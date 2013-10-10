@@ -1,0 +1,22 @@
+import(limma)
+import(RPMM)
+import(DNAcopy)
+import(preprocessCore)
+import(impute)
+import(marray)
+import(sva)
+import(IlluminaHumanMethylation450kmanifest)
+import(minfi)
+import(ChAMPdata)
+import(Illumina450ProbeVariants.db)
+
+export(
+	champ.process, 
+	champ.load, 
+	champ.norm, 
+	champ.CNA, 
+	champ.SVD, 
+	champ.lasso, 
+	champ.MVP, 
+	champ.runCombat
+	) 
