@@ -2,7 +2,7 @@ Package: ChAMP
 Type: Package
 Title: Chip Analysis Methylation Pipeline for Illumina
         HumanMethylation450
-Version: 0.99.9
+Version: 0.99.13
 Date: 2013-10-08
 Author: Tiffany Morris, Lee Butcher, Andy Feber, Andrew Teschendorff, Ankur Chakravarthy and Stephan Beck
 Maintainer: Tiffany Morris <Tiffany.Morris@ucl.ac.uk>
@@ -14,3 +14,4 @@ Imports: sva, IlluminaHumanMethylation450kmanifest, limma, RPMM,
 biocViews: Bioinformatics, DNAmethylation, DataImport, IlluminaChip,
         Preprocessing, QualityControl, Software,
         DifferentialMethylation, SNP, CopyNumberVariants
+Packaged: 2013-10-08 18:45:16 UTC; regmtmo

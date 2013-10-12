@@ -12,7 +12,7 @@ A pipeline that enables pre-processing of 450k data, a selection of normalizatio
 \tabular{ll}{
 Package: \tab ChAMP\cr
 Type: \tab Package\cr
-Version: \tab 0.99.9\cr
+Version: \tab 0.99.13\cr
 Date: \tab 2013-10-08\cr
 License: \tab GPL-3\cr
 }

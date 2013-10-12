@@ -86,7 +86,7 @@ The champ.load() function uses the most memory. If you plan to run the analysis 
 <<processSAVE, eval=FALSE>>=
 save(myLoad,file="currentStudyloadedData.RData")
 load("currentStudyloadedData.RData")
-champ.process(fromIDAT=F)
+champ.process(fromIDAT=FALSE)
 @
 
 %Add info on combining datasets...
@@ -99,7 +99,7 @@ myNorm=champ.norm()
 champ.SVD()
 batchNorm=champ.runCombat()
 limma=champ.MVP()
-lasso=champ.lasso(limma=limma)
+lasso=champ.lasso(fromFile =TRUE, limma=limma)
 champ.CNA()
 @
 
@@ -218,7 +218,7 @@ This function implements the ComBat normalization method \citep{Johnson07} that 
 ComBat uses an empirical Bayes method to correct for technical variation. If ComBat were applied directly to beta values zeros could be introduced as beta values have a range between 0 and 1. For this reason \Rpackage{ChAMP} logit transforms beta values before ComBat adjustment and then computes the reverse logit transformation following the ComBat adjustment. If the user has chosen to use M-values no logit transformation will be done. If the dataset only includes data from one slide the adjustment will abort.  As the CNA method utilises intensity values rather than beta or M -values the ComBat adjustment will be repeated for that function. The ComBat function can be a time consuming step in the pipeline if you have a large number of samples. 
 \subsubsection{Usage}
 
-<<combatFunction, eval=F>>=
+<<combatFunction, eval=FALSE>>=
 batchNorm=champ.runCombat()
 @
 \subsection{Calling MVPs - Methylation Variable Positions}
@@ -229,7 +229,7 @@ This function implements the \Rpackage{limma} package to calculate the p-value f
 
 \subsubsection{Usage}
 
-<<mvpFunction, eval=F>>=
+<<mvpFunction, eval=FALSE>>=
 limma=champ.MVP()
 head(limma)
 @
@@ -292,8 +292,8 @@ SNPs can be filtered from the DMR hunter using data obtained from the 1000 Genom
 
 \subsubsection{Usage}
 
-<<lassoFunction, eval=F>>=
-lasso=champ.lasso(fromFile=T, limma=limma, image=F,bedFile=F)
+<<lassoFunction, eval=FALSE>>=
+lasso=champ.lasso(fromFile=TRUE, limma=limma, image=FALSE,bedFile=FALSE)
 if(!is.null(lasso))
 {
 head(lasso)
@@ -325,7 +325,7 @@ Feber \citep{Feber13} compared the results obtained using this method to copy nu
 
 \subsubsection{Usage}
 
-<<cnaFunction, eval=F>>=
+<<cnaFunction, eval=FALSE>>=
 CNA=champ.CNA()
 @
 
@@ -333,6 +333,6 @@ CNA=champ.CNA()
 Additional options for downstream analysis are available using other packages. It is recommended that DMRs be investigated using pathway analysis software and Encode data. In addition data from previously published 450k datasets can be downloaded using \Rpackage{marmal-aid} and combined with study data for meta-analysis.
 
 \bibliographystyle{natbib}
-\bibliography{450k.bib}
+\bibliography{450k}
 
 \end{document}

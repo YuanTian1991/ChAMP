@@ -27,7 +27,7 @@ sampleCNA=TRUE, plotSample=TRUE, filterXY = TRUE, groupFreqPlots=TRUE,freqThresh
 \examples{
 	data(testDataSet)
 	myLoad=testDataSet
-	champ.CNA(batchCorrect=FALSE)
+	champ.CNA(batchCorrect=FALSE,sampleCNA=FALSE,groupFreqPlots=FALSE)
 }
 \references{
 Feber, A et. al. (2013). CNA profiling using high density DNA methylation arrays, under review. Genome Biology.

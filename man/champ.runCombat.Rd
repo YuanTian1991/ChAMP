@@ -22,8 +22,7 @@ champ.runCombat(beta.c = myNorm$beta, pd = myLoad$pd, logitTrans = TRUE)
 \examples{
 	data(testDataSet)
 	myLoad=testDataSet
-	myNorm=champ.norm()
-	batchNorm=champ.runCombat()
+	myNorm=champ.norm(norm="NONE")
 }
 
 

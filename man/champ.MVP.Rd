@@ -24,7 +24,7 @@ bedFile = FALSE)
 \examples{
 	data(testDataSet)
 	myLoad=testDataSet
-	myNorm=champ.norm()
+	myNorm=champ.norm(norm="NONE")
 }
 \value{
 \item{results.file}{A matrix of all probes with an adjusted p-value for significance of differential methylation containing columns for probeID, logFC, AveExpr, t, P.Value, adjusted p-value, B, chromosome, map info, chromosome arm, closest gene.1, gene.2, gene.3, gene.4, closest feature.1, feature.2, feature.3, feature.4, UCSC_CpG_ISALNDS_NAME, Relation to UCSC CpG Island, Phantom, DMR, Enhancer, HMM_Island, regulatory feature name, regulatory feature group, feature relation, average of first sample group, average of second sample group, delta beta}

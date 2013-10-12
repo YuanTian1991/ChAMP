@@ -48,8 +48,10 @@ sampleCNA=TRUE,plotSample = TRUE,groupFreqPlots=TRUE,freqThreshold=0.3, bedFile
 }
 
 \examples{
+\donttest{
 	directory=system.file("extdata",package="ChAMPdata")
-	champ.process(directory=directory,norm="NONE",plotBMIQ=FALSE,runCNA=FALSE,)
+	champ.process(directory=directory)
+}
 }
 
 \author{

@@ -45,7 +45,7 @@ bedFile = TRUE, DMRpval = 0.05, batchDone = FALSE, normSave)
 \examples{
 	data(testDataSet)
 	myLoad=testDataSet
-	myNorm=champ.norm()
+	myNorm=champ.norm(norm="NONE")
 }
 
 \value{

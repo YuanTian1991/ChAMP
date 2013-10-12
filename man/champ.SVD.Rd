@@ -10,9 +10,9 @@ Runs Singular Value Decomposition on a dataset to estimate the impact of batch e
 }
 \usage{
 champ.SVD(beta = myNorm$beta, rgSet = myLoad$rgSet, detP = myLoad$detP, pd = myLoad$pd, 
-loadFile = F, betaFile = "beta.txt", sampleSheet = "sampleSheet.txt", methProfile = F, 
-methFile = "MethylationProbeProfile.txt", controlProfile = F, 
-controlFile = "ControlProbeProfile.txt", studyInfo = F, studyInfoFile = "studyInfo.txt", 
+loadFile = FALSE, betaFile = "beta.txt", sampleSheet = "sampleSheet.txt", methProfile = FALSE, 
+methFile = "MethylationProbeProfile.txt", controlProfile = FALSE, 
+controlFile = "ControlProbeProfile.txt", studyInfo = FALSE, studyInfoFile = "studyInfo.txt", 
 infoFactor = c(), resultsDir = paste(getwd(), "resultsChamp", sep = "/"))
 }
 
@@ -37,7 +37,7 @@ infoFactor = c(), resultsDir = paste(getwd(), "resultsChamp", sep = "/"))
 \examples{
 	data(testDataSet)
 	myLoad=testDataSet
-	myNorm=champ.norm()
+	myNorm=champ.norm(norm="NONE")
 	champ.SVD()
 }
 
