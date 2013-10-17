@@ -1,10 +1,6 @@
 champ.MVP <-
-function(beta.norm = myNorm$beta, pd=myLoad$pd, adjPVal=0.05, adjust.method="BH", compare.group=c("C","T"),resultsDir=paste(getwd(),"resultsChamp",sep="/"),bedFile=FALSE)
-{
-	#put them in order based on data
-	#limma
-	#make a bedfile and then call DMR function.
-	
+function(beta.norm = myNorm$beta, pd=myLoad$pd, adjPVal=0.05, adjust.method="BH", compare.group=c("C","T"),resultsDir=paste(getwd(),"resultsChamp",sep="/"),bedFile=TRUE)
+{	
 	makeContrasts<-NA
 	rm(makeContrasts)
 	lmFit<-NA
@@ -67,9 +63,6 @@ function(beta.norm = myNorm$beta, pd=myLoad$pd, adjPVal=0.05, adjust.method="BH"
 
 	fit <- lmFit(data, design)
 	fit2 <- contrasts.fit(fit, contrast.matrix)
-    
-    probe.features=data.frame(probe.features)
-    probe.features$ID=row.names(probe.features)
 
 	ok=TRUE
 	tryCatch(fit3 <- eBayes(fit2),
@@ -88,19 +81,16 @@ function(beta.norm = myNorm$beta, pd=myLoad$pd, adjPVal=0.05, adjust.method="BH"
           }else{
           
           resList=data[which(row.names(data) %in% results$ID),]
-          resList=data.frame(resList)
-          resList$ID=row.names(resList)
-          
 	
           #join with annotation
-          resList_anno <- merge(resList, probe.features, by ="ID",all.x=T)
+          resList_anno<-data.frame(probe.features[match(row.names(resList),row.names(probe.features)),],resList)
+          resList_anno$probeID=row.names(resList_anno)        
           
           if(bedFile)
           {
               
               if(!is.null(resList_anno))
               {
-              	colnames(resList_anno)[1]="probeID"
               	bedfile=champ.bedfile(resList_anno)
               	#add pvalue to file name
               	fileName1=paste(resultsDir,"/MVP_",adjPVal,"_",groupLabel[1],"vs",groupLabel[2],"_",adjust.method,"adjust_",dim(resList)[1],".bed",sep="")
@@ -110,8 +100,7 @@ function(beta.norm = myNorm$beta, pd=myLoad$pd, adjPVal=0.05, adjust.method="BH"
        }
           
           resultsALL<- topTable(fit3, coef=1, number=dim(data)[1], adjust.method=adjust.method,p.value=1)
-          resultsALL=data.frame(resultsALL)
-          resultsALL_anno <- merge(resultsALL, probe.features, by ="ID", all.x=T)
+          resultsALL_anno<-data.frame(resultsALL,probe.features[match(resultsALL$ID,row.names(probe.features)),])
 
           control.data=data[,which(colnames(data) %in% controls$Sample_Name)]
           test.data=data[,which(colnames(data) %in% test$Sample_Name)]
@@ -123,8 +112,7 @@ function(beta.norm = myNorm$beta, pd=myLoad$pd, adjPVal=0.05, adjust.method="BH"
           colnames(data)[length(data)-2]=paste(groupLabel[1],"_AVG",sep="")
           colnames(data)[length(data)-1]=paste(groupLabel[2],"_AVG",sep="")
           data1=data[(length(data)-2):length(data)]
-          data1$ID=row.names(data1)
-          resultsALL_anno<-merge(resultsALL_anno,data1, by="ID",all.y=T)
+          resultsALL_anno<-data.frame(resultsALL_anno,data1[match(resultsALL_anno$ID,row.names(data1)),])
           
           colnames(resultsALL_anno)[1]="probeID"
           row.names(resultsALL_anno)=resultsALL_anno$probeID

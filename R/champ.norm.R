@@ -9,7 +9,8 @@ function(beta=myLoad$beta, rgSet=myLoad$rgSet, pd=myLoad$pd,mset=myLoad$mset, sa
 	rm(getBeta)	
 	getM<-NA
 	rm(getM)
-	cwd=getwd()	
+	cwd=getwd()
+	data(probe.features)	
 
 	message("Normalizing data with ",norm)
 	if(fromIDAT==F)
@@ -42,10 +43,16 @@ function(beta=myLoad$beta, rgSet=myLoad$rgSet, pd=myLoad$pd,mset=myLoad$mset, sa
 			if(methValue=="B")
 			{	
 				beta.p = getBeta(mset, "Illumina")
+
 			}else{beta.p = getM(mset)}
 		}else{
         beta.p=beta
         }
+        if(filterXY)
+		{
+			autosomes=probe.features[!probe.features$CHR %in% c("X","Y"), ]
+            beta.p=beta.p[row.names(beta.p) %in% row.names(autosomes), ]	
+		}
 	}	
 	if(norm=="BMIQ" | norm == "PBC")
 	{

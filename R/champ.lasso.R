@@ -215,16 +215,14 @@ function(fromFile=FALSE, uploadResults=FALSE, uploadFile="limma.txt", limma, bet
     
         message("You have found ",max(dmr.probes$dmr.no)," significant DMRs.")
         resultsFile=resultsFile[c(1,30)]
-        colnames(resultsFile)[1]="ID"
-        tmp4=merge(resultsFile,tmp4,by="ID")
+        tmp4=data.frame(tmp4,"deltaBeta"=resultsFile[match(tmp4$ID, resultsFile$probeID),c(2)])
  
         tmp4 <- tmp4[order(tmp4$dmr.no),]
-	if(!is.null(dmr.p))
-	{
-		
-        dmrList=data.frame(tmp4,"dmr.p" = dmr.p)
-        dmrList=dmrList[which(dmrList$dmr.p < DMRpval),]
-	}
+		if(!is.null(dmr.p))
+		{	
+        	dmrList=data.frame(tmp4,"dmr.p" = dmr.p)
+        	dmrList=dmrList[which(dmrList$dmr.p < DMRpval),]
+		}
         colnames(dmrList)[1]="probeID"
 
         fileName=paste(resultsDir,"/DMR_",DMRpval,"_",max(dmrList$dmr.no),".txt",sep="")
