@@ -1,6 +1,6 @@
 champ.MVP <-
 function(beta.norm = myNorm$beta, pd=myLoad$pd, adjPVal=0.05, adjust.method="BH", compare.group=c("C","T"),resultsDir=paste(getwd(),"resultsChamp",sep="/"),bedFile=TRUE)
-{	
+{
 	makeContrasts<-NA
 	rm(makeContrasts)
 	lmFit<-NA
@@ -11,7 +11,7 @@ function(beta.norm = myNorm$beta, pd=myLoad$pd, adjPVal=0.05, adjust.method="BH"
 	rm(eBayes)
 	topTable<-NA
 	rm(topTable)
-	data(probe.features)	
+	data(probe.features)
 	
     groupLabel=unique(pd$Sample_Group)
 	if(length(groupLabel)>2)
@@ -38,7 +38,7 @@ function(beta.norm = myNorm$beta, pd=myLoad$pd, adjPVal=0.05, adjust.method="BH"
 		{
 			if(colnames(data)[i]==colnames(beta.norm)[j])
 			{
-				data[,i]=beta.norm[,j] 
+				data[,i]=beta.norm[,j]
 				done=T
                 
 			}else{
@@ -46,80 +46,81 @@ function(beta.norm = myNorm$beta, pd=myLoad$pd, adjPVal=0.05, adjust.method="BH"
 				{
 					j=j+1
 				}else{
-
+                    
 					print("There is an error in this dataset")
 				}
 			}
 		}
 		
 	}
-
+    
 	numsamples=length(controls$Sample_Name)
 	numtest=length(test$Sample_Name)
 	design <- model.matrix(~0 + factor(c(rep("C",numsamples), rep("T",numtest))))
 	print(paste("contrast",groupLabel[1],groupLabel[2],sep=" "))
 	colnames(design) <- c("C", "T")
 	contrast.matrix <- makeContrasts(T-C, levels=design)
-
+    
 	fit <- lmFit(data, design)
 	fit2 <- contrasts.fit(fit, contrast.matrix)
-
+    
 	ok=TRUE
 	tryCatch(fit3 <- eBayes(fit2),
-      warning=function(w) 
-      {
+    warning=function(w)
+    {
       	cat("No sample variance.\n")
       	ok <- FALSE
-      })
-      if(ok)
-      {
-          results<- topTable(fit3, coef=1, number=dim(data)[1], adjust.method=adjust.method,p.value=adjPVal)
-          message("You have found ", dim(results)[1], " significant MVPs with a ",adjust.method," adjusted P-value below ", adjPVal)
-          if(dim(results)[1]==0)
-          {
-              message("No bedfile will be generated for tophits but a full MVP list with all p-values is being saved")
-          }else{
-          
-          resList=data[which(row.names(data) %in% results$ID),]
-	
-          #join with annotation
-          resList_anno<-data.frame(probe.features[match(row.names(resList),row.names(probe.features)),],resList)
-          resList_anno$probeID=row.names(resList_anno)        
-          
-          if(bedFile)
-          {
-              
-              if(!is.null(resList_anno))
-              {
-              	bedfile=champ.bedfile(resList_anno)
-              	#add pvalue to file name
-              	fileName1=paste(resultsDir,"/MVP_",adjPVal,"_",groupLabel[1],"vs",groupLabel[2],"_",adjust.method,"adjust_",dim(resList)[1],".bed",sep="")
-              	write.table(bedfile,fileName1,row.names=F,col.names=F,quote=F, sep = "\t")
-	         }
-          }
-       }
-          
-          resultsALL<- topTable(fit3, coef=1, number=dim(data)[1], adjust.method=adjust.method,p.value=1)
-          resultsALL_anno<-data.frame(resultsALL,probe.features[match(resultsALL$ID,row.names(probe.features)),])
-
-          control.data=data[,which(colnames(data) %in% controls$Sample_Name)]
-          test.data=data[,which(colnames(data) %in% test$Sample_Name)]
-          data=data.frame(data)
-          data$C_AVG=rowMeans(control.data)
-          data$T_AVG=rowMeans(test.data)
-          data$deltaBeta<-data$T_AVG-data$C_AVG
-
-          colnames(data)[length(data)-2]=paste(groupLabel[1],"_AVG",sep="")
-          colnames(data)[length(data)-1]=paste(groupLabel[2],"_AVG",sep="")
-          data1=data[(length(data)-2):length(data)]
-          resultsALL_anno<-data.frame(resultsALL_anno,data1[match(resultsALL_anno$ID,row.names(data1)),])
-          
-          colnames(resultsALL_anno)[1]="probeID"
-          row.names(resultsALL_anno)=resultsALL_anno$probeID
-          fileName2=paste(resultsDir,"/MVP_ALL_",groupLabel[1],"vs",groupLabel[2],"_",adjust.method,"adjust.txt",sep="")
-          write.table(resultsALL_anno, fileName2 ,quote=F,sep="\t",row.names=F)
-          return(results.file=resultsALL_anno)
-          
-      }else(print("There are no significant MVPs"))
-
+    })
+    if(ok)
+    {
+        results<- topTable(fit3, coef=1, number=dim(data)[1], adjust.method=adjust.method,p.value=adjPVal)
+        results$probeID=row.names(results)
+        message("You have found ", dim(results)[1], " significant MVPs with a ",adjust.method," adjusted P-value below ", adjPVal)
+        if(dim(results)[1]==0)
+        {
+            message("No bedfile will be generated for tophits but a full MVP list with all p-values is being saved")
+        }else{
+            
+            resList=data[which(row.names(data) %in% results$probeID),]
+            
+            #join with annotation
+            resList_anno<-data.frame(probe.features[match(row.names(resList),row.names(probe.features)),],resList)
+            resList_anno$probeID=row.names(resList_anno)
+            
+            if(bedFile)
+            {
+                
+                if(!is.null(resList_anno))
+                {
+                    bedfile=champ.bedfile(resList_anno)
+                    #add pvalue to file name
+                    fileName1=paste(resultsDir,"/MVP_",adjPVal,"_",groupLabel[1],"vs",groupLabel[2],"_",adjust.method,"adjust_",dim(resList)[1],".bed",sep="")
+                    write.table(bedfile,fileName1,row.names=F,col.names=F,quote=F, sep = "\t")
+                }
+            }
+        }
+        
+        resultsALL<- topTable(fit3, coef=1, number=dim(data)[1], adjust.method=adjust.method,p.value=1)
+        resultsALL_anno<-data.frame(resultsALL,probe.features[match(row.names(resultsALL),row.names(probe.features)),])
+        
+        control.data=data[,which(colnames(data) %in% controls$Sample_Name)]
+        test.data=data[,which(colnames(data) %in% test$Sample_Name)]
+        data=data.frame(data)
+        data$C_AVG=rowMeans(control.data)
+        data$T_AVG=rowMeans(test.data)
+        data$deltaBeta<-data$T_AVG-data$C_AVG
+        
+        colnames(data)[length(data)-2]=paste(groupLabel[1],"_AVG",sep="")
+        colnames(data)[length(data)-1]=paste(groupLabel[2],"_AVG",sep="")
+        data1=data[(length(data)-2):length(data)]
+        resultsALL_anno<-data.frame(resultsALL_anno,data1[match(row.names(resultsALL_anno),row.names(data1)),])
+        
+        
+        resultsALL_anno$probeID=row.names(resultsALL_anno)
+        fileName2=paste(resultsDir,"/MVP_ALL_",groupLabel[1],"vs",groupLabel[2],"_",adjust.method,"adjust.txt",sep="")
+        write.table(resultsALL_anno, fileName2 ,quote=F,sep="\t",row.names=F)
+        return(results.file=resultsALL_anno)
+        
+    }else(print("There are no significant MVPs"))
+    
 }
