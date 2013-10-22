@@ -74,7 +74,15 @@ function(beta.norm = myNorm$beta, pd=myLoad$pd, adjPVal=0.05, adjust.method="BH"
     if(ok)
     {
         results<- topTable(fit3, coef=1, number=dim(data)[1], adjust.method=adjust.method,p.value=adjPVal)
-        results$probeID=row.names(results)
+        if(colnames(results[1])=="ID")
+        {
+            row.names(results)=results$ID
+            colnames(results)[1]<-"probeID"
+            
+        }else{
+            results$probeID=row.names(results)
+            
+        }
         message("You have found ", dim(results)[1], " significant MVPs with a ",adjust.method," adjusted P-value below ", adjPVal)
         if(dim(results)[1]==0)
         {
@@ -101,6 +109,14 @@ function(beta.norm = myNorm$beta, pd=myLoad$pd, adjPVal=0.05, adjust.method="BH"
         }
         
         resultsALL<- topTable(fit3, coef=1, number=dim(data)[1], adjust.method=adjust.method,p.value=1)
+        if(colnames(resultsALL[1])=="ID")
+        {
+            row.names(resultsALL)=resultsALL$ID
+            colnames(resultsALL)[1]<-"probeID"
+        }else{
+            resultsALL$probeID=row.names(resultsALL)
+            
+        }
         resultsALL_anno<-data.frame(resultsALL,probe.features[match(row.names(resultsALL),row.names(probe.features)),])
         
         control.data=data[,which(colnames(data) %in% controls$Sample_Name)]
@@ -115,8 +131,6 @@ function(beta.norm = myNorm$beta, pd=myLoad$pd, adjPVal=0.05, adjust.method="BH"
         data1=data[(length(data)-2):length(data)]
         resultsALL_anno<-data.frame(resultsALL_anno,data1[match(row.names(resultsALL_anno),row.names(data1)),])
         
-        
-        resultsALL_anno$probeID=row.names(resultsALL_anno)
         fileName2=paste(resultsDir,"/MVP_ALL_",groupLabel[1],"vs",groupLabel[2],"_",adjust.method,"adjust.txt",sep="")
         write.table(resultsALL_anno, fileName2 ,quote=F,sep="\t",row.names=F)
         return(results.file=resultsALL_anno)
