@@ -10,8 +10,8 @@ Function that loads data from IDAT files to calculate intensity and produce qual
 }
 \usage{
 champ.load(directory = getwd(), methValue = "B", resultsDir = paste(getwd(),
- "resultsChamp", sep = "/"), filterXY = TRUE, QCimages = TRUE, filter = TRUE, 
- detPcut = 0.01)
+ "resultsChamp", sep = "/"), filterXY = TRUE, QCimages = TRUE, filterDetP = TRUE, 
+ detPcut = 0.01,  removeDetP = 0, filterBeads=FALSE, beadCutoff=0.05, filterNoCG=FALSE)
 }
 
 \arguments{
@@ -20,9 +20,13 @@ champ.load(directory = getwd(), methValue = "B", resultsDir = paste(getwd(),
 	\item{methValue}{Indicates whether you prefer m-values M or beta-values B.}
 	\item{resultsDir}{Directory where results will be saved.}
 	\item{QCimages}{If QCimages=T, then images will be saved.}
-	\item{filter}{If filter = T, then probes above the detPcut will be filtered out.}
+	\item{filterDetP}{If filter = T, then probes above the detPcut will be filtered out.}
 	\item{filterXY}{If filterXY=TRUE, probes from X and Y chromosomes are removed. Default is TRUE.}
   	\item{detPcut}{The detection p-value threshhold. Probes about this cutoff will be filtered out. Default is 0.01}
+  	\item{removeDetP}{The removeDetP parameter represents the fraction of samples that can contain a detection p-value above the detPcut. Default is 0.}
+  	\item{filterBeads}{If filterBeads=TRUE, probes with a beadcount less than 3 will be removed depending on the beadCutoff value. Default is FALSE until the next Bioconductor release.}
+  	\item{beadCutoff}{The beadCutoff represents the fraction of samples that must have a beadcount less than 3 before the probe is removed. Default is 0.05 or 5\% of samples.}
+  	\item{filterNoCG}{If filterNoCG=TRUE, non-cg probes are removed. Default is FALSE.}
 }
 
 \value{
@@ -34,7 +38,7 @@ champ.load(directory = getwd(), methValue = "B", resultsDir = paste(getwd(),
 	\item{detP}{A matrix of detection p-values for all probes and all samples.}
 }
 \examples{
-myLoad=champ.load(directory=system.file("extdata",package="ChAMPdata"))
+myLoad=champ.load(directory=system.file("extdata",package="ChAMPdata"),filterBeads=TRUE)
 }
 \author{
 Morris, T

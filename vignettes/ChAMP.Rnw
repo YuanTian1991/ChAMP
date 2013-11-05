@@ -38,7 +38,7 @@ This can be done in one go using the following commands:\\
 <<InstallLibraries, eval=FALSE>>=
 source("http://bioconductor.org/biocLite.R")
 biocLite(c('minfi', 'DNAcopy', 'impute', 'marray', 'limma', 'preprocessCore', 
-'RPMM', 'sva', 'IlluminaHumanMethylation450kmanifest'))
+'RPMM', 'sva', 'IlluminaHumanMethylation450kmanifest','wateRmelon'))
 @
 
 Load the \Rpackage{ChAMP} package. \\
@@ -94,7 +94,7 @@ champ.process(fromIDAT=FALSE)
 Another option if you have time or space constraints or if you are combining \Rpackage{ChAMP} with other analysis pipelines is to run the analysis step by step and not use the champ.process() function. Each separate function is described in detail below, but the full pipeline in a step-wise process would go:
 
 <<processSTEPbySTEP,eval=FALSE>>=
-myLoad=champ.load()
+myLoad=champ.load(directory = testDir)
 myNorm=champ.norm()
 champ.SVD()
 batchNorm=champ.runCombat()
@@ -111,7 +111,7 @@ As previously mentioned, the user has the option to run each of the \Rpackage{Ch
 
 The champ.load() function utilises \Rpackage{minfi} to load data from .idat files. By default this loads data from the current working directory, in this directory you should have all .idat files and a sample sheet. The sample sheet currently needs to be a .csv file as came with your results following hybridization. You can choose whether you want M-values or beta-values. For small datasets M-values are recommended \citep{Zhuang12}. 
 
-The newest version of minfi automatically filters out the 65 SNP probes that were included on the chip as internal controls which can useful for identifying sample mixups. This option is implemented in other packages including \Rpackage{watermelon}. As such, before filtering for low quality probes the dataset will include 485,512 probes.
+The newest version of \Rpackage{minfi} automatically filters out the 65 SNP probes that were included on the chip as internal controls which can useful for identifying sample mixups. As such, before filtering for low quality probes the dataset will include 485,512 probes.
 
 <<SampleSheet>>=
 myLoad$pd
@@ -120,7 +120,13 @@ myLoad$pd
 %\subsubsection{Load Data from Genome Studio files}
 
 \subsubsection{Filtering for failed probes}
-By default \Rpackage{ChAMP} filters the data for detection p-value. This utilises \Rpackage{minfi} method for calculating the detection p-value which differs from the method used in Genome Studio. A file failedSamples.txt is saved (see Figure \ref{fig:failed}) and also printed to the screen showing the fraction of failed probes per sample. If any of these values is high (>0.05) you may want to consider removing that sample from the analysis and rerunning. 
+By default \Rpackage{ChAMP} filters the data for detection p-value (<  0.01). This utilises \Rpackage{minfi} method for calculating the detection p-value which differs from the method used in Genome Studio. A file failedSamples.txt is saved (see Figure \ref{fig:failed}) and also printed to the screen showing the fraction of failed probes per sample. If any of these values is high (>0.05) you may want to consider removing that sample from the analysis and rerunning. 
+
+The option to filter out probes with <3 is available by changing the filterBeads parameter to TRUE. The default will filter probes with <3 beads in at least 5\% of samples, but this can be adjusted with the beadCutoff parameter.
+
+<<combatFunction, eval=FALSE>>=
+myLoad=champ.load(directory = testDir, filterBeads=TRUE)
+@
 
 
 \subsubsection{Output}
@@ -333,6 +339,6 @@ CNA=champ.CNA()
 Additional options for downstream analysis are available using other packages. It is recommended that DMRs be investigated using pathway analysis software and Encode data. In addition data from previously published 450k datasets can be downloaded using \Rpackage{marmal-aid} and combined with study data for meta-analysis.
 
 \bibliographystyle{natbib}
-\bibliography{450k}
+\bibliography{450k.bib}
 
 \end{document}

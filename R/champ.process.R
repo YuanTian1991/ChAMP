@@ -1,5 +1,5 @@
 champ.process <-
-function(fromIDAT=TRUE, fromFile=FALSE,directory = getwd(), resultsDir=paste(getwd(),"resultsChamp",sep="/"), methValue="B", filter = TRUE, detPcut=0.01, filterXY = TRUE, QCimages = TRUE, batchCorrect=TRUE, runSVD = TRUE, studyInfo=FALSE, infoFactor=c(), norm = "BMIQ", adjust.method="BH", adjPVal=0.05, runDMR=TRUE, runCNA=TRUE,plotBMIQ=TRUE,sampleCNA=TRUE,plotSample=TRUE,groupFreqPlots=TRUE,freqThreshold=0.3,bedFile=FALSE, methProfile=FALSE,controlProfile=FALSE)
+function(fromIDAT=TRUE, fromFile=FALSE,directory = getwd(), resultsDir=paste(getwd(),"resultsChamp",sep="/"), methValue="B", filterDetP = TRUE, detPcut=0.01, filterXY = TRUE, removeDetP = 0, filterBeads = FALSE, beadCutoff = 0.05, filterNoCG= FALSE, QCimages = TRUE, batchCorrect=TRUE, runSVD = TRUE, studyInfo=FALSE, infoFactor=c(), norm = "BMIQ", adjust.method="BH", adjPVal=0.05, runDMR=TRUE, runCNA=TRUE,plotBMIQ=TRUE,sampleCNA=TRUE,plotSample=TRUE,groupFreqPlots=TRUE,freqThreshold=0.3,bedFile=FALSE, methProfile=FALSE,controlProfile=FALSE)
 {
     batchDone=FALSE
 
@@ -11,7 +11,7 @@ function(fromIDAT=TRUE, fromFile=FALSE,directory = getwd(), resultsDir=paste(get
     }
 	if(fromIDAT)
     {
-        myLoad=champ.load(directory=directory, methValue=methValue, resultsDir=resultsDir, QCimages=QCimages, filter=filter, detPcut=detPcut)
+        myLoad=champ.load(directory=directory, methValue=methValue, resultsDir=resultsDir, QCimages=QCimages, filterDetP=filterDetP, detPcut=detPcut,filterXY=filterXY,filterBeads=filterBeads,beadCutoff=beadCutoff,filterNoCG=filterNoCG)
 	}else if(fromFile){
 		myLoad=champ.read()
 	}else{}

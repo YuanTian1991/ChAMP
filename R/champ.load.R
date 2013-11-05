@@ -1,5 +1,5 @@
 champ.load <-
-function(directory = getwd(), methValue="B", resultsDir=paste(getwd(), "resultsChamp",sep="/"), filterXY=TRUE, QCimages=TRUE, filter=TRUE, detPcut=0.01)
+function(directory = getwd(), methValue="B", resultsDir=paste(getwd(), "resultsChamp",sep="/"), filterXY=TRUE, QCimages=TRUE, filterDetP=TRUE, detPcut=0.01, removeDetP = 0, filterBeads=FALSE, beadCutoff=0.05, filterNoCG=FALSE)
 {
 	read.450k.sheet<-NA
 	rm(read.450k.sheet)
@@ -39,7 +39,7 @@ function(directory = getwd(), methValue="B", resultsDir=paste(getwd(), "resultsC
 		
     myDir= directory
     suppressWarnings(targets <- read.450k.sheet(myDir))
-	rgSet <- read.450k.exp(base = myDir, targets = targets)
+	rgSet <- read.450k.exp(base = myDir, targets = targets, extended=TRUE)
 	sampleNames(rgSet)=rgSet[[1]]
 	pd<-pData(rgSet)
 	green=getGreen(rgSet)
@@ -47,19 +47,42 @@ function(directory = getwd(), methValue="B", resultsDir=paste(getwd(), "resultsC
 	mset <- preprocessRaw(rgSet)
     detP <- detectionP(rgSet)
 	
-    if(filter)
+    failed <- detP>detPcut
+    numfail = colMeans(failed) # Fraction of failed positions per sample
+    message("The fraction of failed positions per sample: ")
+    print(numfail)
+    fileName=paste(resultsDir,"/failedSample",".txt",sep="")
+    write.table(numfail, fileName, row.names=T, col.names=paste("Sample_Name","Fraction_Failed_Probes",sep="\t"), quote=F,sep="\t")
+    
+    if(filterDetP)
     {
-        failed <- detP>detPcut
-        numfail = colMeans(failed) # Fraction of failed positions per sample
-        message("The fraction of failed positions per sample: ")
-        print(numfail)
-        fileName=paste(resultsDir,"/failedSample",".txt",sep="")
-        write.table(numfail, fileName, row.names=T, col.names=paste("Sample_Name","Fraction_Failed_Probes",sep="\t"), quote=F,sep="\t")
-        mset.f = mset[rowSums(detP <= detPcut) == ncol(detP),]
-        message("By filtering with a detection p-value of ",detPcut," a total of ",dim(mset)[1]-dim(mset.f)[1]," probes have been removed from the analysis.")
+        mset.f = mset[rowSums(detP >= detPcut) <= removeDetP*ncol(detP),]
+        
+        if(removeDetP==0)
+        {
+            message("Filtering probes with a detection p-value above ",detPcut," in more than one sample has removed ",dim(mset)[1]-dim(mset.f)[1]," probes from the analysis. If a large number of probes have been removed, ChAMP suggests you look at the failedSample.txt file to identify potentially bad samples.")
+        }else{
+            message("Filtering probes with a detection p-value above ",detPcut," in at least ",removeDetP*100,"% of samples has removed ",dim(mset)[1]-dim(mset.f)[1]," probes from the analysis. If a large number of probes have been removed, ChAMP suggests you look at the failedSample.txt file to identify potentially bad samples.")
+        }
+
         mset=mset.f
     }
-        
+    
+    if(filterBeads)
+    {
+        bc=beadcount(rgSet)
+        bc2=bc[rowSums(is.na(bc))< beadCutoff*(ncol(bc)),]
+        mset.f2 = mset[featureNames(mset) %in% row.names(bc2),]
+        message("Filtering probes with a beadcount <3 in at least ",beadCutoff*100,"% of samples, has removed ",dim(mset)[1]-dim(mset.f2)[1]," from the analysis.")
+        mset=mset.f2
+    }
+    
+    if(filterNoCG)
+    {
+        dropMethylationLoci(mset,dropCH=T)
+        message("Filtering non-cg probes, has removed ",dim(mset)[1]-dim(mset.f2)[1]," from the analysis.")
+    }
+    
     intensity=getMeth(mset)+getUnmeth(mset)
     
     if(methValue=="B")
