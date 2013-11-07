@@ -339,6 +339,6 @@ CNA=champ.CNA()
 Additional options for downstream analysis are available using other packages. It is recommended that DMRs be investigated using pathway analysis software and Encode data. In addition data from previously published 450k datasets can be downloaded using \Rpackage{marmal-aid} and combined with study data for meta-analysis.
 
 \bibliographystyle{natbib}
-\bibliography{450k.bib}
+\bibliography{450k}
 
 \end{document}
