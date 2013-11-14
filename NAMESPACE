@@ -9,6 +9,7 @@ import(IlluminaHumanMethylation450kmanifest)
 import(minfi)
 import(ChAMPdata)
 import(Illumina450ProbeVariants.db)
+import(wateRmelon)
 
 export(
 	champ.process, 
