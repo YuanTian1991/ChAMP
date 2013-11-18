@@ -10,7 +10,7 @@ Description: The package includes quality control metrics, a selection of normal
 License: GPL-3
 Depends: R (>= 3.0.1), minfi, ChAMPdata, Illumina450ProbeVariants.db
 Imports: sva, IlluminaHumanMethylation450kmanifest, limma, RPMM,
-        DNAcopy, preprocessCore, impute, marray
+        DNAcopy, preprocessCore, impute, marray, wateRmelon
 biocViews: Bioinformatics, DNAmethylation, DataImport, IlluminaChip,
         Preprocessing, QualityControl, Software,
         DifferentialMethylation, SNP, CopyNumberVariants
