@@ -74,20 +74,22 @@ function(beta.norm = myNorm$beta, pd=myLoad$pd, adjPVal=0.05, adjust.method="BH"
     if(ok)
     {
         results<- topTable(fit3, coef=1, number=dim(data)[1], adjust.method=adjust.method,p.value=adjPVal)
-        if(colnames(results[1])=="ID")
-        {
-            row.names(results)=results$ID
-            colnames(results)[1]<-"probeID"
-            
-        }else{
-            results$probeID=row.names(results)
-            
-        }
+        
         message("You have found ", dim(results)[1], " significant MVPs with a ",adjust.method," adjusted P-value below ", adjPVal)
         if(dim(results)[1]==0)
         {
             message("No bedfile will be generated for tophits but a full MVP list with all p-values is being saved")
         }else{
+            
+            if(colnames(results[1])=="ID")
+            {
+                row.names(results)=results$ID
+                colnames(results)[1]<-"probeID"
+                
+            }else{
+                results$probeID=row.names(results)
+                
+            }
             
             resList=data[which(row.names(data) %in% results$probeID),]
             
