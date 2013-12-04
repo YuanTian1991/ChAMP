@@ -9,7 +9,7 @@ This function
 \usage{
 champ.MVP(beta.norm = myNorm$beta, pd = myLoad$pd, adjPVal = 0.05, adjust.method = "BH", 
 compare.group = c("C", "T"), resultsDir = paste(getwd(), "resultsChamp", sep = "/"), 
-bedFile = FALSE)
+bedFile = TRUE)
 }
 
 \arguments{
