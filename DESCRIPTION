@@ -2,16 +2,17 @@ Package: ChAMP
 Type: Package
 Title: Chip Analysis Methylation Pipeline for Illumina
         HumanMethylation450
-Version: 1.1.6
-Date: 2013-12-04
+Version: 1.1.7
+Date: 2014-02-06
 Author: Tiffany Morris, Lee Butcher, Andy Feber, Andrew Teschendorff, Ankur Chakravarthy and Stephan Beck
 Maintainer: Tiffany Morris <Tiffany.Morris@ucl.ac.uk>
 Description: The package includes quality control metrics, a selection of normalization methods and novel methods to identify differentially methylated regions and to highlight copy number aberrations.  
 License: GPL-3
-Depends: R (>= 3.0.1), minfi, ChAMPdata, Illumina450ProbeVariants.db
+Depends: R (>= 3.0.1), minfi
 Imports: sva, IlluminaHumanMethylation450kmanifest, limma, RPMM,
         DNAcopy, preprocessCore, impute, marray, wateRmelon
+Suggests: ChAMPdata
 biocViews: Bioinformatics, DNAmethylation, DataImport, IlluminaChip,
         Preprocessing, QualityControl, Software,
         DifferentialMethylation, SNP, CopyNumberVariants
-Packaged: 2013-10-08 18:45:16 UTC; regmtmo
+Packaged: 2013-10-08 18:14:13 UTC; pkgbuild

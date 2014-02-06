@@ -1,6 +1,8 @@
 BMIQ <-
 function(beta.v,design.v,nL=3,doH=TRUE,nfit=50000,th1.v=c(0.2,0.75),th2.v=NULL,niter=5,tol=0.001,plots=TRUE,sampleID=1){
 
+if(any(is.na(beta.v))) stop("NAs found in beta matrix, BMIQ will fail")
+
 type1.idx <- which(design.v==1);
 type2.idx <- which(design.v==2);
 

@@ -100,6 +100,7 @@ function(directory = getwd(), methValue="B", resultsDir=paste(getwd(), "resultsC
 	{
 		data(probe.features)
 		autosomes=probe.features[!probe.features$CHR %in% c("X","Y"), ]
+        mset=mset[featureNames(mset) %in% row.names(autosomes),]
 		beta.raw=beta.raw[row.names(beta.raw) %in% row.names(autosomes), ]
         detP=detP[row.names(detP) %in% row.names(autosomes), ]
         intensity=intensity[row.names(intensity) %in% row.names(autosomes), ]

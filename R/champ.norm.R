@@ -10,6 +10,7 @@ function(beta=myLoad$beta, rgSet=myLoad$rgSet, pd=myLoad$pd,mset=myLoad$mset, sa
 	getM<-NA
 	rm(getM)
 	cwd=getwd()
+    require(ChAMPdata)
 	data(probe.features)	
 
 	message("Normalizing data with ",norm)
@@ -63,7 +64,7 @@ function(beta=myLoad$beta, rgSet=myLoad$rgSet, pd=myLoad$pd,mset=myLoad$mset, sa
  		probeInfo.lv  <- lapply(probeInfoALL.lv,mapto)
 		design.v <- probeInfo.lv[[2]]
 		
-		if(min(beta.p)==0)
+		if(min(beta.p, na.rm=TRUE)==0)
 		{
 			message("Zeros in your dataset have been replaced with 0.000001")
 			beta.p[beta.p==0]<-0.000001
