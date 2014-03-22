@@ -11,7 +11,6 @@ function(beta.norm = myNorm$beta, pd=myLoad$pd, adjPVal=0.05, adjust.method="BH"
 	rm(eBayes)
 	topTable<-NA
 	rm(topTable)
-    require(Illumina450ProbeVariants.db)
 	data(probe.features)	
 	
     groupLabel=unique(pd$Sample_Group)

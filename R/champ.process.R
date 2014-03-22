@@ -1,5 +1,5 @@
 champ.process <-
-function(fromIDAT=TRUE, fromFile=FALSE,directory = getwd(), resultsDir=paste(getwd(),"resultsChamp",sep="/"), methValue="B", filterDetP = TRUE, detPcut=0.01, filterXY = TRUE, removeDetP = 0, filterBeads = FALSE, beadCutoff = 0.05, filterNoCG= FALSE, QCimages = TRUE, batchCorrect=TRUE, runSVD = TRUE, studyInfo=FALSE, infoFactor=c(), norm = "BMIQ", adjust.method="BH", adjPVal=0.05, runDMR=TRUE, runCNA=TRUE,plotBMIQ=TRUE,sampleCNA=TRUE,plotSample=TRUE,groupFreqPlots=TRUE,freqThreshold=0.3,bedFile=FALSE, methProfile=FALSE,controlProfile=FALSE)
+function(fromIDAT=TRUE, fromFile=FALSE,directory = getwd(), resultsDir=paste(getwd(),"resultsChamp",sep="/"), methValue="B", filterDetP = TRUE, detPcut=0.01, filterXY = TRUE, removeDetP = 0, filterBeads = TRUE, beadCutoff = 0.05, filterNoCG= FALSE, QCimages = TRUE, batchCorrect=TRUE, runSVD = TRUE, studyInfo=FALSE, infoFactor=c(), norm = "BMIQ", adjust.method="BH", adjPVal=0.05, runDMR=TRUE, runCNA=TRUE,plotBMIQ=TRUE,DMRpval=0.05, sampleCNA=TRUE,plotSample=TRUE,groupFreqPlots=TRUE,freqThreshold=0.3,bedFile=FALSE, methProfile=FALSE,controlProfile=FALSE)
 {
     batchDone=FALSE
 
@@ -41,9 +41,9 @@ function(fromIDAT=TRUE, fromFile=FALSE,directory = getwd(), resultsDir=paste(get
 	{
 		if(batchDone==F)
 		{
-			dmr=champ.lasso(pd=myLoad$pd,beta.norm=myNorm$beta,resultsDir=resultsDir,bedFile=bedFile, adjust.method = adjust.method, adjPVal=adjPVal, batchDone=batchDone)
+			dmr=champ.lasso(pd=myLoad$pd,beta.norm=myNorm$beta,resultsDir=resultsDir,bedFile=bedFile, adjust.method = adjust.method, adjPVal=adjPVal, DMRpval=DMRpval, batchDone=batchDone)
 		}else{
-			dmr=champ.lasso(pd=myLoad$pd, beta.norm=batchNorm$beta, resultsDir=resultsDir, bedFile=bedFile, batchDone=batchDone, adjust.method=adjust.method, adjPVal=adjPVal, normSave=myNorm$beta)
+			dmr=champ.lasso(pd=myLoad$pd, beta.norm=batchNorm$beta, resultsDir=resultsDir, bedFile=bedFile, batchDone=batchDone, adjust.method=adjust.method, adjPVal=adjPVal, DMRpval=DMRpval,normSave=myNorm$beta)
 		}	
     }
     

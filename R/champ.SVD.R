@@ -73,7 +73,7 @@ function(beta=myNorm$beta, rgSet=myLoad$rgSet,detP=myLoad$detP,pd=myLoad$pd, loa
 			
 		#columns are samples
 		CPP=rbind(getGreen(rgSet)[bc1[1:3],],getRed(rgSet)[bc1[7:9],],getRed(rgSet)[bc2[1:4],],getGreen(rgSet)[tr[1:2],],getGreen(rgSet)[hyb[1:3],],getRed(rgSet)[ext[1:2],],getGreen(rgSet)[ext[3:4],])
-		controlNames <- c("BSC-I C1 Grn","BSC-I C2 Grn","BSC-I C3 Grn","BSC-I C4 Red","BSC-I C5 Red","BSC-I C6 Red","BSC-II C1 Red","BSC-II C2 Red","BSC-II C3 Red","BSC-II C4 Red","Target Removal 1 Grn","Target Removal 2 Grn","Hyb (Low) Grn","Hyb (Medium) 		Grn","Hyb (High) Grn","Extension (A) Red","Extension (T) Red","Extension (C) Grn","Extension (G) Grn");
+		controlNames <- c("BSC-I C1 Grn","BSC-I C2 Grn","BSC-I C3 Grn","BSC-I C4 Red","BSC-I C5 Red","BSC-I C6 Red","BSC-II C1 Red","BSC-II C2 Red","BSC-II C3 Red","BSC-II C4 Red","Target Removal 1 Grn","Target Removal 2 Grn","Hyb (Low) Grn","Hyb (Medium) Grn","Hyb (High) Grn","Extension (A) Red","Extension (T) Red","Extension (C) Grn","Extension (G) Grn");
 		rownames(CPP)=controlNames
 			
 		#log2

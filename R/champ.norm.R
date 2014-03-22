@@ -10,7 +10,6 @@ function(beta=myLoad$beta, rgSet=myLoad$rgSet, pd=myLoad$pd,mset=myLoad$mset, sa
 	getM<-NA
 	rm(getM)
 	cwd=getwd()
-    require(ChAMPdata)
 	data(probe.features)	
 
 	message("Normalizing data with ",norm)
@@ -92,8 +91,7 @@ function(beta=myLoad$beta, rgSet=myLoad$rgSet, pd=myLoad$pd,mset=myLoad$mset, sa
 				bmiq.o <- BMIQ(beta.v,design.v,doH=TRUE,nL=3,nfit=5000,niter=10,plots=plotBMIQ,sampleID=sID);
 				bmiq[,s] <- bmiq.o$nbeta;
 				hf.v[s] <- bmiq.o$hf;
-				
-				print(sID);
+
 			}
 			setwd(cwd)
 			beta.p=bmiq

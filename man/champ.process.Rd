@@ -11,10 +11,10 @@ This function allows the user to run the entire pipeline in one function. Argume
 \usage{
 champ.process(fromIDAT = TRUE, fromFile = FALSE, directory = getwd(), resultsDir = 
 paste(getwd(), "resultsChamp", sep = "/"), methValue = "B", filterDetP = TRUE, 
-detPcut = 0.01, filterXY = TRUE, removeDetP = 0, filterBeads = FALSE, beadCutoff = 
+detPcut = 0.01, filterXY = TRUE, removeDetP = 0, filterBeads = TRUE, beadCutoff = 
 0.05, filterNoCG = FALSE, QCimages = TRUE, batchCorrect = TRUE, runSVD = 
 TRUE, studyInfo = FALSE, infoFactor = c(), norm = "BMIQ", adjust.method = "BH", 
-adjPVal = 0.05, runDMR = TRUE, runCNA = TRUE, plotBMIQ = TRUE, 
+adjPVal = 0.05, runDMR = TRUE,  runCNA = TRUE, plotBMIQ = TRUE, DMRpval = 0.05,
 sampleCNA=TRUE,plotSample = TRUE,groupFreqPlots=TRUE,freqThreshold=0.3, bedFile 
 = FALSE, methProfile = FALSE, controlProfile = FALSE)
 }
@@ -30,7 +30,7 @@ sampleCNA=TRUE,plotSample = TRUE,groupFreqPlots=TRUE,freqThreshold=0.3, bedFile
 	\item{filterXY}{If filterXY=TRUE, probes from X and Y chromosomes are removed. Default is TRUE.}
 	\item{QCimages}{If QCimages=TRUE, then quality control images are saved to the resultsDir. Default is TRUE.}
 	\item{removeDetP}{The removeDetP parameter represents the fraction of samples that can contain a detection p-value above the detPcut. Default is 0.}
-  	\item{filterBeads}{If filterBeads=TRUE, probes with a beadcount less than 3 will be removed depending on the beadCutoff value. Default is FALSE until the next Bioconductor release.}
+  	\item{filterBeads}{If filterBeads=TRUE, probes with a beadcount less than 3 will be removed depending on the beadCutoff value. Default is TRUE.}
   	\item{beadCutoff}{The beadCutoff represents the fraction of samples that must have a beadcount less than 3 before the probe is removed. Default is 0.05 or 5 percent of samples.}
   	\item{filterNoCG}{If filterNoCG=TRUE, non-cg probes are removed. Default is FALSE.}
 	\item{batchCorrect}{If batchCorrect=TRUE, then the ComBat batch correction will be performed on batch effects related to bead chip. Default is TRUE.}
@@ -43,6 +43,7 @@ sampleCNA=TRUE,plotSample = TRUE,groupFreqPlots=TRUE,freqThreshold=0.3, bedFile
 	\item{runDMR}{If runDMR=TRUE, runs the probe lasso method for finding DMRs. This will result in an MVP list with p-values and a DMR list with p-values. Default is TRUE.}
 	\item{runCNA}{If runCNA=TRUE, copy number abberation analysis will be performed. Default is TRUE.}
 	\item{plotBMIQ}{If plotBMIQ=TRUE and norm="BMIQ", BMIQ plots will be saved. Default is TRUE.}
+	\item{DMRpval}{If runDMR=TRUE, this value will be used as the cutoff for the DMR p-value. Default is 0.05.}
 	\item{sampleCNA}{If sampleCNA=TRUE, then . Default is TRUE.}
 	\item{plotSample}{If plotSample=TRUE, CNA plots will be saved. Default is TRUE.}
 	\item{groupFreqPlots}{If groupFreqPlots=T, then}

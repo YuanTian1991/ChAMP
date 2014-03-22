@@ -1,5 +1,5 @@
 champ.CNA <-
-function(intensity=myLoad$intensity, pd=myLoad$pd, loadFile=FALSE, batchCorrect=TRUE, file="intensity.txt", resultsDir=paste(getwd(),"resultsChamp",sep="/"), sampleCNA=TRUE,plotSample=TRUE, filterXY=TRUE, groupFreqPlots=TRUE,freqThreshold=0.3) 
+function(intensity=myLoad$intensity, pd=myLoad$pd, loadFile=FALSE, batchCorrect=TRUE, file="intensity.txt", resultsDir=paste(getwd(),"resultsChamp",sep="/"), sampleCNA=TRUE,plotSample=TRUE, filterXY=TRUE, groupFreqPlots=TRUE,freqThreshold=0.3, control=FALSE, controlGroup="Control")
 {
 	data(probe.features)
 	normalize.quantiles<-NULL
@@ -12,7 +12,7 @@ function(intensity=myLoad$intensity, pd=myLoad$pd, loadFile=FALSE, batchCorrect=
 	segment<-NA
 	rm(segment)
 	
-	message("Run CNA")
+	message("Run champ.CNA")
 	newDir=paste(resultsDir,"CNA",sep="/")
     
 	if(!file.exists(resultsDir)){dir.create(resultsDir)}
@@ -52,35 +52,36 @@ function(intensity=myLoad$intensity, pd=myLoad$pd, loadFile=FALSE, batchCorrect=
 		intsqnlog=combat$beta
 	}
 
-
-	control=F
 	if(control)
 	{
-		#separates case from control(reference sample/samples)
-		#case.intsqnlog<-intsqnlog[,1:length(names)-1]
-		#control.intsqnlog<-intsqnlog[,length(names)]
-		message("This option is not yet available")
-		control=F
+        	#separates case from control(reference sample/samples)
+        	
+        	message("champ.CNA is using the samples you have defined as", controlGroup,"as the baseline for calculating copy number abberations.")
+        
+        	#check that control group exists...
+        	controlSamples= pd[which(pd$Sample_Group==controlGroup),]
+        	caseSamples= pd[which(pd$Sample_Group != controlGroup),]
+		case.intsqnlog<-intsqnlog[,which(colnames(intsqnlog) %in% caseSamples$Sample_Name)]
+	        control.intsqnlog<-intsqnlog[,which(colnames(intsqnlog) %in% controlSamples$Sample_Name)]
+       	 	control.intsqnlog<-rowMeans(control.intsqnlog)
+        
+        	intsqnlogratio<-case.intsqnlog
+        	for(i in 1:ncol(case.intsqnlog))
+        	{
+            		intsqnlogratio[,i]<-case.intsqnlog[,i]-control.intsqnlog
+        	}
 			
 	}else
 	{
-		#Creates alternate reference sample from rowMeans if proper reference /control is not available 
-		case.intsqnlog<-intsqnlog[,1:length(names)]
-		ref.intsqnlog<-rowMeans(intsqnlog)
-	}
-
-	#Generates Log2Ratio for case v control/reference
-	intsqnlogratio<-intsqnlog
-	colnames(intsqnlogratio)<-names
-	for(i in 1:ncol(case.intsqnlog))
-	{
-		if(control)
-		{
-			intsqnlogratio[,i]<-case.intsqnlog[,i]-control.intsqnlog
-		}else 
-		{
-			intsqnlogratio[,i]<-case.intsqnlog[,i]-ref.intsqnlog
-		}
+			#Creates alternate reference sample from rowMeans if proper reference /control is not available 
+			case.intsqnlog<-intsqnlog[,1:length(names)]
+			ref.intsqnlog<-rowMeans(intsqnlog)
+   
+        	intsqnlogratio<-intsqnlog
+        	for(i in 1:ncol(case.intsqnlog))
+        	{
+            		intsqnlogratio[,i]<-case.intsqnlog[,i]-ref.intsqnlog
+        	}
 	}
 
 	ints <- data.frame(ints, probe.features$MAPINFO[match(rownames(ints), rownames(probe.features))])
@@ -104,21 +105,21 @@ function(intensity=myLoad$intensity, pd=myLoad$pd, loadFile=FALSE, batchCorrect=
 	if(sampleCNA)
 	{
 		message("Saving Copy Number information for each Sample")
-		for(i in 1:ncol(intsqnlogratio))
+		for(i in 1:ncol(case.intsqnlog))
 		{
-			CNA.object <- CNA(cbind(intsqnlogratio[,i]), CHR, MAPINFO ,data.type = "logratio", sampleid = paste(names[i],"_qn"))
+			CNA.object <- CNA(cbind(intsqnlogratio[,i]), CHR, MAPINFO ,data.type = "logratio", sampleid = paste(colnames(case.intsqnlog)[i],"qn"))
 			smoothed.CNA.object <- smooth.CNA(CNA.object)
 			segment.smoothed.CNA.object <- segment(smoothed.CNA.object, verbose = 1,alpha=0.001, undo.splits="sdundo", undo.SD=2)
 			if(plotSample)
 			{
-				imageName<-paste(names[i],"_qn.jpg",sep="")
+				imageName<-paste(colnames(case.intsqnlog)[i],"qn.jpg",sep="")
 				imageName=paste(newDir,imageName,sep="/")
 				jpeg(imageName)
 				plot(segment.smoothed.CNA.object, plot.type = "w", ylim=c(-6,6))
 				dev.off()
 			}
 			seg<-segment.smoothed.CNA.object$output
-			table_name<-paste(newDir,"/",names[i],"_qn.txt",sep="")
+			table_name<-paste(newDir,"/",colnames(case.intsqnlog)[i],"qn.txt",sep="")
 			write.table(seg,table_name, sep="\t", col.names=T, row.names=F, quote=FALSE)
 		}
 	}
@@ -127,7 +128,15 @@ function(intensity=myLoad$intensity, pd=myLoad$pd, loadFile=FALSE, batchCorrect=
 	if(groupFreqPlots)
 	{
 	message("Saving frequency plots for each group")
-	groups = unique(pd$Sample_Group)
+        
+        if(control)
+        {
+            groups = unique(pd$Sample_Group)
+	    groups = groups[!groups==controlGroup]
+        }else
+        {
+            groups = unique(pd$Sample_Group)
+        }
 	
 		for(g in 1:length(groups))
 		{
@@ -137,7 +146,7 @@ function(intensity=myLoad$intensity, pd=myLoad$pd, loadFile=FALSE, batchCorrect=
 			ints_group=ints[,which(colnames(ints) %in% pd_group$Sample_Name)]
 			row.names(ints_group)=row.names(ints)
 	
-			group.CNA.object <- CNA(data_group, CHR, MAPINFO,data.type = "logratio", sampleid = paste(paste(pd_group$Sample_Name,pd_group$Sample_Group),"_qn"))
+			group.CNA.object <- CNA(data_group, CHR, MAPINFO,data.type = "logratio", sampleid = paste(paste(pd_group$Sample_Name,pd_group$Sample_Group),"qn"))
 			group.smoothed.CNA.object <- smooth.CNA(group.CNA.object)
 			group.segment.smoothed.CNA.object <- segment(group.smoothed.CNA.object, verbose = 1,alpha=0.001, undo.splits="sdundo", undo.SD=2)
 		
@@ -181,4 +190,5 @@ function(intensity=myLoad$intensity, pd=myLoad$pd, loadFile=FALSE, batchCorrect=
 			dev.off()
 		}
 	}
+
 }

@@ -8,7 +8,8 @@ This function enables CNA profiles to be built using methylation data from Illum
 \usage{
 champ.CNA(intensity = myLoad$intensity, pd = myLoad$pd, loadFile = FALSE, batchCorrect = TRUE, 
 file = "intensity.txt", resultsDir = paste(getwd(), "resultsChamp", sep = "/"), 
-sampleCNA=TRUE, plotSample=TRUE, filterXY = TRUE, groupFreqPlots=TRUE,freqThreshold=0.3)
+sampleCNA=TRUE, plotSample=TRUE, filterXY = TRUE, groupFreqPlots=TRUE,freqThreshold=0.3,
+control=FALSE,controlGroup="Control")
 }
 
 \arguments{
@@ -23,6 +24,8 @@ sampleCNA=TRUE, plotSample=TRUE, filterXY = TRUE, groupFreqPlots=TRUE,freqThresh
 	\item{filterXY}{Probes from X and Y chromosomes are removed. Default is TRUE.}
 	\item{groupFreqPlots}{If groupFreqPlots=T, then}
 	\item{freqThreshold}{If groupFreqPlots=T, then freqThreshold will be used as the cutoff for calling a gain or loss. Default is 0.03.}
+	\item{control}{If control=T, then the samples defined by the controlGroup identifier will be used as the baseline for CNA calculations. Default is FALSE.}	
+	\item{controlGroup}{If Control=T, then controlGroup will be used as the baseline for CNA calculations. The default is "Control". Control samples must be labelled with this identifier in the Sample_Group column of the pd file.}
 }
 \examples{
 	data(testDataSet)
@@ -30,7 +33,7 @@ sampleCNA=TRUE, plotSample=TRUE, filterXY = TRUE, groupFreqPlots=TRUE,freqThresh
 	champ.CNA(batchCorrect=FALSE,sampleCNA=FALSE,groupFreqPlots=FALSE)
 }
 \references{
-Feber, A et. al. (2013). CNA profiling using high density DNA methylation arrays, under review. Genome Biology.
+Feber, A et. al. (2014). CNA profiling using high density DNA methylation arrays. Genome Biology.
 
 }
 \author{

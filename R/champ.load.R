@@ -1,5 +1,5 @@
 champ.load <-
-function(directory = getwd(), methValue="B", resultsDir=paste(getwd(), "resultsChamp",sep="/"), filterXY=TRUE, QCimages=TRUE, filterDetP=TRUE, detPcut=0.01, removeDetP = 0, filterBeads=FALSE, beadCutoff=0.05, filterNoCG=FALSE)
+function(directory = getwd(), methValue="B", resultsDir=paste(getwd(), "resultsChamp",sep="/"), filterXY=TRUE, QCimages=TRUE, filterDetP=TRUE, detPcut=0.01, removeDetP = 0, filterBeads=TRUE, beadCutoff=0.05, filterNoCG=FALSE)
 {
 	read.450k.sheet<-NA
 	rm(read.450k.sheet)
