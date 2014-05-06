@@ -34,6 +34,25 @@ function(intensity=myLoad$intensity, pd=myLoad$pd, loadFile=FALSE, batchCorrect=
 		ints=intensity
 	}
 	
+	if(control)
+	{
+		        	
+        if(controlGroup != "champCtl" & !(controlGroup %in% pd$Sample_Group))
+        {
+        	message("You have chosen ", controlGroup, " as the reference and this does not exist in your sample sheet (column Sample_Group). The analysis will run with ChAMP blood controls.")
+        	controlGroup="champCtl"
+        }
+        
+		#load("champBloodCtls.Rdata")
+		data(champBloodCtls)
+		ctlIntensity=bloodCtl$intensity
+		ctlIntensity=ctlIntensity[which(row.names(ctlIntensity) %in% row.names(ints)),]
+		
+		ints=cbind(ints,ctlIntensity)
+		pd=rbind(pd,bloodCtl$pd)
+		batchCorrect=F
+	}
+	
 	#Extracts names of samples 
 	names<-colnames(ints)
 
@@ -54,11 +73,14 @@ function(intensity=myLoad$intensity, pd=myLoad$pd, loadFile=FALSE, batchCorrect=
 
 	if(control)
 	{
-        	#separates case from control(reference sample/samples)
-        	
-        	message("champ.CNA is using the samples you have defined as", controlGroup,"as the baseline for calculating copy number abberations.")
+        	#separates case from control(reference sample/samples)        	
+        	message("champ.CNA is using the samples you have defined as ", controlGroup," as the reference for calculating copy number aberrations.")
+        	if(controlGroup=="champCtl")
+        	{
+        		message("As you are using the ChAMP controls Combat cannot adjust for batch effects. Batch effects may affect your dataset.")
+        	}
         
-        	#check that control group exists...
+        	
         	controlSamples= pd[which(pd$Sample_Group==controlGroup),]
         	caseSamples= pd[which(pd$Sample_Group != controlGroup),]
 		case.intsqnlog<-intsqnlog[,which(colnames(intsqnlog) %in% caseSamples$Sample_Name)]
@@ -73,6 +95,7 @@ function(intensity=myLoad$intensity, pd=myLoad$pd, loadFile=FALSE, batchCorrect=
 			
 	}else
 	{
+			message("champ.CNA is using an average of all your samples as the reference for calculating copy number aberrations.")
 			#Creates alternate reference sample from rowMeans if proper reference /control is not available 
 			case.intsqnlog<-intsqnlog[,1:length(names)]
 			ref.intsqnlog<-rowMeans(intsqnlog)
