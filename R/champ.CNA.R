@@ -43,14 +43,17 @@ function(intensity=myLoad$intensity, pd=myLoad$pd, loadFile=FALSE, batchCorrect=
         	controlGroup="champCtl"
         }
         
-		#load("champBloodCtls.Rdata")
-		data(champBloodCtls)
-		ctlIntensity=bloodCtl$intensity
-		ctlIntensity=ctlIntensity[which(row.names(ctlIntensity) %in% row.names(ints)),]
+        if(controlGroup == "champCtl")
+        {
+            #load("champBloodCtls.Rdata")
+            data(champBloodCtls)
+            ctlIntensity=bloodCtl$intensity
+            ctlIntensity=ctlIntensity[which(row.names(ctlIntensity) %in% row.names(ints)),]
 		
-		ints=cbind(ints,ctlIntensity)
-		pd=rbind(pd,bloodCtl$pd)
-		batchCorrect=F
+            ints=cbind(ints,ctlIntensity)
+            pd=rbind(pd,bloodCtl$pd)
+            batchCorrect=F
+        }
 	}
 	
 	#Extracts names of samples 
