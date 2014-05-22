@@ -10,6 +10,7 @@ import(minfi)
 import(ChAMPdata)
 import(Illumina450ProbeVariants.db)
 import(wateRmelon)
+import(plyr)
 
 export(
 	champ.process, 
