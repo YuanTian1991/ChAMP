@@ -15,7 +15,5 @@ License: GPL-3
 Depends: R (>= 3.0.1), minfi, ChAMPdata, Illumina450ProbeVariants.db
 Imports: sva, IlluminaHumanMethylation450kmanifest, limma, RPMM,
         DNAcopy, preprocessCore, impute, marray, wateRmelon,plyr
-biocViews: DNAMethylation, DataImport, 
-        Preprocessing, QualityControl, Software,
-        DifferentialMethylation, SNP, CopyNumberVariation
+biocViews: Microarray, MethylationArray, Normalization, TwoChannel CopyNumber
 Packaged: 2013-10-08 18:14:13 UTC; pkgbuild
