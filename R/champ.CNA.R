@@ -1,5 +1,5 @@
 champ.CNA <-
-function(intensity=myLoad$intensity, pd=myLoad$pd, loadFile=FALSE, batchCorrect=TRUE, file="intensity.txt", resultsDir=paste(getwd(),"resultsChamp",sep="/"), sampleCNA=TRUE,plotSample=TRUE, filterXY=TRUE, groupFreqPlots=TRUE,freqThreshold=0.3, control=FALSE, controlGroup="Control")
+function(intensity=myLoad$intensity, pd=myLoad$pd, loadFile=FALSE, batchCorrect=TRUE, file="intensity.txt", resultsDir=paste(getwd(),"resultsChamp",sep="/"), sampleCNA=TRUE,plotSample=TRUE, filterXY=TRUE, groupFreqPlots=TRUE,freqThreshold=0.3, control=TRUE, controlGroup="Control")
 {
 	data(probe.features)
 	normalize.quantiles<-NULL

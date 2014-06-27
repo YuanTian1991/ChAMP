@@ -9,7 +9,7 @@ This function enables CNA profiles to be built using methylation data from Illum
 champ.CNA(intensity = myLoad$intensity, pd = myLoad$pd, loadFile = FALSE, batchCorrect = TRUE, 
 file = "intensity.txt", resultsDir = paste(getwd(), "resultsChamp", sep = "/"), 
 sampleCNA=TRUE, plotSample=TRUE, filterXY = TRUE, groupFreqPlots=TRUE,freqThreshold=0.3,
-control=FALSE,controlGroup="Control")
+control=TRUE,controlGroup="Control")
 }
 
 \arguments{
@@ -24,11 +24,12 @@ control=FALSE,controlGroup="Control")
 	\item{filterXY}{Probes from X and Y chromosomes are removed. Default is TRUE.}
 	\item{groupFreqPlots}{If groupFreqPlots=T, then}
 	\item{freqThreshold}{If groupFreqPlots=T, then freqThreshold will be used as the cutoff for calling a gain or loss. Default is 0.03.}
-	\item{control}{If control=T, then the samples defined by the controlGroup identifier will be used as the baseline for CNA calculations. Default is FALSE.}	
-	\item{controlGroup}{If Control=T, then controlGroup will be used as the baseline for CNA calculations. The default is "Control". Control samples must be labelled with this identifier in the Sample_Group column of the pd file.}
+	\item{control}{If control=T, then the samples defined by the controlGroup identifier will be used as the baseline for CNA calculations. Default is TRUE.}	
+	\item{controlGroup}{If Control=T, then controlGroup will be used as the baseline for CNA calculations. The default is "Control". Control samples must be labelled with this identifier in the Sample_Group column of the pd file. If this doesn't exist in your dataset then ChAMP will revert to using the internal blood controls "champCtls"'}
 }
 \examples{
 	data(testDataSet)
+	data(champBloodCtls)
 	myLoad=testDataSet
 	champ.CNA(batchCorrect=FALSE,sampleCNA=FALSE,groupFreqPlots=FALSE)
 }
