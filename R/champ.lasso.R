@@ -226,7 +226,7 @@ function(fromFile=FALSE, uploadResults=FALSE, uploadFile="limma.txt", limma, bet
         
         message("You have found ",max(myDf$dmr.no)," DMRs.")
         # resultsFile=resultsFile[c(1,30)]
-        myDf=data.frame(myDf,"deltaBeta"=resultsFile[match(rownames(myDf), rownames(resultsFile)),c(30)])
+        myDf=data.frame(myDf,"deltaBeta"=resultsFile[match(rownames(myDf), rownames(resultsFile)),c(24)])
         
         myDf <- myDf[order(myDf$dmr.no),]
         

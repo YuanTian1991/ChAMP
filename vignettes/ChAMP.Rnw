@@ -17,6 +17,7 @@
 \title{The \Rpackage{ChAMP} Package}
 \author{Morris TJ, Butcher L, Feber A, Teschendorff A, Chakravarthy A, Beck S}
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 \maketitle
 \begin{figure}[!tpb]%logo
 \centerline{\includegraphics[scale=2.5]{logo4.jpg}}%{system.file("extdata","logo4.jpg",package="ChAMP")}}
@@ -25,7 +26,7 @@
 
 The \Rpackage{ChAMP} package is a pipeline that integrates currently available 450k analysis methods and also offers its own novel functionality. It utilises the data import, quality control and SWAN \citep{Maksimovic12} normalization functions offered by the \Rpackage{minfi} \citep{minfi} package. In addition, the \Rpackage{ChAMP} package includes the Peak Based Correction (PBC) method \citep{Dedeurwaerder11} and the BMIQ normalization \citep{Teschendorff13} is set as the default method. 
 
-A number of other pipelines and packages are available for 450k analysis including \Rpackage{IMA} \citep{Wang12IMA}, \Rpackage{minfi} \citep{minfi}, \Rpackage{methylumi} \citep{methylumi}, \Rpackage{R n Beads} \citep{rnbeads} and \Rpackage{watermelon}  \citep{Pidsley13}.  However, \Rpackage{ChaMP} includes several analysis options that are not available in other packages. The singular value decomposition (SVD) method \citep{Teschendorff09} allows an in-depth look at batch effects and for correction of this the ComBat method \citep{Johnson07} has been implemented. For the identification of differentially methylated regions (DMRs) \Rpackage{ChAMP} offers the new Probe Lasso method. Finally, \Rpackage{ChAMP} has an additional function to analyse 450k for copy number aberrations \citep{Feber13}.
+A number of other pipelines and packages are available for 450k analysis including \Rpackage{IMA} \citep{Wang12IMA}, \Rpackage{minfi} \citep{minfi}, \Rpackage{methylumi} \citep{methylumi}, \Rpackage{R n Beads} \citep{rnbeads} and \Rpackage{watermelon}  \citep{Pidsley13}.  However, \Rpackage{ChaMP} includes several analysis options that are not available in other packages. The singular value decomposition (SVD) method \citep{Teschendorff09} allows an in-depth look at batch effects and for correction of this the ComBat method \citep{Johnson07} has been implemented. For the identification of differentially methylated regions (DMRs) \Rpackage{ChAMP} offers the new Probe Lasso method. Finally, \Rpackage{ChAMP} has an additional function to analyse 450k for copy number alterations \citep{Feber14}.
 
 %mention shinymethy
 
@@ -136,14 +137,20 @@ The load function saves 3 quality control images (see Figures \ref{fig:density},
 
 \begin{figure}[!ht]%densityPlot
 \centerline{\includegraphics[scale = 0.55]{densityPlot.jpg}}%{system.file("extdata","densityPlot.jpg",package="ChAMP")}}
-\caption{An example of a density plot showing the density of unnormalised beta values for all the samples that have been uploaded. They are coloured based on the Sample Group as defined in the sample sheet (Figure \ref{fig:sampleSheet}). This plot may identify any samples with significantly different profiles.}
+\caption{An example of a density plot showing the density of unnormalised beta values for all the samples that have been uploaded. They are coloured based on the Sample Group as defined in the sample sheet (Figure \ref{fig:sampleSheetexample}). This plot may identify any samples with significantly different profiles.}
 \label{fig:density}
+\end{figure}
+
+\begin{figure}[!ht]%sampleSheet
+\centerline{\includegraphics[scale = 0.55]{sampleSheetexample.jpg}}%{system.file("extdata","sampleSheetexample.jpg",package="ChAMP")}}
+\caption{An example of the sample sheet.}
+\label{fig:sampleSheetexample}
 \end{figure}
 
 \begin{figure}[!ht]%mdsPlot
 \centerline{\includegraphics[scale = 0.55]{mdsPlot.jpg}}%{system.file("extdata","mdsPlot.jpg",package="ChAMP")}}
 
-\caption{An example of a MDS (multidimensional scaling) plot. This plot allows a visualisation of the similarity of samples based on the top 1000 most variable probes amongst all samples. The samples are coloured by Sample\_Group (as defined in the sample sheet Figure sampleSheet. }
+\caption{An example of a MDS (multidimensional scaling) plot. This plot allows a visualisation of the similarity of samples based on the top 1000 most variable probes amongst all samples. The samples are coloured by Sample\_Group (as defined in the sample sheet Figure \ref{fig:sampleSheetexample}. }
 \label{fig:mds}
 \end{figure}
 
@@ -194,19 +201,19 @@ myNorm=champ.norm()
 
 \subsection{SVD for identification of components of variation (batch effects)}
 
-The singular value decomposition method (SVD) implemented by Teschendorff \citep{Teschendorff09} for 27k data is used to identify the most significant components of variation. These components of variation would ideally be biological factors of interest, but it may be technical variation (batch effects). To get the most from this analysis it is useful to include as much information as possible. If samples have been loaded from .idat files then the 18 internal controls on the bead chip (including bisulphite conversion efficiency) are included as well as any study details defined in the sample sheet (well position, sentrix id, batch etc) (Figure \ref{fig:sampleSheet}). Additional phenotype/study information (age, gender, batch) can be included in a separate file (set studyInfo=TRUE) (Figure \ref{fig:studyInfo}). This must be a .txt file saved as studyInfo.txt and the first column must be labelled "Sample\_Name" with the sample names as used in the sample sheet. These new covariates will be considered categorical by default. If any are continuous it is necessary to include a list in the parameter infoFactor=c() that defines them. TRUE = categorical, FALSE=continuous. These settings will print to the screen after the SVD analysis has been run to confirm they were correctly assigned.
+The singular value decomposition method (SVD) implemented by Teschendorff \citep{Teschendorff09} for 27k data is used to identify the most significant components of variation. These components of variation would ideally be biological factors of interest, but it may be technical variation (batch effects). To get the most from this analysis it is useful to include as much information as possible. If samples have been loaded from .idat files then the 18 internal controls on the bead chip (including bisulphite conversion efficiency) are included as well as any study details defined in the sample sheet (well position, sentrix id, batch etc) (Figure \ref{fig:sampleSheetexample}). Additional phenotype/study information (age, gender, batch) can be included in a separate file (set studyInfo=TRUE) (Figure \ref{fig:studyInfo}). This must be a .txt file saved as studyInfo.txt and the first column must be labelled ''Sample\_Name'' with the sample names as used in the sample sheet. These new covariates will be considered categorical by default. If any are continuous it is necessary to include a list in the parameter infoFactor=c() that defines them. TRUE = categorical, FALSE=continuous. These settings will print to the screen after the SVD analysis has been run to confirm they were correctly assigned.
 
 It is important to realise SVD does not manipulate the data, but analyses it to compute p-values based on the significance of each component. The result is a heatmap (saved as SVDsummary.pdf) of the top 6 principle components correlated to the information provided (Figure \ref{fig:SVD}). The darker colours represent a lower p-value indicating a larger component of variation. If it becomes clear from this SVD analysis that the largest components of variation are technical factors (batch effects) then it is worth considering the experimental design and implementing other normalization methods that may help remove technical variation. ComBat is included in this pipeline to remove variation related to chip number but it or other methods may be implemented independently to remove other sources of technical variation revealed in the SVD analysis. 
 
 \begin{figure}[!ht]%study info
 \centerline{\includegraphics[scale=0.9]{studyInfo.jpg}}%{system.file("extdata","studyInfo.jpg",package="ChAMP")}}
-\caption{An example of the study info file. This file must include the first column "Sample\_Name" and be identical to the first column of the sample sheet (Figure \ref{fig:sampleSheet}). It should be saved as studyInfo.txt and can include any addition study information including gender, age, batch, cell type, patientID etc.}
+\caption{An example of the study info file. This file must include the first column "Sample\_Name" and be identical to the first column of the sample sheet (Figure \ref{fig:sampleSheetexample}). It should be saved as studyInfo.txt and can include any addition study information including gender, age, batch, cell type, patientID etc.}
 \label{fig:studyInfo}
 \end{figure}
 
 \begin{figure}[!ht]%SVD
 \centerline{\includegraphics[scale = 0.55]{SVDsummary.pdf}}%{system.file("extdata","SVDsummary.pdf",package="ChAMP")}}
-\caption{An example of the SVD output. This heatmap shows all the components of variation that have been included in the analysis. The first 18 are internal controls on the bead chip representing potential technical variation, The remaining covariates are obtained from data in the sample sheet (Figure \ref{fig:sampleSheet}) and the study info file (Figure \ref{fig:studyInfo}).}
+\caption{An example of the SVD output. This heatmap shows all the components of variation that have been included in the analysis. The first 18 are internal controls on the bead chip representing potential technical variation, The remaining covariates are obtained from data in the sample sheet (Figure \ref{fig:sampleSheetexample}) and the study info file (Figure \ref{fig:studyInfo}).}
 \label{fig:SVD}
 \end{figure}
 
@@ -229,7 +236,7 @@ batchNorm=champ.runCombat()
 @
 \subsection{Calling MVPs - Methylation Variable Positions}
 
-This function implements the \Rpackage{limma} package to calculate the p-value for differential methylation using a linear model.  At present, the function can only compute differential methylation between two groups. The two groups are determined by the Sample\_Group column in the sample sheet. If more than two groups are present the function will calculate the differential methylation between the first two unique groups in the  file. As the function is running it will print which two groups the contrast is being computed for and will then printout how many MVPs were found for the given p-value. All probes are saved in a file "MVP\_ALL.txt" which can be filtered for a p-value of interest. The filename also includes the two groups compared and the method used to adjust the p-values (for example "MVP\_ALL\_CvsT\_BHadjust.txt"). The file includes the annotation for each probe, the average beta (for the sample group) and the delta beta for the two groups used in the comparison. In addition, a bedfile is saved with only the significant MVPs. This may be useful for downstream pathway analysis. It is planned that a future version of \Rpackage{ChAMP} will include the ability to compare multiple groups. However, a more advanced user can run \Rpackage{limma} with other settings and use the output (including all probes and their p-values) for the DMR hunter.
+This function implements the \Rpackage{limma} package to calculate the p-value for differential methylation using a linear model.  At present, the function can only compute differential methylation between two groups. The two groups are determined by the Sample\_Group column in the sample sheet. If more than two groups are present the function will calculate the differential methylation between the first two unique groups in the  file. As the function is running it will print which two groups the contrast is being computed for and will then printout how many MVPs were found for the given p-value. All probes are saved in a file ''MVP\_ALL.txt'' which can be filtered for a p-value of interest. The filename also includes the two groups compared and the method used to adjust the p-values (for example "MVP\_ALL\_CvsT\_BHadjust.txt"). The file includes the annotation for each probe, the average beta (for the sample group) and the delta beta for the two groups used in the comparison. In addition, a bedfile is saved with only the significant MVPs. This may be useful for downstream pathway analysis. It is planned that a future version of \Rpackage{ChAMP} will include the ability to compare multiple groups. However, a more advanced user can run \Rpackage{limma} with other settings and use the output (including all probes and their p-values) for the DMR hunter.
 
 %bedfile
 
@@ -245,7 +252,7 @@ This function computes and returns a data frame of probes binned into discreet d
 
 Differentially methylated regions (DMRs) are extended and discreet segments of the genome that show a quantitative alteration in DNA methylation levels between two groups.  A number of different approaches to the identification of DMRs have been implemented, most notably ''windows'' in which differential methylation is sought over a stretch of DNA of pre-defined - and often fixed - size.  This approach is utilitarian and effective but is confounded by the fluctuating CpG density throughout a genome; it is further limited when using microarrays, in that coverage is often incomplete and non-uniform. Consequently, DMR identification is likely to be biased towards regions of densely tiled probes.  
 
-To compensate for this the Probe Lasso DMR Hunter is based on a feature-oriented dynamic window ("lasso"), which aims to capture neighbouring, significant probes and bundle them into DMRs. 
+To compensate for this the Probe Lasso DMR Hunter is based on a feature-oriented dynamic window (''lasso''), which aims to capture neighbouring, significant probes and bundle them into DMRs. 
 
 \subsubsection{Procedure}
 Because the Probe Lasso DMR Hunter takes into account probe spacing, the first step to identify DMRs is to calculate a dataset-specific record of probe spacing. Although it is tempting to calculate probe spacing based on all 485,577 probes on the Infinium 450k BeadChip, the Probe Lasso DMR Hunter requires input for a number of user-specified parameters (e.g., filtering of X-chromosome probes and putatively polymorphic probes) that can truncate the dataset; additionally, probe failures are inevitable and will differ between experiments. As such, each dataset is bestowed a unique set of probes, which underscores the need for an experiment-specific catalogue of probe-spacing. Once the dataset has been defined, the nearest neighbouring probe is calculated for all available probes; this data is then partitioned into one of 28 different categories comprising information on the genomic feature (1st exon, 3$\prime$UTR, 5$\prime$UTR, body, intergenic region, TSS200, or TSS1500) and that features relation (if any) to a nearby CpG island (island, shore, shelf, or not associated). 
@@ -305,14 +312,14 @@ if(!is.null(lasso))
 head(lasso)
 }
 @
-\subsection{Copy Number Aberrations}
+\subsection{Copy Number Alternations}
 
-This function uses the HumanMethylation450 data to identify copy number aberrations \citep{Feber13}. The function utilises the intensity values for each probe to count copy number and determine if copy number aberrations are present. Copy number is determined using the \Rpackage{CopyNumber} package.
+This function uses the HumanMethylation450 data to identify copy number alterations \citep{Feber14}. The function utilises the intensity values for each probe to count copy number and determine if copy number alterations are present. Copy number is determined using the \Rpackage{CopyNumber} package.
 
 \subsubsection{Procedure}
 Intensity values are quantile normalized and the user has the option to also run the ComBat normalization for correction of batch effects related to the slide before the copy number is calculated. 
 
-Feber \citep{Feber13} compared the results obtained using this method to copy number data from Illumina CytoSNP array and Affymetrix SNP 6.0 arrays and found that using this method for 450k data was effective in identifying regions of gain and loss.
+Feber \citep{Feber14} compared the results obtained using this method to copy number data from Illumina CytoSNP array and Affymetrix SNP 6.0 arrays and found that using this method for 450k data was effective in identifying regions of gain and loss.
 
 
 \begin{figure}[!ht]
