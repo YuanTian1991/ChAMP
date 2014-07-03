@@ -113,6 +113,12 @@ function(directory = getwd(), methValue="B", resultsDir=paste(getwd(), "resultsC
 	{
 		if(ncol(beta.raw) > 0)
 		{
+            if(min(beta.p, na.rm=TRUE)==0)
+            {
+                message("Zeros in your dataset have been replaced with 0.000001")
+                beta.p[beta.p==0]<-0.000001
+            }
+            
 		#save images...
         imageName1=paste(resultsDir,"raw_mdsPlot.pdf",sep="/")
         imageName2=paste(resultsDir,"raw_densityPlot.pdf",sep="/")
