@@ -7,7 +7,9 @@ function(beta=myNorm$beta, rgSet=myLoad$rgSet,detP=myLoad$detP,pd=myLoad$pd, loa
 	message("Performing SVD")
 	if(!is.null(rgSet))
 	{
-		if(is.null(detP)){detP <- detectionP(rgSet)}
+		if(is.null(detP)){
+            detP <- detectionP(rgSet)
+        }
 		if(is.null(beta))
 		{
 			mset <- preprocessRaw(rgSet)
@@ -242,13 +244,16 @@ function(beta=myNorm$beta, rgSet=myLoad$rgSet,detP=myLoad$detP,pd=myLoad$pd, loa
 	if(studyInfo)
 	{
 		tmp.info<- read.table(studyInfoFile,header=TRUE,sep="\t",fill=T,stringsAsFactors=FALSE,as.is=T)
-		tmp.info=tmp.info[which(tmp.info$Sample_Name %in% pd$Sample_Name),]
+		tmp.info=tmp.info[which(tmp.info$Sample_Name %in% colnames(beta.m)),]
 		if(!is.null(tmp.info))
 		{
-			tmp.info=tmp.info[order(tmp.info$Sample_Name),]
+			tmp.info<-tmp.info[order(match(tmp.info$Sample_Name,colnames(beta.m))),]
+            tmp.info=tmp.info[,-which(colnames(tmp.info) == "Sample_Name")]
+            
 			tmp.info=as.matrix(tmp.info)
-			#match tmp.info[1] with pd=$Sample_Names
-			for(n in 2:ncol(tmp.info))
+            
+            #problem here
+			for(n in 1:ncol(tmp.info))
 			{	
 				tmp.v <- as.vector(tmp.info[,n]);
 				if(length(unique(tmp.v))>1)

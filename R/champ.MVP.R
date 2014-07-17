@@ -13,16 +13,26 @@ function(beta.norm = myNorm$beta, pd=myLoad$pd, adjPVal=0.05, adjust.method="BH"
 	rm(topTable)
 	data(probe.features)	
 	
-    groupLabel=unique(pd$Sample_Group)
+    groupLabel=compare.group
+    
+    checkLabel=unique(pd$Sample_Group)
+    
+    if(!(groupLabel %in% checkLabel)){
+        message("The group labels that have been defined ",groupLabel," do not exist in your sample sheet. Please edit the Sample_Group column or the compare.group parameter. ChAMP will use information in your Sample_group columnn.")
+        groupLabel = checkLabel
+    }
+    
 	if(length(groupLabel)>2)
-	{message("Your dataset has more than two groups. Analysis will compare the first two groups. For a different comparison, please reorder your sample sheet and reload.")}
+	{
+        message("Your dataset has more than two groups. ChAMP will compare the first two groups.")
+    }
 	
-	controls=pd[which(pd$Sample_Group==groupLabel[1]),]
-	test=pd[which(pd$Sample_Group==groupLabel[2]),]
-	all=c(controls$Sample_Name,test$Sample_Name)
-	data=matrix(NA,length(row.names(beta.norm)),length(all))
-	row.names(data)=row.names(beta.norm)
-	colnames(data)=all
+        controls=pd[which(pd$Sample_Group==groupLabel[1]),]
+        test=pd[which(pd$Sample_Group==groupLabel[2]),]
+        all=c(controls$Sample_Name,test$Sample_Name)
+        data=matrix(NA,length(row.names(beta.norm)),length(all))
+        row.names(data)=row.names(beta.norm)
+        colnames(data)=all
 	
 	#quicker way to do this?
 	if(length(beta.norm)==0)
@@ -30,6 +40,7 @@ function(beta.norm = myNorm$beta, pd=myLoad$pd, adjPVal=0.05, adjust.method="BH"
 		message("Your dataset is empty and MVP list cannot be produced")
 		return()
 	}
+    #change this loop...
 	for(i in 1:length(all))
 	{
 		done=F
