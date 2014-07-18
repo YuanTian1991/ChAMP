@@ -26,14 +26,14 @@
 
 The \Rpackage{ChAMP} package is a pipeline that integrates currently available 450k analysis methods and also offers its own novel functionality. It utilises the data import, quality control and SWAN \citep{Maksimovic12} normalization functions offered by the \Rpackage{minfi} \citep{minfi} package. In addition, the \Rpackage{ChAMP} package includes the Peak Based Correction (PBC) method \citep{Dedeurwaerder11} and the BMIQ normalization \citep{Teschendorff13} is set as the default method. 
 
-A number of other pipelines and packages are available for 450k analysis including \Rpackage{IMA} \citep{Wang12IMA}, \Rpackage{minfi} \citep{minfi}, \Rpackage{methylumi} \citep{methylumi}, \Rpackage{R n Beads} \citep{rnbeads} and \Rpackage{watermelon}  \citep{Pidsley13}.  However, \Rpackage{ChaMP} includes several analysis options that are not available in other packages. The singular value decomposition (SVD) method \citep{Teschendorff09} allows an in-depth look at batch effects and for correction of this the ComBat method \citep{Johnson07} has been implemented. For the identification of differentially methylated regions (DMRs) \Rpackage{ChAMP} offers the new Probe Lasso method. Finally, \Rpackage{ChAMP} has an additional function to analyse 450k for copy number alterations \citep{Feber14}.
+A number of other pipelines and packages are available for 450k analysis including \Rpackage{IMA} \citep{Wang12IMA}, \Rpackage{minfi} \citep{minfi}, \Rpackage{methylumi} \citep{methylumi}, \Rpackage{R n Beads} \citep{rnbeads} and \Rpackage{watermelon}  \citep{Pidsley13}.  However, \Rpackage{ChaMP} includes several analysis options that are not available in other packages. The singular value decomposition (SVD) method \citep{Teschendorff09} allows an in-depth look at batch effects and for correction of batch related to slide number the ComBat method \citep{Johnson07} has been implemented. For the identification of differentially methylated regions (DMRs) \Rpackage{ChAMP} offers the new Probe Lasso method. Finally, \Rpackage{ChAMP} has an additional function to analyse 450k for copy number alterations \citep{Feber14}.
 
 %mention shinymethy
 
 
 \section{Installation}
  
-It is essential that you have R already installed on your computer. \Rpackage{ChAMP} is a pipeline that utilises many Bioconductor packages that are currently available from CRAN and Bioconductor. For all of the steps of the pipeline to work make sure that you have installed  \Rpackage{minfi}, \Rpackage{DNAcopy}, \Rpackage{impute}, \Rpackage{marray}, \Rpackage{limma}, \Rpackage{preprocessCore}, \Rpackage{RPMM}, \Rpackage{sva} and \Rpackage{IlluminaHumanMethylation450kmanifest}.\\
+It is essential that you have R already installed on your computer. \Rpackage{ChAMP} is a pipeline that utilises many Bioconductor packages that are currently available from CRAN and Bioconductor. For all of the steps of the pipeline to work make sure that you have installed  \Rpackage{minfi}, \Rpackage{DNAcopy}, \Rpackage{impute}, \Rpackage{marray}, \Rpackage{limma}, \Rpackage{preprocessCore}, \Rpackage{RPMM}, \Rpackage{sva}, \Rpackage{IlluminaHumanMethylation450kmanifest} and \Rpackage{wateRmelon}.\\
 \\
 This can be done in one go using the following commands:\\
 <<InstallLibraries, eval=FALSE>>=
@@ -112,7 +112,7 @@ As previously mentioned, the user has the option to run each of the \Rpackage{Ch
 
 The champ.load() function utilises \Rpackage{minfi} to load data from .idat files. By default this loads data from the current working directory, in this directory you should have all .idat files and a sample sheet. The sample sheet currently needs to be a .csv file as came with your results following hybridization. You can choose whether you want M-values or beta-values. For small datasets M-values are recommended \citep{Zhuang12}. 
 
-The newest version of \Rpackage{minfi} automatically filters out the 65 SNP probes that were included on the chip as internal controls which can useful for identifying sample mixups. As such, before filtering for low quality probes the dataset will include 485,512 probes.
+The \Rpackage{minfi} function used to load the data from the idat files automatically filters out the 65 SNP probes that were included on the chip as internal controls which can useful for identifying sample mixups. As such, before filtering for low quality probes the dataset will include 485,512 probes.
 
 <<SampleSheet>>=
 myLoad$pd
@@ -123,7 +123,14 @@ myLoad$pd
 \subsubsection{Filtering for failed probes}
 By default \Rpackage{ChAMP} filters the data for detection p-value (<  0.01). This utilises \Rpackage{minfi} method for calculating the detection p-value which differs from the method used in Genome Studio. A file failedSamples.txt is saved (see Figure \ref{fig:failed}) and also printed to the screen showing the fraction of failed probes per sample. If any of these values is high (>0.05) you may want to consider removing that sample from the analysis and rerunning. 
 
-The option to filter out probes with <3 is available by changing the filterBeads parameter to TRUE. The default will filter probes with <3 beads in at least 5\% of samples, but this can be adjusted with the beadCutoff parameter.
+By default \Rpackage{ChAMP} will filter out probes with <3 beads in at least 5\% of samples per probe. This default can changed with the filterBeads parameter or the frequency can be adjusted with the beadCutoff parameter.
+
+\begin{figure}[!ht]%failedProbes
+\centerline{\includegraphics[scale = 0.55]{failedProbes.jpg}}%{system.file("extdata","densityPlot.jpg",package="ChAMP")}}
+\caption{An example of the output showing the portion of probes with a detection p-value above the specified cutoff (default is 0.01) for each sample. Users may want to consider removing samples above 0.05.}
+\label{fig:failed}
+\end{figure}
+
 
 <<combatFunction, eval=FALSE>>=
 myLoad=champ.load(directory = testDir, filterBeads=TRUE)
@@ -137,7 +144,7 @@ The load function saves 3 quality control images (see Figures \ref{fig:density},
 
 \begin{figure}[!ht]%densityPlot
 \centerline{\includegraphics[scale = 0.55]{densityPlot.jpg}}%{system.file("extdata","densityPlot.jpg",package="ChAMP")}}
-\caption{An example of a density plot showing the density of unnormalised beta values for all the samples that have been uploaded. They are coloured based on the Sample Group as defined in the sample sheet (Figure \ref{fig:sampleSheetexample}). This plot may identify any samples with significantly different profiles.}
+\caption{An example of a density plot showing the density of unnormalised beta values for all the samples that have been uploaded. They are coloured based on the Sample Group as defined in the sample sheet (Figure \ref{fig:sampleSheetexample}). This plot may identify potential outliers that have significantly different profiles.}
 \label{fig:density}
 \end{figure}
 
@@ -150,7 +157,7 @@ The load function saves 3 quality control images (see Figures \ref{fig:density},
 \begin{figure}[!ht]%mdsPlot
 \centerline{\includegraphics[scale = 0.55]{mdsPlot.jpg}}%{system.file("extdata","mdsPlot.jpg",package="ChAMP")}}
 
-\caption{An example of a MDS (multidimensional scaling) plot. This plot allows a visualisation of the similarity of samples based on the top 1000 most variable probes amongst all samples. The samples are coloured by Sample\_Group (as defined in the sample sheet Figure \ref{fig:sampleSheetexample}. }
+\caption{An example of a MDS (multidimensional scaling) plot. This plot allows a visualisation of the similarity of samples based on the top 1000 most variable probes amongst all samples. The samples are coloured by Sample\_Group (as defined in the sample sheet Figure \ref{fig:sampleSheetexample}.)}
 \label{fig:mds}
 \end{figure}
 
@@ -168,9 +175,9 @@ myLoad = champ.load(directory=testDir)
 
 \subsection{Normalization for adjustment of type-2 bias}
 
-There are several normalization methods available:  BMIQ \citep{Teschendorff13}, SWAN  \citep{Maksimovic12}, PBC \citep{Dedeurwaerder11} or NONE. SQN \citep{Touleimat12} is not yet implemented. 
+There are several normalization methods available:  BMIQ \citep{Teschendorff13}, SWAN  \citep{Maksimovic12}, PBC \citep{Dedeurwaerder11} or NONE.
 
-The default method is BMIQ.  It will save three quality control images to the folder '/Normalization' for each sample (see Figures \ref{fig:type1}, \ref{fig:type2} and \ref{fig:check}). These images are showing the fit that the normalization is applying to each probe type. 
+The default method is BMIQ.  It will save three quality control images to the folder '/Normalization' for each sample (see Figures \ref{fig:type1}, \ref{fig:type2} and \ref{fig:check}). These images show the fit that the normalization is applying to each probe type. 
 
 After normalization a second set of quality control images will be saved similar to pre-normalization (see Figures \ref{fig:density}, \ref{fig:mds} and \ref{fig:cluster}). The clustering image will not be saved if there are more than 65 samples in the dataset.
 
@@ -201,9 +208,9 @@ myNorm=champ.norm()
 
 \subsection{SVD for identification of components of variation (batch effects)}
 
-The singular value decomposition method (SVD) implemented by Teschendorff \citep{Teschendorff09} for 27k data is used to identify the most significant components of variation. These components of variation would ideally be biological factors of interest, but it may be technical variation (batch effects). To get the most from this analysis it is useful to include as much information as possible. If samples have been loaded from .idat files then the 18 internal controls on the bead chip (including bisulphite conversion efficiency) are included as well as any study details defined in the sample sheet (well position, sentrix id, batch etc) (Figure \ref{fig:sampleSheetexample}). Additional phenotype/study information (age, gender, batch) can be included in a separate file (set studyInfo=TRUE) (Figure \ref{fig:studyInfo}). This must be a .txt file saved as studyInfo.txt and the first column must be labelled ''Sample\_Name'' with the sample names as used in the sample sheet. These new covariates will be considered categorical by default. If any are continuous it is necessary to include a list in the parameter infoFactor=c() that defines them. TRUE = categorical, FALSE=continuous. These settings will print to the screen after the SVD analysis has been run to confirm they were correctly assigned.
+The singular value decomposition method (SVD) implemented by Teschendorff \citep{Teschendorff09} for 27k data is used to identify the most significant components of variation. These components of variation would ideally be biological factors of interest, but it may be technical variation (batch effects). To get the most from this analysis it is useful to include as much information as possible. If samples have been loaded from .idat files then the 18 internal controls on the bead chip (including bisulphite conversion efficiency) are included as well as any study details defined in the sample sheet (well position, sentrix id, batch etc) (Figure \ref{fig:sampleSheetexample}). Additional phenotype/study information (age, gender, batch) can be included in a separate file (set studyInfo=TRUE) (Figure \ref{fig:studyInfo}). This must be a .txt file saved as studyInfo.txt and the first column must be labelled ''Sample\_Name'' with the sample names as used in the sample sheet. These new covariates will be considered categorical by default. If any are continuous it is necessary to include a vector in the parameter infoFactor=c() that defines them. TRUE = categorical, FALSE=continuous. These settings will print to the screen after the SVD analysis has been run to confirm they were correctly assigned.
 
-It is important to realise SVD does not manipulate the data, but analyses it to compute p-values based on the significance of each component. The result is a heatmap (saved as SVDsummary.pdf) of the top 6 principle components correlated to the information provided (Figure \ref{fig:SVD}). The darker colours represent a lower p-value indicating a larger component of variation. If it becomes clear from this SVD analysis that the largest components of variation are technical factors (batch effects) then it is worth considering the experimental design and implementing other normalization methods that may help remove technical variation. ComBat is included in this pipeline to remove variation related to chip number but it or other methods may be implemented independently to remove other sources of technical variation revealed in the SVD analysis. 
+It is important to realise SVD \emph{does not} manipulate the data, but analyses it to compute p-values based on the significance of each component. The result is a heatmap (saved as SVDsummary.pdf) of the top 6 principle components correlated to the information provided (Figure \ref{fig:SVD}). The darker colours represent a lower p-value indicating a larger component of variation. If it becomes clear from this SVD analysis that the largest components of variation are technical factors (batch effects) then it is worth considering the experimental design and implementing other normalization methods that may help remove technical variation. ComBat is included in this pipeline to remove variation related to chip number but it or other methods may be implemented independently to remove other sources of technical variation revealed in the SVD analysis. 
 
 \begin{figure}[!ht]%study info
 \centerline{\includegraphics[scale=0.9]{studyInfo.jpg}}%{system.file("extdata","studyInfo.jpg",package="ChAMP")}}
@@ -255,7 +262,7 @@ Differentially methylated regions (DMRs) are extended and discreet segments of t
 To compensate for this the Probe Lasso DMR Hunter is based on a feature-oriented dynamic window (''lasso''), which aims to capture neighbouring, significant probes and bundle them into DMRs. 
 
 \subsubsection{Procedure}
-Because the Probe Lasso DMR Hunter takes into account probe spacing, the first step to identify DMRs is to calculate a dataset-specific record of probe spacing. Although it is tempting to calculate probe spacing based on all 485,577 probes on the Infinium 450k BeadChip, the Probe Lasso DMR Hunter requires input for a number of user-specified parameters (e.g., filtering of X-chromosome probes and putatively polymorphic probes) that can truncate the dataset; additionally, probe failures are inevitable and will differ between experiments. As such, each dataset is bestowed a unique set of probes, which underscores the need for an experiment-specific catalogue of probe-spacing. Once the dataset has been defined, the nearest neighbouring probe is calculated for all available probes; this data is then partitioned into one of 28 different categories comprising information on the genomic feature (1st exon, 3$\prime$UTR, 5$\prime$UTR, body, intergenic region, TSS200, or TSS1500) and that features relation (if any) to a nearby CpG island (island, shore, shelf, or not associated). 
+Because the Probe Lasso DMR Hunter takes into account probe spacing, the first step to identify DMRs is to calculate a dataset-specific record of probe spacing. Although it is tempting to calculate probe spacing based on all 485,512 probes on the Infinium 450k BeadChip, the Probe Lasso DMR Hunter requires input for a number of user-specified parameters (e.g., filtering of X-chromosome probes and putatively polymorphic probes) that can truncate the dataset; additionally, probe failures are inevitable and will differ between experiments. As such, each dataset is bestowed a unique set of probes, which underscores the need for an experiment-specific catalogue of probe-spacing. Once the dataset has been defined, the nearest neighbouring probe is calculated for all available probes; this data is then partitioned into one of 28 different categories comprising information on the genomic feature (1st exon, 3$\prime$UTR, 5$\prime$UTR, body, intergenic region, TSS200, or TSS1500) and that features relation (if any) to a nearby CpG island (island, shore, shelf, or not associated). 
 
 Figure \ref{fig:features}  illustrates the wildly variable probe spacing as a function of genomic feature on the Infinium 450k BeadChip. Data were derived from an experiment in which the X-chromosome was omitted, polymorphic probes were included, and >98\% of probes were detected across all samples.
 
@@ -265,7 +272,7 @@ Figure \ref{fig:features}  illustrates the wildly variable probe spacing as a fu
 \label{fig:features}
 \end{figure}
 
-The user then specifies a maximum (or minimum) lasso size (bp) and the Probe Lasso DMR Hunter determines which feature/CGI category fulfils this criterion first and what quantile of the relevant feature/CGI category it corresponds to. This quantile is applied to all feature/CGI categories to define feature/CGI category-specific lasso sizes (see Figures \ref{fig:dmr} and \ref{fig:radius}).
+The user then specifies a maximum (or minimum) lasso size (bp) and the Probe Lasso DMR Hunter determines which feature/CGI category fulfils this criterion first and what quantile of the relevant feature/CGI category it corresponds to. This quantile is applied to all feature/CGI categories to define feature/CGI category-specific lasso sizes (see Figures \ref{fig:dmr} and \ref{fig:radius}).*Note a minimum lasso size would rarely be appropriate.
 
 \begin{figure}[!ht]
 \centerline{\includegraphics[scale=0.75]{DMR.jpg}}%{system.file("extdata","DMR.jpg",package="ChAMP")}}
@@ -312,12 +319,12 @@ if(!is.null(lasso))
 head(lasso)
 }
 @
-\subsection{Copy Number Alternations}
+\subsection{Copy Number Alterations}
 
 This function uses the HumanMethylation450 data to identify copy number alterations \citep{Feber14}. The function utilises the intensity values for each probe to count copy number and determine if copy number alterations are present. Copy number is determined using the \Rpackage{CopyNumber} package.
 
 \subsubsection{Procedure}
-Intensity values are quantile normalized and the user has the option to also run the ComBat normalization for correction of batch effects related to the slide before the copy number is calculated. 
+Intensity values are quantile normalized and by default the ComBat normalization is run for correction of batch effects related to the slide before the copy number is calculated. 
 
 Feber \citep{Feber14} compared the results obtained using this method to copy number data from Illumina CytoSNP array and Affymetrix SNP 6.0 arrays and found that using this method for 450k data was effective in identifying regions of gain and loss.
 

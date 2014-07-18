@@ -113,10 +113,10 @@ function(directory = getwd(), methValue="B", resultsDir=paste(getwd(), "resultsC
 	{
 		if(ncol(beta.raw) > 0)
 		{
-            if(min(beta.p, na.rm=TRUE)==0)
+            if(min(beta.raw, na.rm=TRUE)==0)
             {
                 message("Zeros in your dataset have been replaced with 0.000001")
-                beta.p[beta.p==0]<-0.000001
+                beta.raw[beta.raw==0]<-0.000001
             }
             
 		#save images...
