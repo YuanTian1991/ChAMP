@@ -108,6 +108,11 @@ function(fromFile=FALSE, uploadResults=FALSE, uploadFile="limma.txt", limma, bet
         
         myResults.sig <- data.frame(myResults.sig, lasso.probe.countOverlap)
         probeKeepers <- which(lasso.probe.countOverlap >= minSigProbesLasso)
+        if(length(probeKeepers)==0)
+        {
+            return(emptyDMRList)
+        }else{
+            
         myResults.sig.cap <- myResults.sig[probeKeepers,] # retains rows (probes) that capture no less than "no.probes"
         myResults.sig.cap <- myResults.sig.cap[order(myResults.sig.cap$CHR, myResults.sig.cap$MAPINFO),] # orders object by chromosome then position
         rm(lasso.gr, probe.gr, lasso.probe.countOverlap, myResults.sig, probeKeepers)
@@ -249,4 +254,4 @@ function(fromFile=FALSE, uploadResults=FALSE, uploadFile="limma.txt", limma, bet
         }
     }
     return(myDf)
-}
+}}
