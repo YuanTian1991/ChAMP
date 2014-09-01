@@ -12,8 +12,8 @@ A pipeline that enables pre-processing of 450k data, a selection of normalizatio
 \tabular{ll}{
 Package: \tab ChAMP\cr
 Type: \tab Package\cr
-Version: \tab 1.3.12\cr
-Date: \tab 2014-07-18\cr
+Version: \tab 1.3.13\cr
+Date: \tab 2014-09-01\cr
 License: \tab GPL-3\cr
 }
 The full analysis pipeline can be run with all defaults using champ.process()

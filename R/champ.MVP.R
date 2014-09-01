@@ -17,7 +17,7 @@ function(beta.norm = myNorm$beta, pd=myLoad$pd, adjPVal=0.05, adjust.method="BH"
     
     checkLabel=unique(pd$Sample_Group)
     
-    if(!(groupLabel %in% checkLabel)){
+    if(any(!(groupLabel %in% checkLabel))){
         message("The group labels that have been defined ",groupLabel," do not exist in your sample sheet. Please edit the Sample_Group column or the compare.group parameter. ChAMP will use information in your Sample_group columnn.")
         groupLabel = checkLabel
     }
