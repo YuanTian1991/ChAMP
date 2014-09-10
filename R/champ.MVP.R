@@ -132,8 +132,8 @@ function(beta.norm = myNorm$beta, pd=myLoad$pd, adjPVal=0.05, adjust.method="BH"
           }
           resultsALL_anno<-data.frame(resultsALL,probe.features[match(row.names(resultsALL),row.names(probe.features)),])
 
-          control.data=data[,which(colnames(data) %in% controls$Sample_Name)]
-          test.data=data[,which(colnames(data) %in% test$Sample_Name)]
+          control.data=data[,which(colnames(data) %in% controls$Sample_Name),drop=FALSE]
+          test.data=data[,which(colnames(data) %in% test$Sample_Name),drop=FALSE]
           data=data.frame(data)
           data$C_AVG=rowMeans(control.data)
           data$T_AVG=rowMeans(test.data)
