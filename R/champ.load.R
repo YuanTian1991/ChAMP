@@ -39,7 +39,7 @@ function(directory = getwd(), methValue="B", resultsDir=paste(getwd(), "resultsC
 		
     myDir= directory
     suppressWarnings(targets <- read.450k.sheet(myDir))
-	rgSet <- read.450k.exp(base = myDir, targets = targets, extended=TRUE)
+	rgSet <- read.450k.exp(targets = targets, extended=TRUE)
 	sampleNames(rgSet)=rgSet[[1]]
 	pd<-pData(rgSet)
 	green=getGreen(rgSet)
