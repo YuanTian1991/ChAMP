@@ -12,8 +12,8 @@ A pipeline that enables pre-processing of 450k data, a selection of normalizatio
 \tabular{ll}{
 Package: \tab ChAMP\cr
 Type: \tab Package\cr
-Version: \tab 1.3.14\cr
-Date: \tab 2014-09-10\cr
+Version: \tab 1.5.2\cr
+Date: \tab 2015-03-22\cr
 License: \tab GPL-3\cr
 }
 The full analysis pipeline can be run with all defaults using champ.process()
@@ -23,7 +23,7 @@ Alternatively, it can be run in steps using all functions separately.
 
 \author{
 Tiffany Morris, Lee Butcher, Andy Feber, Andrew Teschendorff, Ankur Chakravarthy, Stephen Beck\cr
-\bold{Maintainer}: Tiffany Morris <tiffany.morris@ucl.ac.uk>
+\bold{Maintainer}: Tiffany Morris <champ450k@gmail.com>
 }
 \keyword{ package }
 \keyword{ methylation}

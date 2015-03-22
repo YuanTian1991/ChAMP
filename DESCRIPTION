@@ -2,8 +2,8 @@ Package: ChAMP
 Type: Package
 Title: Chip Analysis Methylation Pipeline for Illumina
         HumanMethylation450
-Version: 1.5.1
-Date: 2014-09-10
+Version: 1.5.2
+Date: 2015-03-22
 Description: The package includes quality control metrics, a selection
         of normalization methods and novel methods to identify
         differentially methylated regions and to highlight copy number
@@ -24,4 +24,4 @@ Author: Tiffany Morris [cre, aut],
   Andrew Feber [aut],
   Andrew Teschendorff [aut],
   Ankur Chakravarthy [aut]
-Maintainer: Tiffany Morris <tiffany.morris@ucl.ac.edu>
+Maintainer: Tiffany Morris <champ450k@gmail.com>
