@@ -1,5 +1,5 @@
 champ.SVD <-
-function(beta=myNorm$beta, rgSet=myLoad$rgSet,detP=myLoad$detP,pd=myLoad$pd, loadFile=FALSE, betaFile="beta.txt", sampleSheet="sampleSheet.txt", methProfile=FALSE, methFile="MethylationProbeProfile.txt", controlProfile=FALSE, controlFile="ControlProbeProfile.txt", studyInfo=FALSE,studyInfoFile="studyInfo.txt", infoFactor=c(),resultsDir=paste(getwd(),"resultsChamp",sep="/"))
+function(beta=myNorm$beta, rgSet=myLoad$rgSet,detP=myLoad$detP,pd=myLoad$pd, loadFile=FALSE, betaFile="beta.txt", sampleSheet="sampleSheet.txt", methProfile=FALSE, methFile="MethylationProbeProfile.txt", controlProfile=FALSE, controlFile="ControlProbeProfile.txt", studyInfo=FALSE,studyInfoFile="studyInfo.txt", infoFactor=c(),resultsDir=paste(getwd(),"resultsChamp",sep=“/“))
 {
     impute.knn<-NA
 	rm(impute.knn)
@@ -7,9 +7,7 @@ function(beta=myNorm$beta, rgSet=myLoad$rgSet,detP=myLoad$detP,pd=myLoad$pd, loa
 	message("Performing SVD")
 	if(!is.null(rgSet))
 	{
-		if(is.null(detP)){
-            detP <- detectionP(rgSet)
-        }
+		if(is.null(detP)){detP <- detectionP(rgSet)}
 		if(is.null(beta))
 		{
 			mset <- preprocessRaw(rgSet)
@@ -161,7 +159,7 @@ function(beta=myNorm$beta, rgSet=myLoad$rgSet,detP=myLoad$detP,pd=myLoad$pd, loa
 		PhenoTypes.lv[[p]] <- rep(1,length(tmp.v)); 
 		for(i in 2:length(well))
 		{
-			PhenoTypes.lv[[p]][grep(well[i],tmp.v)] <- i; 
+			PhenoTypes.lv[[p]][which(tmp.v == well[i])] <- i; 
 		}
 		names(PhenoTypes.lv)[p]<-"Sample_Well"
 		p=p+1
@@ -175,7 +173,7 @@ function(beta=myNorm$beta, rgSet=myLoad$rgSet,detP=myLoad$detP,pd=myLoad$pd, loa
 		PhenoTypes.lv[[p]] <- rep(1,length(tmp.v)) #1
 		for(i in 2:length(plates))
 		{
-			PhenoTypes.lv[[p]][grep(plates[i],tmp.v)] <- 2
+			PhenoTypes.lv[[p]][which(tmp.v == plates[i])] <- i;
 		}
 		names(PhenoTypes.lv)[p]<-"Sample_Plate"
 		p=p+1
@@ -189,7 +187,7 @@ function(beta=myNorm$beta, rgSet=myLoad$rgSet,detP=myLoad$detP,pd=myLoad$pd, loa
 		PhenoTypes.lv[[p]] <- rep(1,length(tmp.v));
 		for(i in 2:length(groups))
 		{
-			PhenoTypes.lv[[p]][grep(groups[i],tmp.v)] <- i; #R
+			PhenoTypes.lv[[p]][which(tmp.v == groups[i])] <- i; #R
 		}
 		names(PhenoTypes.lv)[p]<-"Sample_Group"
 		p=p+1
@@ -203,7 +201,7 @@ function(beta=myNorm$beta, rgSet=myLoad$rgSet,detP=myLoad$detP,pd=myLoad$pd, loa
 		PhenoTypes.lv[[p]] <- rep(1,length(tmp.v));
 		for(i in 2:length(pool))
 		{
-			PhenoTypes.lv[[p]][grep(pool[i],tmp.v)] <- i;
+			PhenoTypes.lv[[p]][which(tmp.v == pool[i])] <- i;
 		}
 		names(PhenoTypes.lv)[p]<-"Pool_ID"
 		p=p+1
@@ -244,16 +242,13 @@ function(beta=myNorm$beta, rgSet=myLoad$rgSet,detP=myLoad$detP,pd=myLoad$pd, loa
 	if(studyInfo)
 	{
 		tmp.info<- read.table(studyInfoFile,header=TRUE,sep="\t",fill=T,stringsAsFactors=FALSE,as.is=T)
-		tmp.info=tmp.info[which(tmp.info$Sample_Name %in% colnames(beta.m)),]
+		tmp.info=tmp.info[which(tmp.info$Sample_Name %in% pd$Sample_Name),]
 		if(!is.null(tmp.info))
 		{
-			tmp.info<-tmp.info[order(match(tmp.info$Sample_Name,colnames(beta.m))),]
-            tmp.info=tmp.info[,-which(colnames(tmp.info) == "Sample_Name")]
-            
+			tmp.info=tmp.info[order(tmp.info$Sample_Name),]
 			tmp.info=as.matrix(tmp.info)
-            
-            #problem here
-			for(n in 1:ncol(tmp.info))
+			#match tmp.info[1] with pd=$Sample_Names
+			for(n in 2:ncol(tmp.info))
 			{	
 				tmp.v <- as.vector(tmp.info[,n]);
 				if(length(unique(tmp.v))>1)
@@ -262,7 +257,7 @@ function(beta=myNorm$beta, rgSet=myLoad$rgSet,detP=myLoad$detP,pd=myLoad$pd, loa
 					phenos=unique(tmp.info[,n])
 					for(i in 2:length(phenos))
 					{
-						PhenoTypes.lv[[p]][grep(phenos[i],tmp.v)]<-i
+						PhenoTypes.lv[[p]][which(tmp.v == phenos[i])]<-i
 					}
 					names(PhenoTypes.lv)[p]<-colnames(tmp.info)[n]
 				}else{
