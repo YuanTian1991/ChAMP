@@ -1,5 +1,5 @@
 champ.norm <-
-function(beta=myLoad$beta, rgSet=myLoad$rgSet, pd=myLoad$pd,mset=myLoad$mset, sampleSheet="sampleSheet.txt", resultsDir=paste(getwd(), "resultsChamp", sep="/"), methValue="B", fromIDAT=TRUE, norm="BMIQ", fromFile = FALSE, betaFile, filter=TRUE, filterXY=TRUE, QCimages=TRUE, plotBMIQ=TRUE)
+function(beta=myLoad$beta, rgSet=myLoad$rgSet, pd=myLoad$pd,mset=myLoad$mset, sampleSheet="sampleSheet.txt", resultsDir=paste(getwd(), "resultsChamp", sep="/"), methValue="B", fromIDAT=TRUE, norm="BMIQ", fromFile = FALSE, betaFile, filter=TRUE, filterXY=TRUE, QCimages=FALSE, plotBMIQ=FALSE)
 {
 	detectionP<-NA
 	rm(detectionP)

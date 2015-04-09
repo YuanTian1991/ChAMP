@@ -11,7 +11,7 @@ Option to normalize data with a selection of normalization methods.
 champ.norm(beta = myLoad$beta, rgSet = myLoad$rgSet, pd = myLoad$pd, mset = myLoad$mset, 
 sampleSheet = "sampleSheet.txt", resultsDir = paste(getwd(), "resultsChamp", 
 sep = "/"), methValue = "B", fromIDAT = TRUE, norm = "BMIQ", fromFile = FALSE, betaFile, 
-filter = TRUE, filterXY = TRUE, QCimages = TRUE, plotBMIQ = TRUE)
+filter = TRUE, filterXY = TRUE, QCimages = FALSE, plotBMIQ = FALSE)
 }
 
 \arguments{
