@@ -22,5 +22,6 @@ export(
 	champ.SVD, 
 	champ.lasso, 
 	champ.MVP, 
-	champ.runCombat
+	champ.runCombat,
+	champ.TrueMethyl
 	) 

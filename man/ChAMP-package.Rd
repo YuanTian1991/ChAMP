@@ -30,11 +30,10 @@ Tiffany Morris, Lee Butcher, Andy Feber, Andrew Teschendorff, Ankur Chakravarthy
 \keyword{ HumanMethylation450 }
 \keyword{ 450k }
 \keyword{ array }
-\keyword{ Beadchip}
-
+\keyword{ Beadchip }
 \examples{
 \donttest{
-	directory=system.file("extdata",package="ChAMPdata")
+	directory=system.file('extdata',package='ChAMPdata')
 	champ.process(directory=directory)
 	myLoad=champ.load()
 	myNorm=champ.norm()
@@ -42,6 +41,6 @@ Tiffany Morris, Lee Butcher, Andy Feber, Andrew Teschendorff, Ankur Chakravarthy
 	batchNorm=champ.runCombat()
 	limma=champ.MVP()
 	lasso=champ.lasso()
-	champ.CNA
+	champ.CNA()
 	}
 }
