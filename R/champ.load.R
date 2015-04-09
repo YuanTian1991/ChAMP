@@ -1,5 +1,5 @@
 champ.load <-
-function(directory = getwd(), methValue="B", resultsDir=paste(getwd(), "resultsChamp",sep="/"), filterXY=TRUE, QCimages=TRUE, filterDetP=TRUE, detPcut=0.01, removeDetP = 0, filterBeads=TRUE, beadCutoff=0.05, filterNoCG=FALSE)
+function(directory = getwd(), methValue="B", resultsDir=paste(getwd(), "resultsChamp",sep="/"), filterXY=TRUE, QCimages=TRUE, filterDetP=TRUE, detPcut=0.01, removeDetP = 0, filterBeads=TRUE, beadCutoff=0.05, filterNoCG=FALSE,filterSNPs=TRUE,filterMultiHit=TRUE)
 {
 	read.450k.sheet<-NA
 	rm(read.450k.sheet)
@@ -79,8 +79,25 @@ function(directory = getwd(), methValue="B", resultsDir=paste(getwd(), "resultsC
     
     if(filterNoCG)
     {
+        mset.f2=mset
         dropMethylationLoci(mset,dropCH=T)
-        message("Filtering non-cg probes, has removed ",dim(mset)[1]-dim(mset.f2)[1]," from the analysis.")
+        message("Filtering non-cg probes, has removed ",dim(mset.f2)[1]-dim(mset)[1]," from the analysis.")
+    }
+    
+    if(filterSNPs)
+    {
+        data(snp.hit)
+        mset.f2=mset[!featureNames(mset) %in% snp.hit$TargetID,]
+        message("Filtering probes with SNPs as identified in Nordlund et al, has removed ",dim(mset)[1]-dim(mset.f2)[1]," from the analysis.")
+        mset=mset.f2
+    }
+    
+    if(filterMultiHit)
+    {
+        data(multi.hit)
+        mset.f2=mset[!featureNames(mset) %in% multi.hit$TargetID,]
+        message("Filtering probes that align to multiple locations as identified in Nordlund et al, has removed ",dim(mset)[1]-dim(mset.f2)[1]," from the analysis.")
+        mset=mset.f2
     }
     
     intensity=getMeth(mset)+getUnmeth(mset)
@@ -100,10 +117,12 @@ function(directory = getwd(), methValue="B", resultsDir=paste(getwd(), "resultsC
 	{
 		data(probe.features)
 		autosomes=probe.features[!probe.features$CHR %in% c("X","Y"), ]
-        mset=mset[featureNames(mset) %in% row.names(autosomes),]
+        mset.f2=mset[featureNames(mset) %in% row.names(autosomes),]
 		beta.raw=beta.raw[row.names(beta.raw) %in% row.names(autosomes), ]
         detP=detP[row.names(detP) %in% row.names(autosomes), ]
         intensity=intensity[row.names(intensity) %in% row.names(autosomes), ]
+        message("Filtering probes on the X or Y chromosome has removed ",dim(mset)[1]-dim(mset.f2)[1]," from the analysis.")
+        mset=mset.f2
 	}
     
     totalProbes=dim(beta.raw)[1]

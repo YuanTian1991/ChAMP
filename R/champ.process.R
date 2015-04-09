@@ -1,5 +1,5 @@
 champ.process <-
-function(fromIDAT=TRUE, fromFile=FALSE,directory = getwd(), resultsDir=paste(getwd(),"resultsChamp",sep="/"), methValue="B", filterDetP = TRUE, detPcut=0.01, filterXY = TRUE, removeDetP = 0, filterBeads = TRUE, beadCutoff = 0.05, filterNoCG= FALSE, QCimages = TRUE, batchCorrect=TRUE, runSVD = TRUE, studyInfo=FALSE, infoFactor=c(), norm = "BMIQ", adjust.method="BH", adjPVal=0.05, runDMR=TRUE, runCNA=TRUE,plotBMIQ=TRUE,DMRpval=0.05, sampleCNA=TRUE,plotSample=TRUE,groupFreqPlots=TRUE,freqThreshold=0.3,bedFile=FALSE, methProfile=FALSE,controlProfile=FALSE)
+function(fromIDAT=TRUE, fromFile=FALSE,directory = getwd(), resultsDir=paste(getwd(),"resultsChamp",sep="/"), methValue="B", filterDetP = TRUE, detPcut=0.01, filterXY = TRUE, removeDetP = 0, filterBeads = TRUE, beadCutoff = 0.05, filterNoCG= FALSE, QCimages = TRUE, batchCorrect=TRUE, runSVD = TRUE, studyInfo=FALSE, infoFactor=c(), norm = "BMIQ", adjust.method="BH", adjPVal=0.05, runDMR=TRUE, runCNA=TRUE,plotBMIQ=FALSE,DMRpval=0.05, sampleCNA=TRUE,plotSample=TRUE,groupFreqPlots=TRUE,freqThreshold=0.3,bedFile=FALSE, methProfile=FALSE,controlProfile=FALSE)
 {
     batchDone=FALSE
 

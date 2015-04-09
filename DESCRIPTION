@@ -2,7 +2,7 @@ Package: ChAMP
 Type: Package
 Title: Chip Analysis Methylation Pipeline for Illumina
         HumanMethylation450
-Version: 1.5.3
+Version: 1.5.5
 Date: 2015-04-09
 Description: The package includes quality control metrics, a selection
         of normalization methods and novel methods to identify
