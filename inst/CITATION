@@ -1,0 +1,37 @@
+c(bibentry(bibtype = "Article",
+           key = “champ”,
+           title = “{ChAMP: 450k Chip Analysis Methylation Pipeline}”,
+           author = c(
+           person(c(“Tiffany”, "J."), “Morris”),
+           person(c(“Lee”, “M.”), “Butcher”),
+
+           person(c("Andrew", “E.”), “Teschendorff”),
+           person(c(“Ankur”, “R.”), “Chakravarthy”),
+           person(c(“Tomasz”, “K.”), “Wojdacz”),
+           person(“Stephan”, “Beck”)
+           ),
+           year = 2014,
+           journal = "Bioinformatics",
+           volume = "30",
+           number = “3”,
+           pages = “428–430”,
+           doi = "10.1093/bioinformatics/btt684",
+           pubmed = "24336642"),
+
+  bibentry(bibtype = "Article",
+           key = “lasso”,
+                     author = c(
+           person(c(“Lee”, “M.”), “Butcher”),
+           person(“Stephan”, “Beck”)
+           ),
+           title = “{Probe Lasso: A novel method to rope in differentially methylated regions with 450K DNA methylation data}”,
+           journal = “Methods”,
+           year = "2015”,
+           volume = “72”,
+           pages = “21-28”,
+           doi = "10.1016%2Fj.ymeth.2014.10.036",
+           pubmed = "25461817",
+           header = “champ.lasso method is described in:”)
+
+  )
+
