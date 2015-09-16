@@ -208,7 +208,7 @@ function(fromFile=FALSE, uploadResults=FALSE, uploadFile="limma.txt", limma, bet
         }
         
         dmr.beta.means=resultsFile[match(rownames(myDf),rownames(resultsFile)),]
-        myDf <- data.frame(myDf, dmr.beta.means[,22:24,])
+        myDf <- data.frame(myDf, dmr.beta.means[,17:19,])
         rm(dmr.beta.means)
         
         dmr.beta <- split(as.data.frame(beta.norm[match(rownames(myDf), rownames(beta.norm)),]), myDf$dmr.no)
