@@ -12,8 +12,8 @@ A pipeline that enables pre-processing of 450k data, a selection of normalizatio
 \tabular{ll}{
 Package: \tab ChAMP\cr
 Type: \tab Package\cr
-Version: \tab 1.7.1\cr
-Date: \tab 2015-09-16\cr
+Version: \tab 1.9.1\cr
+Date: \tab 2016-01-28\cr
 License: \tab GPL-3\cr
 }
 The full analysis pipeline can be run with all defaults using champ.process()
@@ -22,7 +22,7 @@ Alternatively, it can be run in steps using all functions separately.
 }
 
 \author{
-Tiffany Morris, Lee Butcher, Andy Feber, Andrew Teschendorff, Ankur Chakravarthy, Stephen Beck\cr
+Tiffany Morris, Tian Yuan, Lee Stirling, Andy Feber, Andrew Teschendorff, Ankur Chakravarthy, Stephen Beck\cr
 \bold{Maintainer}: Tiffany Morris <champ450k@gmail.com>
 }
 \keyword{ package }
@@ -31,6 +31,7 @@ Tiffany Morris, Lee Butcher, Andy Feber, Andrew Teschendorff, Ankur Chakravarthy
 \keyword{ 450k }
 \keyword{ array }
 \keyword{ Beadchip }
+\keywork{ DNAMethylation }
 \examples{
 \donttest{
 	directory=system.file('extdata',package='ChAMPdata')

@@ -55,7 +55,7 @@ bedFile = TRUE, DMRpval = 0.05, batchDone = FALSE, normSave)
 
 }
 \author{
-Butcher, L
+Stirling, L
 }
 
 \keyword{ DMR }

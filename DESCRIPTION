@@ -2,15 +2,16 @@ Package: ChAMP
 Type: Package
 Title: Chip Analysis Methylation Pipeline for Illumina
         HumanMethylation450
-Version: 1.9.0
-Date: 2015-09-16
+Version: 1.9.1
+Date: 2016-01-28
 Description: The package includes quality control metrics, a selection
         of normalization methods and novel methods to identify
         differentially methylated regions and to highlight copy number
         aberrations. In addition their is a method to help calculate hmC using BS and oxBS samples.
 Authors@R: c(person("Tiffany", "Morris", role = c("cre", "aut"),
                     email = "champ450k@gmail.com"),
-             person("Lee", "Butcher", role = "ctb"),
+		person("Tian","Yuan",role = "aut"),
+             person("Lee", “Stirling”, role = "ctb"),
              person("Andrew", "Feber", role = "ctb"),
 	     person("Andrew", "Teschendorff", role = "ctb"),
 	     person("Ankur", "Chakravarthy", role = "ctb"))
@@ -18,9 +19,10 @@ License: GPL-3
 Depends: R (>= 3.0.1), minfi, ChAMPdata, Illumina450ProbeVariants.db
 Imports: sva, IlluminaHumanMethylation450kmanifest, limma, RPMM,
         DNAcopy, preprocessCore, impute, marray, wateRmelon, plyr, IRanges, GenomicRanges
-biocViews: Microarray, MethylationArray, Normalization, TwoChannel, CopyNumber
+biocViews: Microarray, MethylationArray, Normalization, TwoChannel, CopyNumber, DNAMethylation
 Author: Tiffany Morris [cre, aut],
-  Lee Butcher [ctb],
+  Tian Yuan [aut],
+  Lee Stirling [ctb],
   Andrew Feber [ctb],
   Andrew Teschendorff [ctb],
   Ankur Chakravarthy [ctb]
