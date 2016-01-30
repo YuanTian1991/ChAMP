@@ -11,7 +11,7 @@ Description: The package includes quality control metrics, a selection
 Authors@R: c(person("Tiffany", "Morris", role = c("cre", "aut"),
                     email = "champ450k@gmail.com"),
 		person("Tian","Yuan",role = "aut"),
-             person("Lee", “Stirling”, role = "ctb"),
+             person("Lee", "Stirling", role = "ctb"),
              person("Andrew", "Feber", role = "ctb"),
 	     person("Andrew", "Teschendorff", role = "ctb"),
 	     person("Ankur", "Chakravarthy", role = "ctb"))
