@@ -1,5 +1,21 @@
-champ.norm <-
-function(beta=myLoad$beta, rgSet=myLoad$rgSet, pd=myLoad$pd,mset=myLoad$mset, sampleSheet="sampleSheet.txt", resultsDir=paste(getwd(), "resultsChamp", sep="/"), methValue="B", fromIDAT=TRUE, norm="BMIQ", fromFile = FALSE, betaFile, filter=TRUE, filterXY=TRUE, QCimages=FALSE, plotBMIQ=FALSE)
+if(getRversion() >= "3.1.0") utils::globalVariables(c("myLoad","probe.features","probeInfoALL.lv"))
+
+champ.norm <- function(beta=myLoad$beta,
+                       rgSet=myLoad$rgSet,
+                       pd=myLoad$pd,
+                       mset=myLoad$mset,
+                       sampleSheet="sampleSheet.txt",
+                       resultsDir=paste(getwd(), "resultsChamp", sep="/"),
+                       methValue="B",
+                       fromIDAT=TRUE,
+                       norm="BMIQ",
+                       fromFile = FALSE,
+                       betaFile,
+                       filter=TRUE,
+                       filterXY=TRUE,
+                       QCimages=FALSE,
+                       plotBMIQ=FALSE,
+                       arraytype="450K")
 {
 	detectionP<-NA
 	rm(detectionP)
@@ -10,7 +26,11 @@ function(beta=myLoad$beta, rgSet=myLoad$rgSet, pd=myLoad$pd,mset=myLoad$mset, sa
 	getM<-NA
 	rm(getM)
 	cwd=getwd()
-	data(probe.features)	
+    if(arraytype=="EPIC"){
+        data(probe.features.epic)
+    }else{
+        data(probe.features)	
+    }
 
 	message("Normalizing data with ",norm)
 	if(fromIDAT==F)
@@ -57,11 +77,16 @@ function(beta=myLoad$beta, rgSet=myLoad$rgSet, pd=myLoad$pd,mset=myLoad$mset, sa
 	if(norm=="BMIQ" | norm == "PBC")
 	{
 		### create design.v file
-		data(probeInfoALL.lv)
-		match(rownames(beta.p),probeInfoALL.lv[[5]]) -> map.idx
+        if(arraytype=="EPIC")
+        {
+            data(probeInfoALL.epic.lv)
+        }else{
+            data(probeInfoALL.lv)
+        }
+		match(rownames(beta.p),probeInfoALL.lv$probeID) -> map.idx
 		mapto <- function(tmp.v){ return(tmp.v[map.idx])}
  		probeInfo.lv  <- lapply(probeInfoALL.lv,mapto)
-		design.v <- probeInfo.lv[[2]]
+		design.v <- probeInfo.lv$Design
 		
 		if(min(beta.p, na.rm=TRUE)==0)
 		{
@@ -88,7 +113,7 @@ function(beta=myLoad$beta, rgSet=myLoad$rgSet, pd=myLoad$pd,mset=myLoad$mset, sa
 				beta.v <- beta.p[,s];
 
 
-				bmiq.o <- BMIQ(beta.v,design.v,doH=TRUE,nL=3,nfit=5000,niter=10,plots=plotBMIQ,sampleID=sID);
+				bmiq.o <- BMIQ(beta.v,design.v,sampleID=sID);
 				bmiq[,s] <- bmiq.o$nbeta;
 				hf.v[s] <- bmiq.o$hf;
 

@@ -1,29 +1,29 @@
 Package: ChAMP
 Type: Package
-Title: Chip Analysis Methylation Pipeline for Illumina
-        HumanMethylation450
-Version: 1.9.1
-Date: 2016-01-28
+Title: Chip Analysis Methylation Pipeline for Illumina HumanMethylation450 and EPIC
+Version: 1.9.2
+Date: 2016-03-13
 Description: The package includes quality control metrics, a selection
         of normalization methods and novel methods to identify
         differentially methylated regions and to highlight copy number
-        aberrations. In addition their is a method to help calculate hmC using BS and oxBS samples.
+        alterations. In addition there is a method to help calculate hmC using BS and oxBS samples.
 Authors@R: c(person("Tiffany", "Morris", role = c("cre", "aut"),
                     email = "champ450k@gmail.com"),
 		person("Tian","Yuan",role = "aut"),
-             person("Lee", "Stirling", role = "ctb"),
+             person("Lee", “Stirling”, role = "ctb"),
              person("Andrew", "Feber", role = "ctb"),
 	     person("Andrew", "Teschendorff", role = "ctb"),
 	     person("Ankur", "Chakravarthy", role = "ctb"))
 License: GPL-3
-Depends: R (>= 3.0.1), minfi, ChAMPdata, Illumina450ProbeVariants.db
-Imports: sva, IlluminaHumanMethylation450kmanifest, limma, RPMM,
-        DNAcopy, preprocessCore, impute, marray, wateRmelon, plyr, IRanges, GenomicRanges
+Depends: R (>= 3.2), minfi, ChAMPdata, Illumina450ProbeVariants.db
+Imports: sva, IlluminaHumanMethylation450kmanifest, limma,RPMM, DNAcopy, preprocessCore, impute, marray, wateRmelon, plyr, GenomicRanges,RefFreeEWAS,qvalue,isva,doParallel,bumphunter,quadprog
 biocViews: Microarray, MethylationArray, Normalization, TwoChannel, CopyNumber, DNAMethylation
 Author: Tiffany Morris [cre, aut],
-  Tian Yuan [aut],
+  Yuan Tian [aut],
   Lee Stirling [ctb],
   Andrew Feber [ctb],
   Andrew Teschendorff [ctb],
   Ankur Chakravarthy [ctb]
-Maintainer: Tiffany Morris <champ450k@gmail.com>
+Maintainer: Yuan Tian, Tiffany Morris <champ450k@gmail.com>
+NeedsCompilation: no
+Packaged: 2016-03-13 05:01:36 UTC; regmtyu@pogb.cancer.ucl.ac.uk

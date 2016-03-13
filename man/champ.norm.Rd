@@ -11,10 +11,11 @@ Option to normalize data with a selection of normalization methods.
 champ.norm(beta = myLoad$beta, rgSet = myLoad$rgSet, pd = myLoad$pd, mset = myLoad$mset, 
 sampleSheet = "sampleSheet.txt", resultsDir = paste(getwd(), "resultsChamp", 
 sep = "/"), methValue = "B", fromIDAT = TRUE, norm = "BMIQ", fromFile = FALSE, betaFile, 
-filter = TRUE, filterXY = TRUE, QCimages = FALSE, plotBMIQ = FALSE)
+filter = TRUE, filterXY = TRUE, QCimages = FALSE, plotBMIQ = FALSE,arraytype="450K")
 }
 
 \arguments{
+    \item{arraytype}{Choose microarray type is 450K or EPIC.}
 	\item{beta}{A matrix of values representing the methylation scores for each sample (M or B). The default assumes you ran champ.load and saved the output to "myLoad".}
 	\item{rgSet}{An rgSet object that was created when data was loaded the data from the .idat files. The default assumes you ran champ.load and saved the output to "myLoad".}
 	\item{pd}{This data.frame includes the information from the sample sheet. The default assumes you ran champ.load and saved the output to "myLoad".}

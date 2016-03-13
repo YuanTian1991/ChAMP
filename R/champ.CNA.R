@@ -1,7 +1,13 @@
+if(getRversion() >= "3.1.0") utils::globalVariables(c("myLoad","probe.features","bloodCtl"))
+
 champ.CNA <-
-function(intensity=myLoad$intensity, pd=myLoad$pd, loadFile=FALSE, batchCorrect=TRUE, file="intensity.txt", resultsDir=paste(getwd(),"resultsChamp",sep="/"), sampleCNA=TRUE,plotSample=TRUE, filterXY=TRUE, groupFreqPlots=TRUE,freqThreshold=0.3, control=TRUE, controlGroup="Control")
+function(intensity=myLoad$intensity, pd=myLoad$pd, loadFile=FALSE, batchCorrect=TRUE, file="intensity.txt", resultsDir=paste(getwd(),"resultsChamp",sep="/"), sampleCNA=TRUE,plotSample=TRUE, filterXY=TRUE, groupFreqPlots=TRUE,freqThreshold=0.3, control=TRUE, controlGroup="Control",arraytype="450K")
 {
-	data(probe.features)
+    if(arraytype=="EPIC"){
+        data(probe.features.epic)
+    }else{
+        data(probe.features)
+    }
 	normalize.quantiles<-NULL
     rm(normalize.quantiles)
 	control.intsqnlog<-NULL

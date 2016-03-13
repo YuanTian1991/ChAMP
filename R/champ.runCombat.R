@@ -1,5 +1,8 @@
-champ.runCombat <-
-function(beta.c=myNorm$beta,pd=myLoad$pd,logitTrans=TRUE)
+if(getRversion() >= "3.1.0") utils::globalVariables(c("myNorm","myLoad"))
+
+champ.runCombat <- function(beta.c=myNorm$beta,
+                            pd=myLoad$pd,
+                            logitTrans=TRUE)
 {
  	
     message("Preparing files for ComBat")

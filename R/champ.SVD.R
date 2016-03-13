@@ -1,5 +1,20 @@
-champ.SVD <-
-function(beta=myNorm$beta, rgSet=myLoad$rgSet,detP=myLoad$detP,pd=myLoad$pd, loadFile=FALSE, betaFile="beta.txt", sampleSheet="sampleSheet.txt", methProfile=FALSE, methFile="MethylationProbeProfile.txt", controlProfile=FALSE, controlFile="ControlProbeProfile.txt", studyInfo=FALSE,studyInfoFile="studyInfo.txt", infoFactor=c(),resultsDir=paste(getwd(),"resultsChamp",sep="/"))
+if(getRversion() >= "3.1.0") utils::globalVariables(c("myNorm","myLoad"))
+
+champ.SVD <- function(beta=myNorm$beta,
+                      rgSet=myLoad$rgSet,
+                      detP=myLoad$detP,
+                      pd=myLoad$pd,
+                      loadFile=FALSE,
+                      betaFile="beta.txt",
+                      sampleSheet="sampleSheet.txt",
+                      methProfile=FALSE,
+                      methFile="MethylationProbeProfile.txt",
+                      controlProfile=FALSE,
+                      controlFile="ControlProbeProfile.txt",
+                      studyInfo=FALSE,
+                      studyInfoFile="studyInfo.txt",
+                      infoFactor=c(),
+                      resultsDir=paste(getwd(),"resultsChamp",sep="/"))
 {
     impute.knn<-NA
 	rm(impute.knn)

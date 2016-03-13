@@ -1,7 +1,43 @@
-BMIQ <-
-function(beta.v,design.v,nL=3,doH=TRUE,nfit=50000,th1.v=c(0.2,0.75),th2.v=NULL,niter=5,tol=0.001,plots=TRUE,sampleID=1){
+### BMIQ.R & CheckBMIQ.R
+### This function adjusts for the type-2 bias in Illumina Infinium 450k data.
+### Author: Andrew Teschendorff
+### Date v_1.1: Nov 2012
+### Date v_1.2: 6th Apr 2013
+### Date v_1.3: 29th May 2013
+### Date v_1.4: 23rd Sep 2014(corrected minor inconsequential bug)
+### Date v_1.5: 19th Oct 2015 (corrected minor inconsequential bug)
 
-if(any(is.na(beta.v))) stop("NAs found in beta matrix, BMIQ will fail")
+### SUMMARY
+### BMIQ is an intra-sample normalisation procedure, adjusting for the bias in type-2 probe values, using a 3-step procedure published in Teschendorff AE et al "A Beta-Mixture Quantile Normalisation method for correcting probe design bias in Illumina Infinium 450k DNA methylation data", Bioinformatics 2012 Nov 21.
+
+
+### INPUT:
+### beta.v: vector consisting of beta-values for a given sample. NAs are not allowed, so these must be removed or imputed prior to running BMIQ. Beta-values that are exactly 0 or 1 will be replaced by the minimum positive above zero or maximum value below 1, respectively.
+### design.v: corresponding vector specifying probe design type (1=type1,2=type2). This must be of the same length as beta.v and in the same order.
+### doH: perform normalisation for hemimethylated type2 probes. By default TRUE.
+### nfit: number of probes of a given design to use for the fitting. Default is 10000. Smaller values will make BMIQ run faster at the expense of a small loss in accuracy. For most applications, even 5000 is ok.
+### nL: number of states in beta mixture model. 3 by default. At present BMIQ only works for nL=3.
+### th1.v: thresholds used for the initialisation of the EM-algorithm, they should represent buest guesses for calling type1 probes hemi-methylated and methylated, and will be refined by the EM algorithm. Default values work well in most cases.
+### th2.v: thresholds used for the initialisation of the EM-algorithm, they should represent buest guesses for calling type2 probes hemi-methylated and methylated, and will be refined by the EM algorithm. By default this is null, and the thresholds are estimated based on th1.v and a modified PBC correction method.
+### niter: maximum number of EM iterations to do. By default 5.
+### tol: tolerance threshold for EM algorithm. By default 0.001.
+### plots: logical specifying whether to plot the fits and normalised profiles out. By default TRUE.
+### sampleID: the ID of the sample being normalised.
+
+### OUTPUT
+### A list with the following elements:
+### nbeta: the normalised beta-profile for the sample
+### class1: the assigned methylation state of type1 probes
+### class2: the assigned methylation state of type2 probes
+### av1: mean beta-values for the nL classes for type1 probes.
+### av2: mean beta-values for the nL classes for type2 probes.
+### hf: the "Hubble" dilation factor
+### th1: estimated thresholds used for type1 probes
+### th2: estimated thresholds used for type2 probes
+
+require(RPMM);
+
+BMIQ <- function(beta.v,design.v,nL=3,doH=TRUE,nfit=10000,th1.v=c(0.2,0.75),th2.v=NULL,niter=5,tol=0.001,plots=TRUE,sampleID=1){
 
 type1.idx <- which(design.v==1);
 type2.idx <- which(design.v==2);
@@ -83,13 +119,13 @@ w0.m[intersect(which(beta2.v > th2.v[1]),which(beta2.v <= th2.v[2])),2] <- 1;
 w0.m[which(beta2.v > th2.v[2]),3] <- 1;
 
 print("Fitting EM beta mixture to type2 probes");
-rand.idx <- sample(1:length(beta1.v),nfit,replace=FALSE)
+rand.idx <- sample(1:length(beta2.v),nfit,replace=FALSE)
 em2.o <- blc(matrix(beta2.v[rand.idx],ncol=1),w=w0.m[rand.idx,],maxiter=niter,tol=tol);
 print("Done");
 
 ### for type II probes assign to state (unmethylated, hemi or full methylation)
 subsetclass2.v <- apply(em2.o$w,1,which.max);
-subsetth2.v <- c(mean(max(beta2.v[rand.idx[subsetclass2.v==1]]),min(beta2.v[rand.idx[subsetclass2.v==2]])),mean(max(beta2.v[rand.idx[subsetclass2.v==2]]),min(beta2.v[rand.idx[subsetclass2.v==3]])));
+subsetth2.v <- c(mean(c(max(beta2.v[rand.idx[subsetclass2.v==1]]),min(beta2.v[rand.idx[subsetclass2.v==2]]))),mean(c(max(beta2.v[rand.idx[subsetclass2.v==2]]),min(beta2.v[rand.idx[subsetclass2.v==3]]))));
 class2.v <- rep(2,length(beta2.v));
 class2.v[which(beta2.v < subsetth2.v[1])] <- 1;
 class2.v[which(beta2.v > subsetth2.v[2])] <- 3;
@@ -175,7 +211,7 @@ pnbeta.v <- beta.v;
 pnbeta.v[type1.idx] <- beta1.v;
 pnbeta.v[type2.idx] <- nbeta2.v;
 
-### generate final plot to check normalization
+### generate final plot to check normalisation
 if(plots){
  print("Generating final plot");
  d1.o <- density(beta1.v);
@@ -193,5 +229,19 @@ if(plots){
 print(paste("Finished for sample ",sampleID,sep=""));
 
 return(list(nbeta=pnbeta.v,class1=class1.v,class2=class2.v,av1=classAV1.v,av2=classAV2.v,hf=hf,th1=nth1.v,th2=th2.v));
+
+}
+
+
+
+CheckBMIQ <- function(beta.v,design.v,pnbeta.v){### pnbeta is BMIQ normalised profile
+
+type1.idx <- which(design.v==1);
+type2.idx <- which(design.v==2);
+
+beta1.v <- beta.v[type1.idx];
+beta2.v <- beta.v[type2.idx];
+pnbeta2.v <- pnbeta.v[type2.idx];
+  
 
 }

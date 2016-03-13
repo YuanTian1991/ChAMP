@@ -1,5 +1,11 @@
-plotThreshold <-
-function(myResults,lasso.radius,value.lasso.quantile,lassoRadius,lassoStyle,resultsDir)
+if(getRversion() >= "3.1.0") utils::globalVariables("probe.features")
+
+plotThreshold <- function(myResults,
+                          lasso.radius,
+                          value.lasso.quantile,
+                          lassoRadius,
+                          lassoStyle,
+                          resultsDir)
 {
     data(probe.features)
     

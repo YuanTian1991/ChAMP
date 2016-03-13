@@ -1,5 +1,13 @@
-champ.TrueMethyl <-
-function(beta.norm = myNorm$beta, pd=myLoad$pd, adjPVal=0.05, adjust.method="BH", compare.group=c("oxBS","BS"),resultsDir=paste(getwd(),"resultsChamp",sep="/"),bedFile=TRUE)
+if(getRversion() >= "3.1.0") utils::globalVariables(c("myNorm","myLoad","probe.features"))
+
+champ.TrueMethyl <- function(beta.norm = myNorm$beta,
+                             pd=myLoad$pd,
+                             adjPVal=0.05,
+                             adjust.method="BH",
+                             compare.group=c("oxBS","BS"),
+                             resultsDir=paste(getwd(),"resultsChamp",sep="/"),
+                             bedFile=TRUE,
+                             arraytype="450K")
 {	
 	makeContrasts<-NA
 	rm(makeContrasts)
@@ -11,7 +19,12 @@ function(beta.norm = myNorm$beta, pd=myLoad$pd, adjPVal=0.05, adjust.method="BH"
 	rm(eBayes)
 	topTable<-NA
 	rm(topTable)
-	data(probe.features)	
+
+    if(arraytype=="EPIC"){
+        data(probe.features.epic)
+    }else{
+        data(probe.features)
+    }
 	
     groupLabel=compare.group
     

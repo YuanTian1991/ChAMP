@@ -16,7 +16,7 @@ detPcut = 0.01, filterXY = TRUE, removeDetP = 0, filterBeads = TRUE, beadCutoff 
 TRUE, studyInfo = FALSE, infoFactor = c(), norm = "BMIQ", adjust.method = "BH", 
 adjPVal = 0.05, runDMR = TRUE,  runCNA = TRUE, plotBMIQ = FALSE, DMRpval = 0.05,
 sampleCNA=TRUE,plotSample = TRUE,groupFreqPlots=TRUE,freqThreshold=0.3, bedFile 
-= FALSE, methProfile = FALSE, controlProfile = FALSE)
+= FALSE, methProfile = FALSE, controlProfile = FALSE,arraytype="450K")
 }
 
 \arguments{
@@ -51,6 +51,7 @@ sampleCNA=TRUE,plotSample = TRUE,groupFreqPlots=TRUE,freqThreshold=0.3, bedFile
 	\item{bedFile}{if bedFile = TRUE. MVP list will be saved as an additional file in bedfile format for downstream analysis. Defaults is TRUE.}
 	\item{methProfile}{If methProfile=TRUE then the beta values will be uploaded using the MethylationProbeProfile file from Genome Studio. Default is FALSE.}
 	\item{controlProfile}{If rawdata = FALSE and runSVD = TRUE, then it is useful to have a control probe profile file exported from Genome Studio so that internal control probes can be included in the SVD analyis. Default is FALSE.}
+    \item{arraytype}{Choose microarray type is 450K or EPIC.}
 }
 
 \examples{

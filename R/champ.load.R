@@ -1,5 +1,19 @@
-champ.load <-
-function(directory = getwd(), methValue="B", resultsDir=paste(getwd(), "resultsChamp",sep="/"), filterXY=TRUE, QCimages=TRUE, filterDetP=TRUE, detPcut=0.01, removeDetP = 0, filterBeads=TRUE, beadCutoff=0.05, filterNoCG=FALSE,filterSNPs=TRUE,filterMultiHit=TRUE)
+if(getRversion() >= "3.1.0") utils::globalVariables(c("sampleNames<-","snp.hit","multi.hit","probe.features"))
+
+champ.load <- function(directory = getwd(),
+                       methValue="B",
+                       resultsDir=paste(getwd(), "resultsChamp",sep="/"),
+                       filterXY=TRUE,
+                       QCimages=TRUE,
+                       filterDetP=TRUE,
+                       detPcut=0.01,
+                       removeDetP = 0,
+                       filterBeads=TRUE,
+                       beadCutoff=0.05,
+                       filterNoCG=FALSE,
+                       filterSNPs=TRUE,
+                       filterMultiHit=TRUE,
+                       arraytype="450K")
 {
 	read.450k.sheet<-NA
 	rm(read.450k.sheet)
@@ -36,10 +50,12 @@ function(directory = getwd(), methValue="B", resultsDir=paste(getwd(), "resultsC
 		dir.create(resultsDir)
 		message("Creating results directory. Results will be saved in ", resultsDir)
 	}			
-		
+	
     myDir= directory
     suppressWarnings(targets <- read.450k.sheet(myDir))
 	rgSet <- read.450k.exp(targets = targets, extended=TRUE)
+    if(arraytype=="EPIC")
+        rgSet@annotation <- c(array="IlluminaHumanMethylationEPIC",annotation="ilmn10.hg19")
 	sampleNames(rgSet)=rgSet[[1]]
 	pd<-pData(rgSet)
 	green=getGreen(rgSet)
@@ -47,6 +63,8 @@ function(directory = getwd(), methValue="B", resultsDir=paste(getwd(), "resultsC
 	mset <- preprocessRaw(rgSet)
     detP <- detectionP(rgSet)
 	
+    message("Read DataSet Success.\n")
+
     failed <- detP>detPcut
     numfail = colMeans(failed) # Fraction of failed positions per sample
     message("The fraction of failed positions per sample: ")
@@ -68,6 +86,8 @@ function(directory = getwd(), methValue="B", resultsDir=paste(getwd(), "resultsC
         mset=mset.f
     }
     
+    message("Filter DetP Done.\n")
+
     if(filterBeads)
     {
         bc=beadcount(rgSet)
@@ -76,6 +96,8 @@ function(directory = getwd(), methValue="B", resultsDir=paste(getwd(), "resultsC
         message("Filtering probes with a beadcount <3 in at least ",beadCutoff*100,"% of samples, has removed ",dim(mset)[1]-dim(mset.f2)[1]," from the analysis.")
         mset=mset.f2
     }
+
+    message("Filter Beads Done.\n")
     
     if(filterNoCG)
     {
@@ -84,6 +106,8 @@ function(directory = getwd(), methValue="B", resultsDir=paste(getwd(), "resultsC
         message("Filtering non-cg probes, has removed ",dim(mset.f2)[1]-dim(mset)[1]," from the analysis.")
     }
     
+    message("Filter NoCG Done.\n")
+
     if(filterSNPs)
     {
         data(snp.hit)
@@ -91,6 +115,8 @@ function(directory = getwd(), methValue="B", resultsDir=paste(getwd(), "resultsC
         message("Filtering probes with SNPs as identified in Nordlund et al, has removed ",dim(mset)[1]-dim(mset.f2)[1]," from the analysis.")
         mset=mset.f2
     }
+
+    message("Filter SNP Done.\n")
     
     if(filterMultiHit)
     {
@@ -100,6 +126,8 @@ function(directory = getwd(), methValue="B", resultsDir=paste(getwd(), "resultsC
         mset=mset.f2
     }
     
+    message("Filter MultiHit Done.\n")
+
     intensity=getMeth(mset)+getUnmeth(mset)
     
     if(methValue=="B")
@@ -115,7 +143,12 @@ function(directory = getwd(), methValue="B", resultsDir=paste(getwd(), "resultsC
     
     if(filterXY)
 	{
+        if(arraytype=="EPIC")
+        {
+            data(probe.features.epic)
+        }else{
 		data(probe.features)
+        }
 		autosomes=probe.features[!probe.features$CHR %in% c("X","Y"), ]
         mset.f2=mset[featureNames(mset) %in% row.names(autosomes),]
 		beta.raw=beta.raw[row.names(beta.raw) %in% row.names(autosomes), ]
@@ -124,6 +157,8 @@ function(directory = getwd(), methValue="B", resultsDir=paste(getwd(), "resultsC
         message("Filtering probes on the X or Y chromosome has removed ",dim(mset)[1]-dim(mset.f2)[1]," from the analysis.")
         mset=mset.f2
 	}
+
+    message("Filter XY chromosome Done.\n")
     
     totalProbes=dim(beta.raw)[1]
 

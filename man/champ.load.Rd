@@ -11,11 +11,12 @@ Function that loads data from IDAT files to calculate intensity and produce qual
 \usage{
 champ.load(directory = getwd(), methValue = "B", resultsDir = paste(getwd(),
  "resultsChamp", sep = "/"), filterXY = TRUE, QCimages = TRUE, filterDetP = TRUE, 
- detPcut = 0.01,  removeDetP = 0, filterBeads=TRUE, beadCutoff=0.05, filterNoCG=FALSE,filterSNPs=TRUE,filterMultiHit=TRUE)
+ detPcut = 0.01,  removeDetP = 0, filterBeads=TRUE, beadCutoff=0.05, filterNoCG=FALSE,filterSNPs=TRUE,filterMultiHit=TRUE,arraytype="450K")
 }
 
 \arguments{
 	
+	\item{arraytype}{Choose microarray type is 450K or EPIC.}
 	\item{directory}{Location of IDAT files, default is current working directory.}
 	\item{methValue}{Indicates whether you prefer m-values M or beta-values B.}
 	\item{resultsDir}{Directory where results will be saved.}
