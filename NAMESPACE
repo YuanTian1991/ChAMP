@@ -1,5 +1,4 @@
 import(limma)
-import(RPMM)
 import(DNAcopy)
 import(preprocessCore)
 import(impute)
@@ -11,16 +10,25 @@ import(ChAMPdata)
 import(Illumina450ProbeVariants.db)
 import(wateRmelon)
 import(plyr)
-import(IRanges)
 import(GenomicRanges)
+import(RefFreeEWAS)
+import(isva)
+import(qvalue)
+import(bumphunter)
+import(doParallel)
+import(quadprog)
+
+importFrom(RPMM, blc)
 
 export(
 	champ.process, 
 	champ.load, 
+    champ.refbase,
+    champ.reffree,
+    champ.DMR,
 	champ.norm, 
 	champ.CNA, 
 	champ.SVD, 
-	champ.lasso, 
 	champ.MVP, 
 	champ.runCombat,
 	champ.TrueMethyl
