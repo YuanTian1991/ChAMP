@@ -39,5 +39,5 @@ champ.reffree <- function(beta=myLoad$beta,design=myLoad$pd$Sample_Group,K=NULL,
     qvBeta <- apply(pvBeta,2,function(x) qvalue(x)$qvalue)
 #    qvBstar <- apply(pvBstar,2,function(x) qvalue(x)$qvalue)
     
-    return(list(RefFreeEWASModel=rf.o,pvBeta,qvBeta))
+    return(list(RefFreeEWASModel=rf.o,pvBeta=pvBeta,qvBeta=qvBeta))
 }
