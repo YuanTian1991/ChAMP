@@ -97,23 +97,32 @@ champ.norm <- function(beta=myLoad$beta,
 		if(norm == "BMIQ")
  		{
 			newDir=paste(resultsDir,"Normalization",sep="/")
- 			if(plotBMIQ){if(!file.exists(resultsDir)){dir.create(resultsDir)}
- 			if(!file.exists(newDir))
-			{
-				dir.create(newDir)
-			}}
+ 			if(plotBMIQ)
+            {
+                if(!file.exists(resultsDir))
+                {
+                    dir.create(resultsDir)
+                }
+                if(!file.exists(newDir))
+                {
+                    dir.create(newDir)
+                }
+            }
  			design.v<-as.numeric(design.v)
  			bmiq=beta.p
 			hf.v <- vector();
 
-			if(plotBMIQ){setwd(newDir)}
+			if(plotBMIQ)
+            {
+                setwd(newDir)
+            }
  			for(s in 1:ncol(beta.p))
  			{
 				sID=colnames(beta.p)[s]
 				beta.v <- beta.p[,s];
 
 
-				bmiq.o <- BMIQ(beta.v,design.v,sampleID=sID);
+				bmiq.o <- BMIQ(beta.v,design.v,sampleID=sID,plots=plotBMIQ);
 				bmiq[,s] <- bmiq.o$nbeta;
 				hf.v[s] <- bmiq.o$hf;
 
