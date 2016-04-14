@@ -371,6 +371,14 @@ champ.SVD <- function(beta=myNorm$beta,
   			}
   		}
 	}
+
+    if(!file.exists(resultsDir))
+    {
+        dir.create(resultsDir)
+        message("Creating results directory. Results will be saved in ", resultsDir)
+    }
+
+
 	### image heatmap
 	myPalette <- c("darkred","red","orange","pink","white");
 	breaks.v <- c(-200,-10,-5,-2,log10(0.05),0);
