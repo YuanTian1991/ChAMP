@@ -52,8 +52,8 @@ champ.load <- function(directory = getwd(),
 	}			
 	
     myDir= directory
-    suppressWarnings(targets <- read.450k.sheet(myDir))
-	rgSet <- read.450k.exp(targets = targets, extended=TRUE)
+    suppressWarnings(targets <- read.metharray.sheet(myDir))
+	rgSet <- read.metharray.exp(targets = targets, extended=TRUE)
     if(arraytype=="EPIC")
         rgSet@annotation <- c(array="IlluminaHumanMethylationEPIC",annotation="ilmn10.hg19")
 	sampleNames(rgSet)=rgSet[[1]]
