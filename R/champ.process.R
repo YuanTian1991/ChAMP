@@ -39,7 +39,7 @@ function(fromIDAT=TRUE, fromFile=FALSE,directory = getwd(), resultsDir=paste(get
 	
 	if(runDMR)
 	{
-        dmr <- champ.DMR(arraytype=arraytype,B=50)
+        dmr <- champ.DMR(arraytype=arraytype,B=10)
     }
     
 	if(runCNA)
