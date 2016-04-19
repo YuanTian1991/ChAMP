@@ -32,11 +32,6 @@ filter = TRUE, filterXY = TRUE, QCimages = FALSE, plotBMIQ = FALSE,arraytype="45
 	\item{QCimages}{If QCimages=TRUE, then quality control images are saved to the resultsDir. Default is TRUE.}
 	\item{plotBMIQ}{If plotBMIQ=TRUE and norm="BMIQ", BMIQ plots will be saved. Default is TRUE.}
 }
-\examples{
-	myLoad=champ.load(directory=system.file("extdata",package="ChAMPdata"))	
-	myNorm=champ.norm(norm="NONE")
-}
-
 \value{
 	\item{beta}{A matrix of normalised methylation scores (M or beta values) for all probes and all samples.}
 }

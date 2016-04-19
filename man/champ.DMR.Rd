@@ -51,7 +51,7 @@
 }
 \examples{
 	myLoad <- champ.load(directory=system.file("extdata",package="ChAMPdata"))	
-    myNorm <- champ.norm()
+    myNorm <- champ.norm(norm="NONE")
     myDMR <- champ.DMR(B=10)
 }
 

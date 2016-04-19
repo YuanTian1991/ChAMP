@@ -33,14 +33,6 @@ infoFactor = c(), resultsDir = paste(getwd(), "resultsChamp", sep = "/"))
 	\item{studyInfoFile}{If studyInfo =T, this file will include the additional study information. Default is "studyInfo.txt".}
 	\item{resultsDir}{Directory where results will be saved. Default is to create a folder called "resultsChamp"in the current working directory.}
 }
-
-\examples{
-	data(testDataSet)
-	myLoad=testDataSet
-	myNorm=champ.norm(norm="NONE")
-	champ.SVD()
-}
-
 \references{
 Teschendorff, A. E., Menon, U., Gentry-Maharaj, A., Ramus, S. J., Gayther, S. A., Apostolidou, S., Jones, A., Lechner, M., Beck, S., Jacobs, I. J., and Widschwendter, M. (2009). An epigenetic signature in peripheral blood predicts active ovarian cancer. PLoS One, 4(12), e8274
 

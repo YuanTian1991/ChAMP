@@ -20,6 +20,17 @@ import(quadprog)
 
 importFrom(RPMM, blc)
 
+importFrom("grDevices", "dev.off", "jpeg", "pdf", "rainbow")
+importFrom("graphics", "axis", "legend", "mtext", "par", "plot",
+            "segments", "title")
+importFrom("stats", "C", "cor", "density", "dist", "dnorm", "hclust",
+            "kruskal.test", "lm", "model.matrix", "na.omit", "p.adjust",
+            "pbeta", "pnorm", "pt", "qbeta", "qnorm", "qqline",
+            "qqnorm", "qqplot", "quantile", "rbeta", "rgamma",
+                                                          "rmultinom", "sd", "var")
+importFrom("utils", "capture.output", "data", "head", "read.delim",
+            "read.table", "write.table")
+
 export(
 	champ.process, 
 	champ.load, 
