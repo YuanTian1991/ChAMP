@@ -13,8 +13,11 @@ champ.refbase <- function(beta=myLoad$beta,arraytype="450K")
         DMRs450K <- intersect(rownames(CellTypeMeans450K), rownames(beta))
         cellFrac <- projectWBC(beta[DMRs450K,],CellTypeMeans450K[DMRs450K,],lessThanOne=TRUE)
     }
+    message("Mean value for each estimated Cell Proportion:")
+    print(colMeans(cellFrac))
+    message(names(which.min(colMeans(cellFrac)))," has smallest cell proportion, all other cell proportions will be corrected by linear regression method.")
 
-    lm.o <- lm(t(beta) ~ cellFrac[,1]+cellFrac[,2]+cellFrac[,3]+cellFrac[,4]+cellFrac[,5]+cellFrac[,6])
+    lm.o <- lm(t(beta) ~ cellFrac[,-1*which.min(colMeans(cellFrac))])
     tmp.m <- t(lm.o$res)+rowMeans(beta);
 
 	return(list(CorrectedBeta=tmp.m,CellFraction=cellFrac))

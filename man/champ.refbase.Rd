@@ -4,7 +4,7 @@
     Applying References-Base Methold to beta valued methylation data.
 }
 \description{
-    Applying References-Based Methold to correct cell-proportion in a methylation dataset. Reference-based method use purified whole blood cell-type specific methylation value to correct beta value dataset. Cell Proportions for each cell-type will be detected, and lm function will be used to correct beta value.
+    Applying References-Based Methold to correct cell-proportion in a methylation dataset. Reference-based method use purified whole blood cell-type specific methylation value to correct beta value dataset. Cell Proportions for each cell-type will be detected, and lm function will be used to correct beta value for 5 largest cell types. Cell type with smallest cell proportion will not be corrected.
 }
 \usage{
 champ.refbase(beta=myLoad$beta,arraytype="450K")
@@ -14,12 +14,13 @@ champ.refbase(beta=myLoad$beta,arraytype="450K")
 	\item{arraytype}{There are two types of purified cell-type specific references can be chosen, "450K" and "27K". By default, 450K value will be used, but user may choose 27K as well.}
 }
 \examples{
-	myLoad=champ.load(directory=system.file("extdata",package="ChAMPdata"))	
+    data(testDataSet)
+    myLoad=testDataSet
     myRefBase=champ.refbase(myLoad$beta)
 }
 
 \value{
-	\item{CorrectedBea}{A beta valued matrix, with all value get corrected with RefBaseEWAS method.}
+	\item{CorrectedBea}{A beta valued matrix, with all value get corrected with RefBaseEWAS method. Be aware, champ.refbase will only correct top 5 cell types with largest mean cell proportions, and leave the cell with smallest mean cell proportion. User may check CellFraction result to find out which cell types are get corrected.}
 	\item{CellFraction}{Proportion for each cell type.}
 }
 \references{
