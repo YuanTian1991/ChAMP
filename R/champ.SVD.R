@@ -154,7 +154,7 @@ champ.SVD <- function(beta=myNorm$beta,
 	PhenoTypes.lv <- list();
 
 	################Customise Phenotype Data########################
-	pd=pd[order(pd$Sample_Name),]
+	#pd=pd[order(pd$Sample_Name),] # A serious bug has been reported in https://support.bioconductor.org/p/86591/
 	well=unique(pd$Sample_Well)
 	plates=unique(pd$Sample_Plate)
 	groups=unique(pd$Sample_Group)
