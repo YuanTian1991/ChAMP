@@ -6,24 +6,23 @@
 ChAMP-Chip Analysis Methylation Pipeline
 }
 \description{
-A pipeline that enables pre-processing of 450k data, a selection of normalization methods and novel methods for downstream analysis including Probe Lasso DMR Hunter and Copy Number Alteration analysis.
+A pipeline that enables pre-processing of 450K or EPIC data, a selection of normalization methods and a bundle of analysis method including SVD checking, Batch effect correction, MVP, DMR, Block detection, Cell proportion detection, GSEA pathway detection, EpiMod module detection, and copy number variance detection. ChAMP provided a very comprehensive analysis pipeline for EPIC or 450K data set.
 }
 \details{
 \tabular{ll}{
 Package: \tab ChAMP\cr
 Type: \tab Package\cr
-Version: \tab 1.9.2\cr
-Date: \tab 2016-03-13\cr
+Version: \tab 1.10.2\cr
+Date: \tab 2016-08-24\cr
 License: \tab GPL-3\cr
 }
 The full analysis pipeline can be run with all defaults using champ.process()
-
 Alternatively, it can be run in steps using all functions separately.
 }
 
 \author{
-Tiffany Morris, Lee Stirling, Andy Feber, Andrew Teschendorff, Ankur Chakravarthy, Yuan Tian, Stephen Beck\cr
-\bold{Maintainer}: Yuan Tian, Tiffany Morris <champ450k@gmail.com>
+Yuan Tian, Tiffany Morris, Lee Stirling, Andy Feber, Andrew Teschendorff, Ankur Chakravarthy, Stephen Beck\cr
+\bold{Maintainer}: Yuan Tian  <champ450k@gmail.com>
 }
 \keyword{ package }
 \keyword{ methylation}
@@ -32,18 +31,31 @@ Tiffany Morris, Lee Stirling, Andy Feber, Andrew Teschendorff, Ankur Chakravarth
 \keyword{ array }
 \keyword{ Beadchip }
 \keyword{ DNAMethylation }
-\keyword{ Epic }
+\keyword{ EPIC }
 \examples{
 \donttest{
 	directory=system.file('extdata',package='ChAMPdata')
 	champ.process(directory=directory)
-	myLoad=champ.load()
-	myNorm=champ.norm()
-    myRefBase=champ.refbase()
-	champ.SVD()
-	batchNorm=champ.runCombat()
-	limma=champ.MVP()
-	myDMR=champ.DMR()
-	champ.CNA()
+    ### run champ functions separately.
+    myLoad <- champ.load(directory)
+    myImpute <- champ.impute()
+    champ.QC()
+    myNorm <- champ.norm()
+    champ.SVD()
+    myCombat <- champ.runCombat()
+    myMVP <- champ.MVP()
+    myDMR <- champ.DMR()
+    myBlock <- champ.Block()
+    myGSEA <- champ.GSEA()
+    myEpiMod <- champ.EpiMod()
+    myCNA <- champ.CNA()
+    myRefFree <- champ.reffree()
+    myRefbase <- champ.refbase() ### for blood sample only
+
+    CpG.GUI()
+    QC.GUI()
+    MVP.GUI()
+    DMR.GUI()
+    Block.GUI()
 	}
 }

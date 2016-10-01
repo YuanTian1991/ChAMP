@@ -2,44 +2,48 @@
 \alias{champ.SVD}
 
 \title{
-Singular Value Decomposition analysis for batch effects prediciton in HumanMethylation450 data
+Singular Value Decomposition analysis for batch effects prediciton in HumanMethylation450 or HumanMethylationEPIC data
 }
 
 \description{
-Runs Singular Value Decomposition on a dataset to estimate the impact of batch effects. 
+    Runs Singular Value Decomposition on a dataset to estimate the impact of batch effects. This function would run SVD deconvolution on beta matrix, get components explain most variance in original data set. Then use Random Matrix Theory to estimate numbers of latent variables. Then each significant components would be correlated with each phenotype, to see if this phenotype show significant correlation with this component. All suitable factors in your pd(Sample_Sheet.csv) file will be analysed. After champ.SVD(), used would get a heatmap indicating effect of factors on original data set. And decide if some batch effect shall be corrected before future analysis. Not all factors in your pd file woule be analysis though, name information like Sample_Name, Pool_ID... would be discarded, covariates contain less then 2 variances shall be discarded as well. Note that numeric covariates like age would be calculated with linear regression, while factors and character covariates like Sample_Group would be calculated with Krustal Test. Thus please check your input pd file carefully as well.
 }
+
 \usage{
-champ.SVD(beta = myNorm$beta, rgSet = myLoad$rgSet, detP = myLoad$detP, pd = myLoad$pd, 
-loadFile = FALSE, betaFile = "beta.txt", sampleSheet = "sampleSheet.txt", methProfile = FALSE, 
-methFile = "MethylationProbeProfile.txt", controlProfile = FALSE, 
-controlFile = "ControlProbeProfile.txt", studyInfo = FALSE, studyInfoFile = "studyInfo.txt", 
-infoFactor = c(), resultsDir = paste(getwd(), "resultsChamp", sep = "/"))
+    champ.SVD(beta = myNorm,
+              rgSet=myLoad$rgSet,
+              pd=myLoad$pd,
+              RGEffect=FALSE,
+              PDFplot=TRUE,
+              Rplot=TRUE,
+              resultsDir="./CHAMP_SVDimages/")
 }
 
 \arguments{
-	\item{beta}{A matrix of values representing the methylation scores for each sample (M or B). The default assumes you ran champ.norm and saved the output to "myNorm".}
-	\item{rgSet}{An rgSet object that was created when data was loaded the data from the .idat files. The default assumes you ran champ.load and saved the output to "myLoad".}
-	\item{detP}{A matrix of detection p-values for each sample. The default assumes you ran champ.load and saved the output to "myLoad".}
-	\item{pd}{This data.frame includes the information from the sample sheet. The default assumes you ran champ.load and saved the output to "myLoad".}
-	\item{loadFile}{If loadFile=TRUE, then the beta values and sample sheet need to be  uploaded}  
-	\item{betaFile}{If loadFile=T, }
-	\item{sampleSheet}{If the data has not been loaded from .idat files and fromFile=TRUE then this points to the required sampleSheet. Default is "sampleSheet.txt"}
-	\item{methProfile}{If methprofile=TRUE then the beta values will be uploaded using the MethylationProbeProfile file from Genome Studio}
-	\item{methFile}{If methProfile=TRUE then the beta values will be uploaded using the MethylationProbeProfile from Genome Studio. This is the name of the file. Default is "MethylationProbeProfile.txt"}
-	\item{controlProfile}{If rawdata = FALSE and runSVD = TRUE, then it is useful to have a control probe profile file exported from Genome Studio so that internal control probes can be included in the SVD analyis. Default is FALSE.}
-	\item{controlFile}{If controlProfile = TRUE then the control probe values will be uploaded using the ControlProbeProfile from Genome Studio. This is the name of the file. Default is "ControlProbeProfile.txt"}
-	\item{studyInfo}{If studyInfo=TRUE, additional study covariate information can be included in the SVD analysis. Default is FALSE.}
-	\item{infoFactor}{This.}	
-	\item{studyInfoFile}{If studyInfo =T, this file will include the additional study information. Default is "studyInfo.txt".}
-	\item{resultsDir}{Directory where results will be saved. Default is to create a folder called "resultsChamp"in the current working directory.}
+	\item{beta}{beta matrix waiting to be analysed, better to be one get Probe-Type normalized and imputed. (default = myNorm)}
+	\item{rgSet}{An rgSet object that was created when data was loaded the data from the .idat files, which contains green and red color information of original data set, might be used if RGEffect set TRUE. (default = myLoad$rgSet)}
+	\item{pd}{This data.frame includes the information from the sample sheet. (default = myLoad$pd)}
+	\item{RGEffect}{If Green and Red color control probes would be calculated. (default = FALSE)}
+    \item{PDFplot}{If PDFplot would be generated and save in resultsDir. (default = TRUE)}
+    \item{Rplot}{If Rplot would be generated and save in resultsDir. Note if you are doing analysis on a server remotely, please make sure the server could connect your local graph applications. (For example X11 for linux.) (default = TRUE)}
+    \item{resultsDir}{The directory where PDF files would be saved. (default = "./CHAMP_SVDimages/")}
 }
-\references{
-Teschendorff, A. E., Menon, U., Gentry-Maharaj, A., Ramus, S. J., Gayther, S. A., Apostolidou, S., Jones, A., Lechner, M., Beck, S., Jacobs, I. J., and Widschwendter, M. (2009). An epigenetic signature in peripheral blood predicts active ovarian cancer. PLoS One, 4(12), e8274
 
+\examples{
+    \dontrun{
+        myLoad <- champ.load(directory=system.file("extdata",package="ChAMPdata"))
+        myNorm <- champ.norm()
+        champ.SVD()
+        }
+}
+
+
+\references{
+    Teschendorff, A. E., Menon, U., Gentry-Maharaj, A., Ramus, S. J., Gayther, S. A., Apostolidou, S., Jones, A., Lechner, M., Beck, S., Jacobs, I. J., and Widschwendter, M. (2009). An epigenetic signature in peripheral blood predicts active ovarian cancer. PLoS One, 4(12), e8274
 }
 \author{
-Teschendorff, A \cr
-adapted by Morris, T
+    Teschendorff, A \cr
+    adapted by Yuan Tian
 }
 
 \keyword{ batch effects }

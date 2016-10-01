@@ -1,28 +1,33 @@
 Package: ChAMP
 Type: Package
 Title: Chip Analysis Methylation Pipeline for Illumina HumanMethylation450 and EPIC
-Version: 1.11.1
-Date: 2016-04-25
-Description: The package includes quality control metrics, a selection
-        of normalization methods and novel methods to identify
-        differentially methylated regions and to highlight copy number
-        alterations. In addition there is a method to help calculate hmC using BS and oxBS samples.
-Authors@R: c(person("Tiffany", "Morris", role = c("cre", "aut"),
+Version: 2.0.1
+Date: 2016-10-01
+Description: The package includes quality control metrics, a selection of normalization methods and novel methods to identify differentially methylated regions and to highlight copy number alterations.
+Authors@R: c(person("Tian","Yuan", role = c("cre", "aut"),
                     email = "champ450k@gmail.com"),
-		person("Tian","Yuan",role = "aut"),
+		person("Tiffany","Morris",role = "ctb"),
              person("Lee", "Stirling", role = "ctb"),
              person("Andrew", "Feber", role = "ctb"),
 	     person("Andrew", "Teschendorff", role = "ctb"),
 	     person("Ankur", "Chakravarthy", role = "ctb"))
 License: GPL-3
-Depends: R (>= 3.2), minfi, ChAMPdata, Illumina450ProbeVariants.db
-Imports: sva, IlluminaHumanMethylation450kmanifest, limma,RPMM, DNAcopy, preprocessCore, impute, marray, wateRmelon, plyr, GenomicRanges,RefFreeEWAS,qvalue,isva,doParallel,bumphunter,quadprog
+VignetteBuilder: knitr
+Depends: R (>= 3.3), minfi, ChAMPdata, FEM (>= 3.1),DMRcate,
+             Illumina450ProbeVariants.db,IlluminaHumanMethylationEPICmanifest
+Imports: sva, IlluminaHumanMethylation450kmanifest, limma,RPMM, DNAcopy, preprocessCore,impute, marray, wateRmelon,
+             plyr,
+             GenomicRanges,RefFreeEWAS,qvalue,isva,doParallel,bumphunter,quadprog,shiny,shinythemes,plotly,RColorBrewer,dendextend,
+             matrixStats
 biocViews: Microarray, MethylationArray, Normalization, TwoChannel, CopyNumber, DNAMethylation
-Author: Tiffany Morris [cre, aut],
-  Yuan Tian [aut],
+Suggests: knitr,rmarkdown
+Author: Yuan Tian [cre,aut],
+  Tiffany Morris [ctb],
   Lee Stirling [ctb],
   Andrew Feber [ctb],
   Andrew Teschendorff [ctb],
   Ankur Chakravarthy [ctb]
-Maintainer: Yuan Tian, Tiffany Morris <champ450k@gmail.com>
+Maintainer: Yuan Tian  <champ450k@gmail.com>
 NeedsCompilation: no
+LazyData: true
+Packaged: 2016-10-01 16:06:48 UTC; regmtyu@pogb.cancer.ucl.ac.uk

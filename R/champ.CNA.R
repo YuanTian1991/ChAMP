@@ -1,226 +1,168 @@
-if(getRversion() >= "3.1.0") utils::globalVariables(c("myLoad","probe.features","bloodCtl"))
+if(getRversion() >= "3.1.0") utils::globalVariables(c("myLoad","probe.features","probe.features.epic","bloodCtl"))
 
-champ.CNA <-
-function(intensity=myLoad$intensity, pd=myLoad$pd, loadFile=FALSE, batchCorrect=TRUE, file="intensity.txt", resultsDir=paste(getwd(),"resultsChamp",sep="/"), sampleCNA=TRUE,plotSample=TRUE, filterXY=TRUE, groupFreqPlots=TRUE,freqThreshold=0.3, control=TRUE, controlGroup="Control",arraytype="450K")
+champ.CNA <- function(intensity=myLoad$intensity,
+                      pheno=myLoad$pd$Sample_Group,
+                      control=TRUE,
+                      controlGroup="champCtls",
+                      sampleCNA=TRUE,
+                      groupFreqPlots=TRUE,
+                      Rplot=FALSE,
+                      PDFplot=TRUE,
+                      freqThreshold=0.3,
+                      resultsDir="./CHAMP_CNA",
+                      arraytype="450K")
 {
-    if(arraytype=="EPIC"){
-        data(probe.features.epic)
-    }else{
-        data(probe.features)
-    }
-	normalize.quantiles<-NULL
-    rm(normalize.quantiles)
-	control.intsqnlog<-NULL
-	CNA<-NA
-	rm(CNA)
-	smooth.CNA<-NA
-	rm(smooth.CNA)
-	segment<-NA
-	rm(segment)
-	
-	message("Run champ.CNA")
-	newDir=paste(resultsDir,"CNA",sep="/")
-    
-	if(!file.exists(resultsDir)){dir.create(resultsDir)}
-	if(!file.exists(newDir))
-	{
-		dir.create(newDir)
-	}
-		
-	if(loadFile)
-	{
-		ints = read.table(file,row.names =T, sep = "\t")
-        if(filterXY)
-        {
-            autosomes=probe.features[!probe.features$CHR %in% c("X","Y"), ]
-            ints=ints[row.names(ints) %in% row.names(autosomes), ]
-        }
-	}else
-	{
-		ints=intensity
-	}
+    message("[===========================]")
+    message("[<<<<< ChAMP.CNA START >>>>>]")
+    message("-----------------------------")
+
+    if (!file.exists(resultsDir)) dir.create(resultsDir)
+    message("champ.CNA Results will be saved in ",resultsDir," .\n")
+
+    if(arraytype=="EPIC") data(probe.features.epic) else data(probe.features)
+
+    message("ChaMP.CNA does not provide batch Correct on intensity data now, but you can use champ.runCombat to correct slides batch yourself.")
 	
 	if(control)
 	{
-		        	
-        if(controlGroup != "champCtl" & !(controlGroup %in% pd$Sample_Group))
+        message("<< Create Control Data >>")
+        if(controlGroup != "champCtls" & !(controlGroup %in% pheno))
         {
         	message("You have chosen ", controlGroup, " as the reference and this does not exist in your sample sheet (column Sample_Group). The analysis will run with ChAMP blood controls.")
-        	controlGroup="champCtl"
+        	controlGroup="champCtls"
         }
-        
-        if(controlGroup == "champCtl")
+        if(controlGroup == "champCtls")
         {
-            #load("champBloodCtls.Rdata")
+            message("<< Combining champ bloodCtl dataset into your intensity dataset as control >>")
             data(champBloodCtls)
             ctlIntensity=bloodCtl$intensity
-            ctlIntensity=ctlIntensity[which(row.names(ctlIntensity) %in% row.names(ints)),]
-		
-            ints=cbind(ints,ctlIntensity)
-            pd=rbind(pd,bloodCtl$pd)
-            batchCorrect=F
+            intensity <- cbind(intensity,ctlIntensity[rownames(intensity),])
+            pheno <- c(pheno,bloodCtl$pd$Sample_Group)
+            message("champ bloodCtl dataset contains only two samples, they will be used as control groups.")
         }
 	}
-	
+
 	#Extracts names of samples 
-	names<-colnames(ints)
-
+	names <- colnames(intensity)
 	#Quantile normalises intensities	
-	intsqn<-normalize.quantiles(as.matrix(ints))
+	intsqn <- normalize.quantiles(as.matrix(intensity))
 	colnames(intsqn)<-names
-
-
 	#Calculates Log2
 	intsqnlog<-log2(intsqn)
     	
-	if(batchCorrect)
-	{
-		message("Run batch correction for CNA")
-		combat=champ.runCombat(beta.c=intsqnlog,pd=pd,logitTrans=FALSE)
-		intsqnlog=combat$beta
-	}
-
 	if(control)
 	{
-        	#separates case from control(reference sample/samples)        	
-        	message("champ.CNA is using the samples you have defined as ", controlGroup," as the reference for calculating copy number aberrations.")
-        	if(controlGroup=="champCtl")
-        	{
-        		message("As you are using the ChAMP controls Combat cannot adjust for batch effects. Batch effects may affect your dataset.")
-        	}
-        
-        	
-        	controlSamples= pd[which(pd$Sample_Group==controlGroup),]
-        	caseSamples= pd[which(pd$Sample_Group != controlGroup),]
-		case.intsqnlog<-intsqnlog[,which(colnames(intsqnlog) %in% caseSamples$Sample_Name)]
-	        control.intsqnlog<-intsqnlog[,which(colnames(intsqnlog) %in% controlSamples$Sample_Name)]
-       	 	control.intsqnlog<-rowMeans(control.intsqnlog)
-        
-        	intsqnlogratio<-case.intsqnlog
-        	for(i in 1:ncol(case.intsqnlog))
-        	{
-            		intsqnlogratio[,i]<-case.intsqnlog[,i]-control.intsqnlog
-        	}
-			
+        message("<< Calculate mean value difference between each sample to mean control samples >>")
+        intsqnlogratio <- apply(intsqnlog[,which(!pheno %in% controlGroup)],2,function(x) x - rowMeans(as.data.frame(intsqnlog[,which(pheno %in% controlGroup)])))
 	}else
 	{
-			message("champ.CNA is using an average of all your samples as the reference for calculating copy number aberrations.")
-			#Creates alternate reference sample from rowMeans if proper reference /control is not available 
-			case.intsqnlog<-intsqnlog[,1:length(names)]
-			ref.intsqnlog<-rowMeans(intsqnlog)
-   
-        	intsqnlogratio<-intsqnlog
-        	for(i in 1:ncol(case.intsqnlog))
-        	{
-            		intsqnlogratio[,i]<-case.intsqnlog[,i]-ref.intsqnlog
-        	}
+        message("<< Calculate mean value difference between each sample to mean all samples >>")
+        intsqnlogratio <- apply(intsqnlog[,which(!pheno %in% controlGroup)],2,function(x) x - rowMeans(intsqnlog))
 	}
 
-	ints <- data.frame(ints, probe.features$MAPINFO[match(rownames(ints), rownames(probe.features))])
-	names(ints)[length(ints)] <- "MAPINFO"
-	ints <- data.frame(ints, probe.features$CHR[match(rownames(ints), rownames(probe.features))])
-	names(ints)[length(ints)] <- "CHR"
+    ints <- data.frame(intensity,probe.features[rownames(intensity),c("MAPINFO","CHR")])
+	ints$MAPINFO <- as.numeric(ints$MAPINFO)
 
 	#Replaces Chr X and Y with 23 and 24
-	levels(ints$CHR)[levels(ints$CHR)=='X']='23'
-	levels(ints$CHR)[levels(ints$CHR)=='Y']='24'
+	levels(ints$CHR)[levels(ints$CHR)=='X'] <- '23'
+	levels(ints$CHR)[levels(ints$CHR)=='Y'] <- '24'
 
-	#converts CHR factors to numeric 
-	CHR<-as.numeric(levels(ints$CHR))[ints$CHR]
+    message("<< Generate CHR and MAPINFO information >>")
+	CHR <- ints$CHR
+    MAPINFO <- ints$MAPINFO
 
-	#need to copy in MAPINFO
-	ints$MAPINFO<-as.numeric(ints$MAPINFO)
-	MAPINFO=probe.features$MAPINFO[match(rownames(ints), rownames(probe.features))]
-	MAPINFO<-as.numeric(MAPINFO)
 
 	#Runs CNA and generates individual DNA Copy Number profiles
+    sampleResult <- list()
 	if(sampleCNA)
 	{
-		message("Saving Copy Number information for each Sample")
-		for(i in 1:ncol(case.intsqnlog))
+	    message("<< Processing Samples >>")
+		for(i in 1:ncol(intsqnlogratio))
 		{
-			CNA.object <- CNA(cbind(intsqnlogratio[,i]), CHR, MAPINFO ,data.type = "logratio", sampleid = paste(colnames(case.intsqnlog)[i],"qn"))
+			CNA.object <- CNA(cbind(intsqnlogratio[,i]), CHR, MAPINFO ,data.type = "logratio", sampleid = paste(colnames(intsqnlogratio)[i],"qn"))
 			smoothed.CNA.object <- smooth.CNA(CNA.object)
 			segment.smoothed.CNA.object <- segment(smoothed.CNA.object, verbose = 1,alpha=0.001, undo.splits="sdundo", undo.SD=2)
-			if(plotSample)
+			seg <- segment.smoothed.CNA.object$output
+            sampleResult[[colnames(intsqnlogratio)[i]]] <- seg
+
+            if(Rplot)
+                plot(segment.smoothed.CNA.object, plot.type = "w", ylim=c(-6,6))
+			if(PDFplot)
 			{
-				imageName<-paste(colnames(case.intsqnlog)[i],"qn.jpg",sep="")
-				imageName=paste(newDir,imageName,sep="/")
-				jpeg(imageName)
+				imageName<-paste(colnames(intsqnlog)[i],"qn.jpg",sep="")
+				imageName=paste(resultsDir,imageName,sep="/")
+				pdf(imageName)
 				plot(segment.smoothed.CNA.object, plot.type = "w", ylim=c(-6,6))
 				dev.off()
 			}
-			seg<-segment.smoothed.CNA.object$output
-			table_name<-paste(newDir,"/",colnames(case.intsqnlog)[i],"qn.txt",sep="")
-			write.table(seg,table_name, sep="\t", col.names=T, row.names=F, quote=FALSE)
 		}
 	}
 	
-	##group Frequency plots
+
+    groupResult <- list()
 	if(groupFreqPlots)
 	{
-	message("Saving frequency plots for each group")
-        
-        if(control)
-        {
-            groups = unique(pd$Sample_Group)
-	    groups = groups[!groups==controlGroup]
-        }else
-        {
-            groups = unique(pd$Sample_Group)
-        }
-	
+        message("<< Processing Groups >>")
+        if(control) groups <- setdiff(unique(pheno),controlGroup) else groups <- unique(pheno)	
 		for(g in 1:length(groups))
 		{
 		
-			pd_group = pd[which(pd$Sample_Group==groups[g]),]
-			data_group=intsqnlogratio[,which(colnames(intsqnlogratio) %in% pd_group$Sample_Name)]
-			ints_group=ints[,which(colnames(ints) %in% pd_group$Sample_Name)]
+			data_group=intsqnlogratio[,which(pheno == groups[g])]
+			ints_group=ints[,which(pheno == groups[g])]
 			row.names(ints_group)=row.names(ints)
 	
-			group.CNA.object <- CNA(data_group, CHR, MAPINFO,data.type = "logratio", sampleid = paste(paste(pd_group$Sample_Name,pd_group$Sample_Group),"qn"))
+			group.CNA.object <- CNA(data_group, CHR, MAPINFO,data.type = "logratio", sampleid = paste(paste(colnames(data_group),pheno[which(pheno == groups[g])]),"qn"))
 			group.smoothed.CNA.object <- smooth.CNA(group.CNA.object)
 			group.segment.smoothed.CNA.object <- segment(group.smoothed.CNA.object, verbose = 1,alpha=0.001, undo.splits="sdundo", undo.SD=2)
+            seg <- group.segment.smoothed.CNA.object$output
+            groupResult[[groups[g]]] <- seg
 		
 			group.freq = glFrequency(group.segment.smoothed.CNA.object,freqThreshold)		
 	
-			#begin plot
-			ints = ints[order(ints$CHR,ints$MAPINFO),]
-			labels_chr <- data.matrix(summary(as.factor(ints$CHR)))
-
-			test1<- data.frame(labels_chr,row.names(labels_chr) )
-			test <- data.frame(unique(CHR))
-			colnames(test) = c("chr")
-			colnames(test1) = c("count","chr")
-			F1 <- merge(test,test1, by="chr", sort=T)
-			for(i in 2:length(row.names(F1))){F1[i,2] = F1[i-1,2] + F1[i,2] ; }
-
-			F1$label <- NULL ; F1[1,3] <- F1[1,2] / 2 ;	
-			for (i in 2:length(row.names(F1))){ F1[i,3] <- (F1[i,2]+F1[i-1,2])/2; }
+            innerplot <- function(ints,group.freq,g)
+            {
+                ints = ints[order(ints$CHR,ints$MAPINFO),]
+                labels_chr <- data.matrix(summary(as.factor(ints$CHR)))
+                test1<- data.frame(labels_chr,row.names(labels_chr) )
+                test <- data.frame(unique(CHR))
+                colnames(test) = c("chr")
+                colnames(test1) = c("count","chr")
+                F1 <- merge(test,test1, by="chr", sort=T)
+                for(i in 2:length(row.names(F1))){F1[i,2] = F1[i-1,2] + F1[i,2] ; }
+                F1$label <- NULL ; F1[1,3] <- F1[1,2] / 2 ;	
+                for (i in 2:length(row.names(F1))){ F1[i,3] <- (F1[i,2]+F1[i-1,2])/2; }
 	
-			y1=group.freq$gain
-			y2=group.freq$loss
+                y1=group.freq$gain
+                y2=group.freq$loss
 
-			imageName1=paste(groups[g],"_","FreqPlot.pdf",sep="")
-			imageName1=paste(newDir,imageName1,sep="/")
-			graphTitle = paste("Frequency Plot of ",groups[g]," Samples",sep="")
-		
-			pdf(imageName1, width = 10.0, height = 9.0)
-		
-			#plot gain
-			plot(y1, type='h',  xaxt="n",  yaxt="n", col="green", main = graphTitle , ylim=range(-1, 1), xlab='Chromosome Number',  ylab=paste('Fraction of Samples with Gain or Loss (n=',dim(data_group)[2],")",sep=""),xaxs = "i", yaxs = "i")
+                graphTitle = paste("Frequency Plot of ",groups[g]," Samples",sep="")
+                #plot gain
+                plot(y1, type='h',  xaxt="n",  yaxt="n", col="green", main = graphTitle , ylim=range(-1, 1), xlab='Chromosome Number',  ylab=paste('Fraction of Samples with Gain or Loss (n=',dim(data_group)[2],")",sep=""),xaxs = "i", yaxs = "i")
 
-			#plot loss
-			points(y2, type='h', col="red")
+                #plot loss
+                points(y2, type='h', col="red")
 
-			#label for chromosomes
-			x= c(-1,-0.8,-0.6,-0.4,-0.2,0,0.2,0.4,0.6,0.8,1)
-			y= c(1:length(F1[,2]))
-			axis(1, at = c(F1[,2]), labels =FALSE, tick = TRUE, las = 1, col = "black", lty = "dotted", tck = 1 );
-			axis(1, at = c(F1[,3]), labels =F1$chr, tick = FALSE );
-			axis(2, at = c(x), labels=x, tick = TRUE, las = 1, col = "black", lty = "dotted", tck = 1 );
-			dev.off()
+                #label for chromosomes
+                x= c(-1,-0.8,-0.6,-0.4,-0.2,0,0.2,0.4,0.6,0.8,1)
+                y= c(1:length(F1[,2]))
+                axis(1, at = c(F1[,2]), labels =FALSE, tick = TRUE, las = 1, col = "black", lty = "dotted", tck = 1 );
+                axis(1, at = c(F1[,3]), labels =F1$chr, tick = FALSE );
+                axis(2, at = c(x), labels=x, tick = TRUE, las = 1, col = "black", lty = "dotted", tck = 1 );
+            }
+			#begin plot
+            if(Rplot) innerplot(ints,group.freq,g)
+            if(PDFplot)
+            {
+                imageName1=paste(groups[g],"_","FreqPlot.pdf",sep="")
+                imageName1=paste(resultsDir,imageName1,sep="/")
+                pdf(imageName1, width = 10.0, height = 9.0)
+                innerplot(ints,group.freq,g)
+                dev.off()
+            }
 		}
 	}
 
+    message("[<<<<<< ChAMP.CNA END >>>>>>]")
+    message("[===========================]")
+    return(list(sampleResult=sampleResult,groupResult=groupResult))
 }

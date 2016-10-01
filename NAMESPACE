@@ -1,7 +1,6 @@
 import(limma)
 import(DNAcopy)
 import(preprocessCore)
-import(impute)
 import(marray)
 import(sva)
 import(IlluminaHumanMethylation450kmanifest)
@@ -17,6 +16,16 @@ import(qvalue)
 import(bumphunter)
 import(doParallel)
 import(quadprog)
+import(shiny)
+import(shinythemes)
+import(plotly)
+import(RColorBrewer)
+import(DMRcate)
+import(dendextend)
+import(sva)
+import(IlluminaHumanMethylationEPICmanifest)
+import(FEM)
+import(impute)
 
 importFrom(RPMM, blc)
 
@@ -31,16 +40,30 @@ importFrom("stats", "C", "cor", "density", "dist", "dnorm", "hclust",
 importFrom("utils", "capture.output", "data", "head", "read.delim",
             "read.table", "write.table")
 
+importFrom("grDevices", "colorRampPalette")
+importFrom("stats", "aggregate", "as.dendrogram", "as.formula","bartlett.test",
+           "cmdscale", "fisher.test", "fitted","loess", "order.dendrogram", "t.test")
+
+
 export(
 	champ.process, 
-	champ.load, 
-    champ.refbase,
-    champ.reffree,
-    champ.DMR,
-	champ.norm, 
-	champ.CNA, 
-	champ.SVD, 
+    champ.load,
+	champ.impute, 
+    champ.QC,
+    champ.norm,
+    champ.SVD,
+    champ.runCombat,
 	champ.MVP, 
-	champ.runCombat,
-	champ.TrueMethyl
+	champ.DMR, 
+	champ.Block, 
+	champ.GSEA, 
+	champ.EpiMod,
+    champ.CNA,
+    champ.reffree,
+    champ.refbase,
+    MVP.GUI,
+    DMR.GUI,
+    QC.GUI,
+    CpG.GUI,
+    Block.GUI
 	) 

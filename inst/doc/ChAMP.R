@@ -1,148 +1,207 @@
-### R code from vignette source 'ChAMP.Rnw'
+## ----eval=FALSE----------------------------------------------------------
+#  source("http://bioconductor.org/biocLite.R")
+#  biocLite(c("minfi","ChAMPdata","Illumina450ProbeVariants.db","sva","IlluminaHumanMethylation450kmanifest","limma","RPMM","DNAcopy","preprocessCore","impute","marray","wateRmelon","plyr","GenomicRanges","RefFreeEWAS","qvalue","isva","doParallel","bumphunter","quadprog","shiny","shinythemes","plotly","RColorBrewer","DMRcate","dendextend","IlluminaHumanMethylationEPICmanifest","FEM","matrixStats"))
 
-###################################################
-### code chunk number 1: InstallLibraries (eval = FALSE)
-###################################################
-## source("http://bioconductor.org/biocLite.R")
-## biocLite(c('minfi', 'DNAcopy', 'impute', 'marray', 'limma',
-## 'preprocessCore', 'RPMM', 'sva', 'IlluminaHumanMethylation450kmanifest',
-## 'wateRmelon','isva','quadprog','bumphunter','doParallel',
-## 'qvalue','RefFreeEWAS','GenomicRanges','plyr'))
+## ----eval=TRUE,message=FALSE, warning=FALSE------------------------------
+library("ChAMP")
 
+## ----eval=FALSE----------------------------------------------------------
+#  testDir=system.file("extdata",package="ChAMPdata")
+#  myLoad <- champ.load(testDir,arraytype="450K")
 
-###################################################
-### code chunk number 2: loadChAMPLibrary
-###################################################
-library(ChAMP)
+## ----eval=FALSE----------------------------------------------------------
+#  data(EPICSimData)
 
+## ---- out.width = 800, fig.retina = NULL,echo=F--------------------------
+knitr::include_graphics("Figure/ChAMP_Pipeline.png")
 
-###################################################
-### code chunk number 3: loadTest
-###################################################
-testDir=system.file("extdata",package="ChAMPdata")
+## ----eval=FALSE----------------------------------------------------------
+#  champ.process(directory = testDir)
 
+## ----eval=FALSE----------------------------------------------------------
+#  myLoad <- cham.load(testDir)
+#  CpG.GUI()
+#  champ.QC() # Alternatively: QC.GUI()
+#  myNorm <- champ.norm()
+#  champ.SVD()
+#  # If Batch detected, run champ.runCombat() here.
+#  myMVP <- champ.MVP()
+#  MVP.GUI()
+#  myDMR <- champ.DMR()
+#  DMR.GUI()
+#  myBlock <- champ.Block()
+#  Block.GUI()
+#  myGSEA <- champ.GSEA()
+#  myEpiMod <- champ.EpiMod()
+#  myCNA <- champ.CNA()
+#  myRefFree <- champ.reffree()
+#  # If DataSet is Blood samples, run champ.refbase() here.
 
-###################################################
-### code chunk number 4: loadTest2
-###################################################
-data(testDataSet)
-myLoad=testDataSet
+## ----eval=FALSE----------------------------------------------------------
+#  # myLoad <- champ.load(directory = testDir,arraytype="EPIC")
+#  # We simulated EPIC data from beta value instead of .idat file,
+#  # but user may use above code to read .idat files directly.
+#  # Here we we started with myLoad.
+#  
+#  data(EPICSimData)
+#  CpG.GUI(arraytype="EPIC")
+#  champ.QC() # Alternatively QC.GUI(arraytype="EPIC")
+#  myNorm <- champ.norm(arraytype="EPIC")
+#  champ.SVD()
+#  # If Batch detected, run champ.runCombat() here.This data is not suitable.
+#  myMVP <- champ.MVP(arraytype="EPIC")
+#  MVP.GUI()
+#  myDMR <- champ.DMR()
+#  DMR.GUI()
+#  myDMR <- champ.DMR(arraytype="EPIC")
+#  DMR.GUI(arraytype="EPIC")
+#  myBlock <- champ.Block(arraytype="EPIC")
+#  Block.GUI(arraytype="EPIC") # For this simulation data, not Differential Methylation Block is detected.
+#  myGSEA <- champ.GSEA(arraytype="EPIC")
+#  myEpiMod <- champ.EpiMod(arraytype="EPIC")
+#  myRefFree <- champ.reffree()
+#  
+#  # champ.CNA(arraytype="EPIC")
+#  # champ.CNA() function call for intensity data, which is not included in our Simulation data.
 
+## ----eval=FALSE----------------------------------------------------------
+#  library("doParallel")
+#  detectCores()
 
-###################################################
-### code chunk number 5: processFunctionIDAT (eval = FALSE)
-###################################################
-## champ.process(directory = testDir)
+## ----eval=FALSE----------------------------------------------------------
+#  myLoad <- champ.load(testDir)
+#  ## We are not running this code here because it cost about 1 minute.
 
+## ----eval=FALSE----------------------------------------------------------
+#  data(testDataSet)
 
-###################################################
-### code chunk number 6: processSAVE (eval = FALSE)
-###################################################
-## save(myLoad,file="currentStudyloadedData.RData")
-## load("currentStudyloadedData.RData")
-## champ.process(fromIDAT=FALSE)
+## ----echo=FALSE----------------------------------------------------------
+load("./testDataSet.rda")
 
-
-###################################################
-### code chunk number 7: processSTEPbySTEP (eval = FALSE)
-###################################################
-## myLoad <- champ.load(directory = testDir)
-## myNorm <- champ.norm()
-## champ.SVD()
-## batchNorm <- champ.runCombat()
-## limma <- champ.MVP()
-## myDMR <- champ.DMR()
-## myRefBase <- champ.refbase()
-## myRefFree <- champ.reffree()
-## champ.CNA()
-
-
-###################################################
-### code chunk number 8: EPICprocessSTEPbySTEP (eval = FALSE)
-###################################################
-## # myLoad <- champ.load(directory = testDir,arraytype="EPIC")
-## # We simulated EPIC data from beta value instead of .idat file,
-## # but user may use above code to read .idat files directly. 
-## # Here we we started with myLoad.
-## data(EPICSimData)
-## 
-## myNorm <- champ.norm(arraytype="EPIC")
-## champ.SVD()
-## batchNorm <- champ.runCombat()
-## myrefbase <- champ.refbase()
-## myreffree <- champ.reffree()
-## limma <- champ.MVP(arraytype="EPIC")
-## myDMR <- champ.DMR(arraytype="EPIC")
-## 
-## # champ.CNA(arraytype="EPIC")
-## # champ.CNA() function call for intensity data, which is not included in 
-## # out Simulation data.
-
-
-###################################################
-### code chunk number 9: SampleSheet
-###################################################
+## ----eval=TRUE-----------------------------------------------------------
 myLoad$pd
 
+## ----eval=FALSE----------------------------------------------------------
+#  CpG.GUI(CpG=rownames(myLoad$beta),arraytype="450K")
 
-###################################################
-### code chunk number 10: load (eval = FALSE)
-###################################################
-## myLoad=champ.load(directory = testDir, filterBeads=TRUE)
+## ---- out.width = 800, fig.retina = NULL,echo=F--------------------------
+knitr::include_graphics("Figure/CpGGUI.png")
 
+## ----eval=TRUE,dpi=100,fig.width=7,fig.height=4,message=FALSE------------
+champ.QC()
 
-###################################################
-### code chunk number 11: loadFunction
-###################################################
-myLoad = champ.load(directory=testDir)
+## ----eval=FALSE----------------------------------------------------------
+#  CpG.GUI(CpG=rownames(myLoad$beta),arraytype="450K")
 
+## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
+knitr::include_graphics("Figure/QCGUI.jpg")
 
-###################################################
-### code chunk number 12: normFunction
-###################################################
-myNorm=champ.norm()
+## ----eval=FALSE----------------------------------------------------------
+#  myNorm <- champ.norm(beta=myLoad$beta,arraytype="450K",cores=5)
 
+## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
+knitr::include_graphics("Figure/BMIQ.jpg")
 
-###################################################
-### code chunk number 13: svdFunction
-###################################################
-champ.SVD()
+## ----eval=TRUE,dpi=100,fig.width=8,fig.height=8,message=FALSE,warning=FALSE----
+champ.SVD(beta=myNorm,pd=myLoad$pd)
 
+## ----eval=FALSE----------------------------------------------------------
+#  myCombat <- champ.runCombat(beta=myNorm,pd=myLoad$pd,batchname=c("Slide"))
 
-###################################################
-### code chunk number 14: combatFunction (eval = FALSE)
-###################################################
-## batchNorm=champ.runCombat()
+## ----eval=FALSE,warning=FALSE,message=FALSE------------------------------
+#  myMVP <- champ.MVP(beta = myNorm,pheno=myLoad$pd$Sample_Group)
 
+## ----eval=TRUE-----------------------------------------------------------
+head(myMVP)
 
-###################################################
-### code chunk number 15: mvpFunction (eval = FALSE)
-###################################################
-## limma=champ.MVP()
-## head(limma)
+## ----eval=FALSE----------------------------------------------------------
+#  MVP.GUI((MVP=myMVP,beta=myNorm,pheno=myLoad$pd$Sample_Group)
 
+## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
+knitr::include_graphics("Figure/MVP-1.png")
 
-###################################################
-### code chunk number 16: lassoFunction (eval = FALSE)
-###################################################
-## lasso <- champ.DMR(resultFiles=limma,method="ProbeLasso",arraytype="450K")
-## bump <- champ.DMR(method="Bumphunter",arraytype="450K")
-## if(!is.null(lasso))
-## {
-## head(lasso)
-## }
+## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
+knitr::include_graphics("Figure/MVP-2.png")
 
+## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
+knitr::include_graphics("Figure/MVP-3.png")
 
-###################################################
-### code chunk number 17: cnaFunction (eval = FALSE)
-###################################################
-## CNA=champ.CNA()
+## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
+knitr::include_graphics("Figure/MVP-4.png")
 
+## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
+knitr::include_graphics("Figure/MVP-5.png")
 
-###################################################
-### code chunk number 18: RefFunction (eval = FALSE)
-###################################################
-## refbase <- champ.refbase()
-## reffree <- champ.reffree()
+## ----eval=FALSE,message=FALSE,warning=TRUE-------------------------------
+#  myDMR <- champ.DMR(beta=myNorm,pheno=myLoad$pd$Sample_Group,method="Bumphunter")
 
+## ----eval=TRUE-----------------------------------------------------------
+head(myDMR$DMRcateDMR)
+
+## ----eval=FALSE----------------------------------------------------------
+#  DMR.GUI(DMR=myDMR)
+#  # It might be a little bit slow to open DMR.GUI() because function need to extract annotation for CpGs from DMR. Might take 30 seconds.
+
+## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
+knitr::include_graphics("Figure/DMR-1.png")
+
+## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
+knitr::include_graphics("Figure/DMR-2.png")
+
+## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
+knitr::include_graphics("Figure/DMR-3.png")
+
+## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
+knitr::include_graphics("Figure/DMR-4.png")
+
+## ----eval=FALSE----------------------------------------------------------
+#  myBlock <- champ.Block(beta=myNorm,pheno=myLoad$pd$Sample_Group,arraytype="450K")
+
+## ----eval=TRUE-----------------------------------------------------------
+head(myBlock$Block)
+
+## ----eval=FALSE----------------------------------------------------------
+#  Block.GUI(Block=myBlock,beta=myNorm,pheno=myLoad$pd$Sample_Group,runMVP=TRUE,compare.group=NULL,arraytype="450K")
+
+## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
+knitr::include_graphics("Figure/Block-1.png")
+
+## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
+knitr::include_graphics("Figure/Block-2.png")
+
+## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
+knitr::include_graphics("Figure/Block-3.png")
+
+## ----eval=FALSE----------------------------------------------------------
+#  myGSEA <- champ.GSEA(beta=myNorm,MVP=myMVP,DMR=myDMR,arraytype="450K",adjPval=0.05)
+#  # myMVP and myDMR could (not must) be used directly.
+
+## ----eval=FALSE----------------------------------------------------------
+#  head(myGSEA$MVP)
+#  # Above is the GSEA result for differential methylation probes.
+#  head(myGSEA$DMR)
+#  # Above is the GSEA result for differential methylation regions.
+#  # Too many information may be printed, so we are not going to show the result here.
+
+## ----eval=FALSE----------------------------------------------------------
+#  myEpiMod <- champ.EpiMod(beta=myNorm,pheno=myLoad$pd$Sample_Group)
+
+## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
+knitr::include_graphics("Figure/EpiMod.jpg")
+
+## ----eval=FALSE----------------------------------------------------------
+#  myCNA <- champ.CNA(intensity=myLoad$intensity,pheno=myLoad$pd$Sample_Group)
+
+## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
+knitr::include_graphics("Figure/CNAGroupPlot.jpg")
+
+## ----eval=FALSE----------------------------------------------------------
+#  myRefFree <- champ.reffree(beta=myNorm,pheno=myLoad$pd$Sample_Group)
+
+## ----eval=TRUE-----------------------------------------------------------
+head(myRefFree$qvBeta)
+
+## ----eval=FALSE----------------------------------------------------------
+#  myRefBase <- champ.refbase(beta=myNorm,arraytype="450K")
+#  # Our test data set is not blood.
 

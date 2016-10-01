@@ -8,17 +8,23 @@
 }
 
 \usage{
-champ.reffree(beta=myLoad$beta,design=myLoad$pd$Sample_Group,K=NULL,nboot=10)
+    champ.reffree(beta=myNorm,
+                  pheno=myLoad$pd$Sample_Group,
+                  K=NULL,
+                  nboot=50)
 }
 \arguments{
-    \item{beta}{Methylation beta valueed dataset user want to do RefFreeEWAS.}
-	\item{design}{Design matrix (subjects x covariates). This parameter MUST be a vecter or a matrix. Though Characters are allowed because inside the function, character covariates will be transformed into numeric, we still recommend user input numeric deigned covariates matrix or vector.}
-    \item{K}{Number of latent variable. If this value was ignored, function will use Random Matrix Theory from isva pacakge to estimate latent variables.}
-    \item{nboot}{Number for Bootstrap on result of RefFreeEWAS.}
+    \item{beta}{Methylation beta valueed dataset user want to do RefFreeEWAS. (default = myNorm)}
+	\item{pheno}{Phenotype user want to find differential methylation result. This parameter MUST be a vecter or a matrix. Though Characters are allowed because inside the function, character covariates will be transformed into numeric, we still recommend user input numeric deigned covariates matrix or vector.(default = myLoad$pd$Sample_Group)}
+    \item{K}{Number of latent variable. If this value was ignored, function will use Random Matrix Theory from isva pacakge to estimate latent variables. (default = NULL)}
+    \item{nboot}{Number for Bootstrap on result of RefFreeEWAS. (default=50)}
 }
 \examples{
-	myLoad=champ.load(directory=system.file("extdata",package="ChAMPdata"))	
-    myRefFree=champ.reffree()
+    \dontrun{
+        myLoad <- champ.load(directory=system.file("extdata",package="ChAMPdata"))	
+        myNorm <- champ.norm()
+        myRefFree <- champ.reffree()
+    }
 }
 
 \value{
@@ -34,5 +40,4 @@ champ.reffree(beta=myLoad$beta,design=myLoad$pd$Sample_Group,K=NULL,nboot=10)
     Houseman EA, Yuan Tian, Andrew Teschendorff
 }
 
-\keyword{ celltype }
 \keyword{ RefFreeEWAS }
