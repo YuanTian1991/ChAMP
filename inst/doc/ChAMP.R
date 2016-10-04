@@ -72,11 +72,8 @@ knitr::include_graphics("Figure/ChAMP_Pipeline.png")
 #  myLoad <- champ.load(testDir)
 #  ## We are not running this code here because it cost about 1 minute.
 
-## ----eval=FALSE----------------------------------------------------------
-#  data(testDataSet)
-
-## ----echo=FALSE----------------------------------------------------------
-load("./testDataSet.rda")
+## ----eval=TRUE-----------------------------------------------------------
+data(testDataSet)
 
 ## ----eval=TRUE-----------------------------------------------------------
 myLoad$pd

@@ -203,11 +203,8 @@ myLoad <- champ.load(testDir)
 ```
 To save user's time to open this vignette, we already saved loaded dataset into `testDataSet` in ChAMPdata package, you can use following code to load it:
 
-```{r eval=FALSE}
+```{r eval=TRUE}
 data(testDataSet)
-```
-```{r echo=FALSE}
-load("./testDataSet.rda")
 ```
 
 Now we can check the pd file (Sample_Sheet.csv), because it's very important. Most pd files are similar but not all of them are exactly the same. So user **MUST** understand their pd file perfectly to achieve a successfully analysis.
