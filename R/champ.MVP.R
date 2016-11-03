@@ -34,9 +34,9 @@ champ.MVP <- function(beta = myNorm,
         message("Seems you did not assign correst compare groups. The first two groups: <",unique(pheno)[1],"> and <",unique(pheno)[2],">, will be compared automatically.")
         compare.group <- unique(pheno)[1:2]
     }
-    pheno <- pheno[which(pheno %in% compare.group)]
+    p <- pheno[which(pheno %in% compare.group)]
     beta <- beta[,which(pheno %in% compare.group)]
-	design <- model.matrix( ~ 0 + pheno)
+	design <- model.matrix( ~ 0 + p)
     contrast.matrix <- makeContrasts(contrasts=paste(colnames(design)[2:1],collapse="-"), levels=colnames(design))
     message("Test")
     message("\n<< Contrast Matrix >>")
@@ -57,7 +57,7 @@ champ.MVP <- function(beta = myNorm,
 
     if(arraytype == "EPIC") data(probe.features.epic) else data(probe.features)
     com.idx <- intersect(rownames(MVP),rownames(probe.features))
-    avg <-  cbind(rowMeans(beta[com.idx,which(pheno==compare.group[1])]),rowMeans(beta[com.idx,which(pheno==compare.group[2])]))
+    avg <-  cbind(rowMeans(beta[com.idx,which(p==compare.group[1])]),rowMeans(beta[com.idx,which(p==compare.group[2])]))
     avg <- cbind(avg,avg[,2]-avg[,1])
     colnames(avg) <- c(paste(compare.group,"AVG",sep="_"),"deltaBeta")
     MVP <- data.frame(MVP[com.idx,],avg,probe.features[com.idx,])
