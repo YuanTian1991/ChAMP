@@ -1,6 +1,6 @@
-if(getRversion() >= "3.1.0") utils::globalVariables(c("myLoad","myMVP","myNorm","probe","proportion","cgi","gene","Number","Variance","Value","ID","Sample","diamonds","logFC","negtive_log10P.adj","info","size","Beta_Value","Pheno","economics","unemploy","pop","MatchGeneName"))
+if(getRversion() >= "3.1.0") utils::globalVariables(c("myLoad","myDMP","myNorm","probe","proportion","cgi","gene","Number","Variance","Value","ID","Sample","diamonds","logFC","negtive_log10P.adj","info","size","Beta_Value","Pheno","economics","unemploy","pop","MatchGeneName"))
 
-MVP.GUI <- function(MVP=myMVP,
+DMP.GUI <- function(DMP=myDMP,
                     beta=myNorm,
                     pheno=myLoad$pd$Sample_Group)
 {
@@ -193,7 +193,7 @@ MVP.GUI <- function(MVP=myMVP,
                 tags$head(tags$style("#inc{height:40vh !important;}")),
 
                 theme = shinytheme("readable"),
-                titlePanel("MVP Overview"),
+                titlePanel("DMP Overview"),
                 
 		        sidebarLayout(
                     sidebarPanel(
@@ -217,7 +217,7 @@ MVP.GUI <- function(MVP=myMVP,
                                 ),
                         mainPanel( 
                              tabsetPanel(
-                                 tabPanel("MVPtable",
+                                 tabPanel("DMPtable",
                                           align = "left",
                                           div(dataTableOutput("table"), style = "font-size:75%")
                                          ),
@@ -293,7 +293,7 @@ MVP.GUI <- function(MVP=myMVP,
                         genename <- input$genebin
 
                         ### Generate Data for Geneplot
-                        mygeneselect=MVP[which(MVP$gene==genename & MVP$adj.P.Val <= pvalueCutoff & abs(MVP$logFC) >= abslogFCCutoff),]
+                        mygeneselect=DMP[which(DMP$gene==genename & DMP$adj.P.Val <= pvalueCutoff & abs(DMP$logFC) >= abslogFCCutoff),]
                         mygeneselect <- mygeneselect[order(mygeneselect$MAPINFO),]
                         mygroup <- split(as.data.frame(t(beta[rownames(mygeneselect),])),pheno)
                         Parameter <- list(mygeneselect=mygeneselect,mygroup=mygroup,genename=genename)
@@ -304,33 +304,33 @@ MVP.GUI <- function(MVP=myMVP,
                         pvalueCutoff <- as.numeric(input$pvaluebin)
                         abslogFCCutoff <- as.numeric(input$logFCbin)
 
-                        mymvp <- MVP[which(MVP$adj.P.Val <= pvalueCutoff & abs(MVP$logFC) >= abslogFCCutoff),]
+                        mydmp <- DMP[which(DMP$adj.P.Val <= pvalueCutoff & abs(DMP$logFC) >= abslogFCCutoff),]
                         ### Generate Data for Heatmap
-                        myheatmapdata=beta[rownames(mymvp),] 
+                        myheatmapdata=beta[rownames(mydmp),] 
 
                         ### Generate Data for cgi Barplot
-                        h.cgi <- rbind(AllProbe=table(as.factor(MVP$cgi)),
-                                   HyperProbe=table(as.factor(mymvp$cgi)[mymvp$logFC >= abslogFCCutoff]),
-                                   HypoProbe=table(as.factor(mymvp$cgi)[mymvp$logFC <= (-1)*abslogFCCutoff]))
+                        h.cgi <- rbind(AllProbe=table(as.factor(DMP$cgi)),
+                                   HyperProbe=table(as.factor(mydmp$cgi)[mydmp$logFC >= abslogFCCutoff]),
+                                   HypoProbe=table(as.factor(mydmp$cgi)[mydmp$logFC <= (-1)*abslogFCCutoff]))
 
                         ### Generate Data for feature Barplot
-                        h.feature <- rbind(AllProbe=table(as.factor(MVP$feature)),
-                                   HyperProbe=table(as.factor(mymvp$feature)[mymvp$logFC >= abslogFCCutoff]),
-                                   HypoProbe=table(as.factor(mymvp$feature)[mymvp$logFC <= (-1)*abslogFCCutoff]))
+                        h.feature <- rbind(AllProbe=table(as.factor(DMP$feature)),
+                                   HyperProbe=table(as.factor(mydmp$feature)[mydmp$logFC >= abslogFCCutoff]),
+                                   HypoProbe=table(as.factor(mydmp$feature)[mydmp$logFC <= (-1)*abslogFCCutoff]))
 
                         ### Generate Data for feature.cgi Barplot
-                        h.feature.cgi <- rbind(AllProbe=table(as.factor(MVP$feat.cgi)),
-                                               HyperProbe=table(as.factor(mymvp$feat.cgi)[mymvp$logFC >= abslogFCCutoff]),
-                                               HypoProbe=table(as.factor(mymvp$feat.cgi)[mymvp$logFC <= (-1)*abslogFCCutoff]))
+                        h.feature.cgi <- rbind(AllProbe=table(as.factor(DMP$feat.cgi)),
+                                               HyperProbe=table(as.factor(mydmp$feat.cgi)[mydmp$logFC >= abslogFCCutoff]),
+                                               HypoProbe=table(as.factor(mydmp$feat.cgi)[mydmp$logFC <= (-1)*abslogFCCutoff]))
 
                         ### Generate Data for geneenrich Barplot
-                        myallgeneselect=mymvp[mymvp$gene!="",c("gene","adj.P.Val","logFC")]
+                        myallgeneselect=mydmp[mydmp$gene!="",c("gene","adj.P.Val","logFC")]
 
 
 
                         Parameter <- list(pvalueCutoff=pvalueCutoff,
                                        abslogFCCutoff=abslogFCCutoff,
-                                       mymvp=mymvp,
+                                       mydmp=mydmp,
                                        myheatmapdata=myheatmapdata,
                                        h.cgi=h.cgi,
                                        h.feature=h.feature,
@@ -339,7 +339,7 @@ MVP.GUI <- function(MVP=myMVP,
                     })
 
         output$table <- renderDataTable({
-                                            datatable <- Cutoff_repalce()$mymvp[,c("CHR","MAPINFO","gene","feature","cgi",names(myMVP)[1:9])]
+                                            datatable <- Cutoff_repalce()$mydmp[,c("CHR","MAPINFO","gene","feature","cgi",names(myDMP)[1:9])]
                                             datatable <- data.frame(ID=rownames(datatable),datatable)
                                         },options = list(pageLength=20))
         output$heatmap <- renderPlotly({   
@@ -361,7 +361,7 @@ MVP.GUI <- function(MVP=myMVP,
                                            innerGenePlot(Gene_repalce()$mygeneselect,Gene_repalce()$mygroup)
                                        })
 #        output$volcanoplot <- renderPlotly({   
-#                                           innervolcanoplot(Cutoff_repalce()$mymvp)
+#                                           innervolcanoplot(Cutoff_repalce()$mydmp)
 #                                       })
         output$cpgplot <- renderPlotly({   
                                            innercpgplot(CpG_repalce()$mycpg,CpG_repalce()$cpgid)

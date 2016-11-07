@@ -1,6 +1,6 @@
 if(getRversion() >= "3.1.0") utils::globalVariables(c("myNorm","myLoad","probe.features.epic","probe.features"))
 
-champ.MVP <- function(beta = myNorm,
+champ.DMP <- function(beta = myNorm,
                       pheno = myLoad$pd$Sample_Group,
                       adjPVal = 0.05,
                       adjust.method = "BH",
@@ -8,7 +8,7 @@ champ.MVP <- function(beta = myNorm,
                       arraytype = "450K")
 {
     message("[===========================]")
-    message("[<<<<< ChAMP.MVP START >>>>>]")
+    message("[<<<<< ChAMP.DMP START >>>>>]")
     message("-----------------------------")
 
 
@@ -28,7 +28,7 @@ champ.MVP <- function(beta = myNorm,
         compare.group <- unique(pheno)[1:2]
     }else if(sum(compare.group %in% unique(pheno))==2)
     {
-        message("As you assigned, champ.svd will compare ",compare.group[1]," and ",compare.group[2],".")
+        message("As you assigned, champ.DMP will compare ",compare.group[1]," and ",compare.group[2],".")
     }else
     {
         message("Seems you did not assign correst compare groups. The first two groups: <",unique(pheno)[1],"> and <",unique(pheno)[2],">, will be compared automatically.")
@@ -38,7 +38,6 @@ champ.MVP <- function(beta = myNorm,
     beta <- beta[,which(pheno %in% compare.group)]
 	design <- model.matrix( ~ 0 + p)
     contrast.matrix <- makeContrasts(contrasts=paste(colnames(design)[2:1],collapse="-"), levels=colnames(design))
-    message("Test")
     message("\n<< Contrast Matrix >>")
     print(contrast.matrix)
 
@@ -51,19 +50,19 @@ champ.MVP <- function(beta = myNorm,
       {
       	stop("limma failed, No sample variance.\n")
       })
-    MVP <- topTable(fit3,coef=1,number=nrow(beta),adjust.method=adjust.method,p.value=adjPVal)
-    message("You have found ",sum(MVP$adj.P.Val <= adjPVal), " significant MVPs with a ",adjust.method," adjusted P-value below ", adjPVal,".")
-    message("\n<< Calculate MVP successfully. >>")
+    DMP <- topTable(fit3,coef=1,number=nrow(beta),adjust.method=adjust.method,p.value=adjPVal)
+    message("You have found ",sum(DMP$adj.P.Val <= adjPVal), " significant MVPs with a ",adjust.method," adjusted P-value below ", adjPVal,".")
+    message("\n<< Calculate DMP successfully. >>")
 
     if(arraytype == "EPIC") data(probe.features.epic) else data(probe.features)
-    com.idx <- intersect(rownames(MVP),rownames(probe.features))
+    com.idx <- intersect(rownames(DMP),rownames(probe.features))
     avg <-  cbind(rowMeans(beta[com.idx,which(p==compare.group[1])]),rowMeans(beta[com.idx,which(p==compare.group[2])]))
     avg <- cbind(avg,avg[,2]-avg[,1])
     colnames(avg) <- c(paste(compare.group,"AVG",sep="_"),"deltaBeta")
-    MVP <- data.frame(MVP[com.idx,],avg,probe.features[com.idx,])
+    DMP <- data.frame(DMP[com.idx,],avg,probe.features[com.idx,])
 
-    message("[<<<<<< ChAMP.MVP END >>>>>>]")
+    message("[<<<<<< ChAMP.DMP END >>>>>>]")
     message("[===========================]")
-    message("[You may want to process champ.DMR() next.]\n")
-    return(MVP)
+    message("[You may want to process DMP.GUI() or champ.GSEA() next.]\n")
+    return(DMP)
 }

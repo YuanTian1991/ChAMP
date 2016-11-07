@@ -27,8 +27,8 @@ This function allows the user to run the entire pipeline in one function. Argume
                   #---champ.runCombat parameters below---#
                   runCombat=TRUE,
                   batchname=c("Slide"),
-                  #---champ.MVP parameters below---#
-                  runMVP=TRUE,
+                  #---champ.DMP parameters below---#
+                  runDMP=TRUE,
                   #---champ.DMR parameters below---#
                   runDMR=TRUE,
                   DMRmethod="Bumphunter",
@@ -72,7 +72,7 @@ This function allows the user to run the entire pipeline in one function. Argume
     \item{RGEffect}{If Red Gree color Effect should be calculated in champ.SVD(). (default = FALSE)}
     \item{runCombat}{If champ.runCombat() should be run? (default = TRUE)}
     \item{batchname}{A character vector indicates what factors should be corrected by champ.runCombat(). (default = c("Slide"))}
-    \item{runMVP}{If champ.MVP() should be run? (default = TRUE)}
+    \item{runDMP}{If champ.DMP() should be run? (default = TRUE)}
     \item{runDMR}{If champ.DMR() should be run? (default = TRUE)}
     \item{DMRmethod}{Which DMR method should be applied by champ.DMR()? (default = TRUE)}
     \item{runBlock}{If champ.Block() should be run? (default = TRUE)}
@@ -83,7 +83,7 @@ This function allows the user to run the entire pipeline in one function. Argume
     \item{controlGroup}{Which pheno should be treated as control group while running champ.CNA().(default = "champCtls")}
     \item{runRefFree}{If champ.reffree() should be run? (default = TRUE)}
     \item{runRefBase}{If champ.refbase() should be run? (default = TRUE)}
-    \item{compare.group}{Which two phenos should be compared in champ.MVP()?}
+    \item{compare.group}{Which two phenos should be compared in champ.DMP()?}
     \item{adjPVal}{The adjusted p value for each function's significant cutoff.}
     \item{resultsDir}{The directory where result should be stored. (default = "./CHAMP_RESULT/")}
     \item{arraytype}{If the data set under analysis is "450K" or "EPIC"? (default = "450K")}

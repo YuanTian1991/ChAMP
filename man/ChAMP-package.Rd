@@ -6,7 +6,7 @@
 ChAMP-Chip Analysis Methylation Pipeline
 }
 \description{
-A pipeline that enables pre-processing of 450K or EPIC data, a selection of normalization methods and a bundle of analysis method including SVD checking, Batch effect correction, MVP, DMR, Block detection, Cell proportion detection, GSEA pathway detection, EpiMod module detection, and copy number variance detection. ChAMP provided a very comprehensive analysis pipeline for EPIC or 450K data set.
+A pipeline that enables pre-processing of 450K or EPIC data, a selection of normalization methods and a bundle of analysis method including SVD checking, Batch effect correction, DMP, DMR, Block detection, Cell proportion detection, GSEA pathway detection, EpiMod module detection, and copy number variance detection. ChAMP provided a very comprehensive analysis pipeline for EPIC or 450K data set.
 }
 \details{
 \tabular{ll}{
@@ -43,7 +43,7 @@ Yuan Tian, Tiffany Morris, Lee Stirling, Andy Feber, Andrew Teschendorff, Ankur 
     myNorm <- champ.norm()
     champ.SVD()
     myCombat <- champ.runCombat()
-    myMVP <- champ.MVP()
+    myDMP <- champ.DMP()
     myDMR <- champ.DMR()
     myBlock <- champ.Block()
     myGSEA <- champ.GSEA()
@@ -54,7 +54,7 @@ Yuan Tian, Tiffany Morris, Lee Stirling, Andy Feber, Andrew Teschendorff, Ankur 
 
     CpG.GUI()
     QC.GUI()
-    MVP.GUI()
+    DMP.GUI()
     DMR.GUI()
     Block.GUI()
 	}

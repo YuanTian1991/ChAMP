@@ -24,7 +24,7 @@ The ChAMP package is a pipeline that integrates currently available 450k and EPI
 In addition, the ChAMP package includes the Peak Based Correction (PBC) method [@Dedeurwaerder11] and the BMIQ Normalization [@Teschendorff13] is set as the default method.
 
 A number of other pipelines and packages are available for 450k or EPIC array analysis
-including IMA [@Wang12IMA], minfi [@minfi], methylumi [@methylumi], RnBeads [@rnbeads] and watermelon [@watermelon]. However, ChAMP provides a comprehensive and compelete analysis pipeline from origin data file to final GSEA result, which would make other researchers' work much easyer. Also, the new version ChAMP provides some Shiny-based WebBrower Interactive analysis function (GUI functions), which should benifit even more scientists' work. 
+including IMA [@Wang12IMA], minfi [@minfi], methylumi [@methylumi], RnBeads [@rnbeads] and watermelon [@watermelon]. However, ChAMP provides a comprehensive and compelete analysis pipeline from origin data file to final GSEA result, which would make researchers' work much easyer. Also, the new version ChAMP provides a series of Shiny-based WebBrower Interactive analysis function (GUI functions), which should benifit even more scientists' work. 
 
 There are also some other advantages for ChAMP. First of all ChAMP is both available for 450k or EPIC array. Also this package contains multiple novel functions. The singular value decomposition (SVD) method [@Teschendorff09] allows an in-depth look at batch effects and for correction of multiple batch effect the ComBat method [@Johnson07] has been implemented. For the identification of differential methylated regions (DMR) ChAMP offers the new Probe Lasso method [@Butcher201521]. Also another two effective DMR detection function Bumphunter [@Jaffe12] and DMRcate [@Peters2015] is also integrated. Users have more freedom to select their prefered methods.
 
@@ -122,8 +122,8 @@ champ.QC() # Alternatively: QC.GUI()
 myNorm <- champ.norm()
 champ.SVD()
 # If Batch detected, run champ.runCombat() here.
-myMVP <- champ.MVP()
-MVP.GUI()
+myDMP <- champ.DMP()
+DMP.GUI()
 myDMR <- champ.DMR()
 DMR.GUI()
 myBlock <- champ.Block()
@@ -153,8 +153,8 @@ champ.QC() # Alternatively QC.GUI(arraytype="EPIC")
 myNorm <- champ.norm(arraytype="EPIC")
 champ.SVD()
 # If Batch detected, run champ.runCombat() here.This data is not suitable.
-myMVP <- champ.MVP(arraytype="EPIC")
-MVP.GUI()
+myDMP <- champ.DMP(arraytype="EPIC")
+DMP.GUI()
 myDMR <- champ.DMR()
 DMR.GUI()
 myDMR <- champ.DMR(arraytype="EPIC")
@@ -319,54 +319,54 @@ myCombat <- champ.runCombat(beta=myNorm,pd=myLoad$pd,batchname=c("Slide"))
 
 ## Differential Methylation Probes
 
-Differential Methylation Probes (DMP) is most commonly analysed result for methylation research. Here user may use champ.MVP() function to calculate differential methylation probes. And use MVP.GUI() to check the result.
+Differential Methylation Probes (DMP) is most commonly analysed result for methylation research. Here user may use champ.DMP() function to calculate differential methylation probes. And use DMP.GUI() to check the result.
 
-champ.MVP() function implements the limma package to calculate the p-value for differential methylation using a linear model. At present, the function can only compute differential methylation between two groups. The two groups are determined by the Sample Group column in the sample sheet. If more than two groups are present the function will calculate the differential methylation between the first two unique groups in the file. As the function is running it will print which two groups the contrast is being computed for and will then print out how many MVPs were found for the given p-value.
+champ.DMP() function implements the limma package to calculate the p-value for differential methylation using a linear model. At present, the function can only compute differential methylation between two groups. The two groups are determined by the Sample Group column in the sample sheet. If more than two groups are present the function will calculate the differential methylation between the first two unique groups in the file. As the function is running it will print which two groups the contrast is being computed for and will then print out how many DMPs were found for the given p-value.
 
-The result of champ.MVP() included the p value, t value logFC between two groups, also includes the annotation for each probe, the average beta (for the sample group) and the delta beta value for the two groups used in the comparison. It is planned that a future version of ChAMP will include the ability to compare multiple groups. However, a more advanced user can run limma with other settings and use the output (including all probes and their p-values) for the DMR hunter.
+The result of champ.DMP() included the p value, t value logFC between two groups, also includes the annotation for each probe, the average beta (for the sample group) and the delta beta value for the two groups used in the comparison. It is planned that a future version of ChAMP will include the ability to compare multiple groups. However, a more advanced user can run limma with other settings and use the output (including all probes and their p-values) for the DMR hunter.
 
 User may use following code to get DMPs:
-```{r eval=FALSE,warning=FALSE,message=FALSE}
-myMVP <- champ.MVP(beta = myNorm,pheno=myLoad$pd$Sample_Group)
+```{r eval=TRUE,warning=FALSE,message=FALSE}
+myDMP <- champ.DMP(beta = myNorm,pheno=myLoad$pd$Sample_Group)
 ```
 
-We can check the result of champ.MVP() as below:
+We can check the result of champ.DMP() as below:
 ```{r eval=TRUE}
-head(myMVP)
+head(myDMP)
 ```
 
-In this version of ChAMP, we included a nice GUI interface for user to check the result of `myMVP` generated from above code. You just need to provide the "unmodified" result of champ.MVP (myMVP), orginal beta matrix you used to generat MVP (beta) and covariates you want to analysis. You can used following code to open MVP.GUI() function. 
+In this version of ChAMP, we included a nice GUI interface for user to check the result of `myDMP` generated from above code. You just need to provide the "unmodified" result of champ.DMP (myDMP), orginal beta matrix you used to generat DMP (beta) and covariates you want to analysis. You can used following code to open DMP.GUI() function. 
 
-> Note that your myMVP reuslt may only be calcuated from two phenotypes, but your covariates may contain 3 or even more phenotypes.
+> Note that your myDMP reuslt may only be calcuated from two phenotypes, but your covariates may contain 3 or even more phenotypes.
 
 ```{r eval=FALSE}
-MVP.GUI((MVP=myMVP,beta=myNorm,pheno=myLoad$pd$Sample_Group)
+DMP.GUI(DMP=myDMP,beta=myNorm,pheno=myLoad$pd$Sample_Group)
 ```
 ```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
-knitr::include_graphics("Figure/MVP-1.png")
+knitr::include_graphics("Figure/DMP-1.png")
 ```
 The left panel indicate the cut off parameters for significant CpGs. Currently only two parameters are supported here: p value and abs(logFC). User may set these two values then press "Submit" to generate significant CpGs table on the right. On the right is the table of significant CpGs, all information are included, the table can be ranked by each column.
 
 
 ```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
-knitr::include_graphics("Figure/MVP-2.png")
+knitr::include_graphics("Figure/DMP-2.png")
 ```
 The second tab provide the heatmap of ALL significant CpGs you generate by left panel cutoff.
 
 
 ```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
-knitr::include_graphics("Figure/MVP-3.png")
+knitr::include_graphics("Figure/DMP-3.png")
 ```
 The third panel provide the barplot of **proportion** of each CpG feature and cgi summary information for hyper and hypo CpGs. **You may press the marker in the legend to close or open certain bars.**
 
 ```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
-knitr::include_graphics("Figure/MVP-4.png")
+knitr::include_graphics("Figure/DMP-4.png")
 ```
 The fourth tab is controled by the gene parameter on the left panel. You may select an gene name (the example default is NFIX here) and press "submit". Then the plot for this gene will be plot above. Note that the x axis here is not the actual MAPINFO of each CpG. The distance between each CpG are the same. There are two kinds of lines plotted for each phenotype, the solid lines represent Mean Value plot, and the dash line represent the Loess line, **user may close or open they by clicking the marker on the legend**. Below is the feature and cgi information of each CpG. At the bottom of this tab, is the gene information extracted from wikigene, which is also controled by the gene parameter on the left.
 
 
 ```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
-knitr::include_graphics("Figure/MVP-5.png")
+knitr::include_graphics("Figure/DMP-5.png")
 ```
 The fifth tab included two plots. At the top is the enrichment plot for top 70 genes involved in significant CpGs you select by left cutoff parameters. The number in each bar indicate how many hyper or hypo differential methylated CpGs are included in this gene. User may use this plot to find intereted genes then use tab 4 to plot the gene. At the bottom of this tab, is the boxplot of certain CpGs, which is controled by parameter on the left panel.
 
@@ -378,7 +378,7 @@ Differentially methylated regions (DMRs) are extended and discreet segments of t
 
 There are three algotithms integrated to do this job, Bumphunter, ProbeLasso and DMRcate. For Bumphunter algotithms, it would firstly cluster all probes into small clusters, then apply random permulation method to estimate candidate DMRs. This method is very user friendly and is not relying on any output of previous functions. The permulation steps in Bumphunter algotithms may be a little bit slow, but user may assign more core to accelerate it by parallel more threads. The result of bumphunter algotithm is a dataframe contain all detected DMRs, with their length, clusters, number of CpGs.e.g annotated.
 
-For ProbeLasso method, the final data frame is distilled from a limma output of probes and their association statistics, so the result from champ.MVP() MUST be inputted into champ.DMR() function. For the principle and mechanism of ProbeLasso function, user may find it in original paper [@Butcher201521].
+For ProbeLasso method, the final data frame is distilled from a limma output of probes and their association statistics, so the result from champ.DMP() MUST be inputted into champ.DMR() function. For the principle and mechanism of ProbeLasso function, user may find it in original paper [@Butcher201521].
 
 The new method here incoporated in new version ChAMP is DMRcate. This is a data-driven approach that is agnostic to all annotations except for spatial ones, specifically chromosomal coordinates. Critical to DMRcate are robust estimates of differential methylation (DM) at individual CpG sites derived from limma, arguably the most widely used tool for microarray analysis. DMRcate pass the square of the moderated t statistic calculated on each 450K probe to DMR-finding function. Then DMRcate would apply a Gaussian kernel to smooth this metric within a given window, and also derive an expected value of the smoothed estimate (in other words, one with no experimental effect) from the varying density of CpGs sites incurred by reduced representation and irregular spacing. For more detail about DMRcate function, user may read the original paper [$Peters2015] and DMRcate R pacakge.
 
@@ -390,7 +390,7 @@ The result of Bumphunter, DMRcate and ProbeLasso functions are all dataframe, bu
 ```{r eval=TRUE}
 head(myDMR$DMRcateDMR)
 ```
-Just like MVP result, we provide `DMR.GUI()` as interface for DMR result. All result from three different method of champ.DMR() are supported in the GUI function. The DMR.GUI() function would automatically detected what kind of input the DMR result is. **Thus it's not recommended to modify the structure of `myDMR` result.**
+Just like DMP result, we provide `DMR.GUI()` as interface for DMR result. All result from three different method of champ.DMR() are supported in the GUI function. The DMR.GUI() function would automatically detected what kind of input the DMR result is. **Thus it's not recommended to modify the structure of `myDMR` result.**
 ```{r eval=FALSE}
 DMR.GUI(DMR=myDMR)
 # It might be a little bit slow to open DMR.GUI() because function need to extract annotation for CpGs from DMR. Might take 30 seconds.
@@ -399,7 +399,7 @@ DMR.GUI(DMR=myDMR)
 ```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
 knitr::include_graphics("Figure/DMR-1.png")
 ```
-Just like the MVP.GUI above, there is a panel for parameters on the left, user may set the parameters to select significant DMRs. We currently only provide two parameters: p value and min number probes. The above title will indicate the method you used to get DMR (here is DMRcate). **Note that for different method the p value may indicate different columns. Bumphunter is `pvaluearea`, while ProbeLasso is `dmrP`, and there is no cutoff for DMRcate result, which has been done during calculation.** After your selection and press "Submit", you will get table of significant DMRs on the right. For different method, the table content might be different. Thus user should research what method you want to use to find DMRs.
+Just like the DMP.GUI above, there is a panel for parameters on the left, user may set the parameters to select significant DMRs. We currently only provide two parameters: p value and min number probes. The above title will indicate the method you used to get DMR (here is DMRcate). **Note that for different method the p value may indicate different columns. Bumphunter is `pvaluearea`, while ProbeLasso is `dmrP`, and there is no cutoff for DMRcate result, which has been done during calculation.** After your selection and press "Submit", you will get table of significant DMRs on the right. For different method, the table content might be different. Thus user should research what method you want to use to find DMRs.
 
 ```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
 knitr::include_graphics("Figure/DMR-2.png")
@@ -409,7 +409,7 @@ The second tab provides a table for all CpGs involvded in these DMRs, which can 
 ```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
 knitr::include_graphics("Figure/DMR-3.png")
 ```
-The third plot is the plot of each DMR, just like the gene plot in MVP.GUI() function. Here the x axis are not real MAPINFO of each CpG, the distance between each CpGs are equal. Also I have feature and CpGs marked under the plot. At the top of this tab, are the table of all CpGs in this DMR. You can use the DMR index parameter on the left panel to select DMR you want to check.
+The third plot is the plot of each DMR, just like the gene plot in DMP.GUI() function. Here the x axis are not real MAPINFO of each CpG, the distance between each CpGs are equal. Also I have feature and CpGs marked under the plot. At the top of this tab, are the table of all CpGs in this DMR. You can use the DMR index parameter on the left panel to select DMR you want to check.
 
 ```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
 knitr::include_graphics("Figure/DMR-4.png")
@@ -430,42 +430,42 @@ head(myBlock$Block)
 ```
 And we provides a GUI function for user to check the result of `myBlock` above.
 ```{r eval=FALSE}
-Block.GUI(Block=myBlock,beta=myNorm,pheno=myLoad$pd$Sample_Group,runMVP=TRUE,compare.group=NULL,arraytype="450K")
+Block.GUI(Block=myBlock,beta=myNorm,pheno=myLoad$pd$Sample_Group,runDMP=TRUE,compare.group=NULL,arraytype="450K")
 ```
-Note that there are two special parameters here: `runMVP` means if Block.GUI() function should calculate DMP for each CpGs, if not, the GUI() function would only return the annotation of all involvded CpGs. And just like champ.MVP() function, compare.group need to be assigned if you want to calculate MVP while running Block.GUI().
+Note that there are two special parameters here: `runDMP` means if Block.GUI() function should calculate DMP for each CpGs, if not, the GUI() function would only return the annotation of all involvded CpGs. And just like champ.DMP() function, compare.group need to be assigned if you want to calculate DMP while running Block.GUI().
 
 
 ```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
 knitr::include_graphics("Figure/Block-1.png")
 ```
-Just like MVP.GUI() and DMR.GUI(), the p value cutoff and min cluster (similar to min probes in DMR.GUI()) controls the number of significant Blocks you selected. Then the information of significant blocks will be listed on the right.
+Just like DMP.GUI() and DMR.GUI(), the p value cutoff and min cluster (similar to min probes in DMR.GUI()) controls the number of significant Blocks you selected. Then the information of significant blocks will be listed on the right.
 
 ```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
 knitr::include_graphics("Figure/Block-2.png")
 ```
-The second tab provides information of all CpGs involved in all Blocks. For methylation blocks, there are actually three unit: Block, Cluster (regions) and CpG. Blocks are formed by some clusters, and clusters are formed by some CpGs. Thus the second tab actually provides a mapping solution from CpG to Block. User may use this tab to find their interested genes and CpGs. Then use MVP.GUI() to combind research between Blocks and MVPs.
+The second tab provides information of all CpGs involved in all Blocks. For methylation blocks, there are actually three unit: Block, Cluster (regions) and CpG. Blocks are formed by some clusters, and clusters are formed by some CpGs. Thus the second tab actually provides a mapping solution from CpG to Block. User may use this tab to find their interested genes and CpGs. Then use DMP.GUI() to combind research between Blocks and DMPs.
 
 ```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
 knitr::include_graphics("Figure/Block-3.png")
 ```
-The third tab provides the plot for each Blocks. **Be caution that each Block may contain many many clusters. Thus it would be slow to calculate and plot. And please make sure you have a good computer or server to run this function.** Note that plot is slightly different from DMR.GUI() and MVP.GUI() that the x axis is actually the **REAL** MAPINFO of each cluster, because I also need to map CpG islands position above the lines (Those dark red dots).
+The third tab provides the plot for each Blocks. **Be caution that each Block may contain many many clusters. Thus it would be slow to calculate and plot. And please make sure you have a good computer or server to run this function.** Note that plot is slightly different from DMR.GUI() and DMP.GUI() that the x axis is actually the **REAL** MAPINFO of each cluster, because I also need to map CpG islands position above the lines (Those dark red dots).
 
 ## Gene Set Enrichment Analysis
 Gene Set Enrichment Analysis is an very important step for most Bioinformatics work. After previous steps, you may already get some significant DMPs or DMRs, thus you may want to know if genes involvded in these significant DMPs or DMRs are actually corresponding to some pathways. To achieve this analysis, you can use champ.GSEA() to do GSEA analysis. 
 
-champ.GSEA() woul automatically extract genes in `myMVP` and `myDMR` (No matter what method you have used to generate DMRs). Also if you have your own significant CpG list or gene list calculated from **THE SAME** methylation arrays (450K or EPIC) by other method not included in ChAMP. You may also format them into **list** and input the function to do GSEA. champ.GSEA() would automatically extract gene information, transfer CpG information into gene information then conduct GSEA on each list.
+champ.GSEA() woul automatically extract genes in `myDMP` and `myDMR` (No matter what method you have used to generate DMRs). Also if you have your own significant CpG list or gene list calculated from **THE SAME** methylation arrays (450K or EPIC) by other method not included in ChAMP. You may also format them into **list** and input the function to do GSEA. champ.GSEA() would automatically extract gene information, transfer CpG information into gene information then conduct GSEA on each list.
 
 The pathway network champ.GSEA() used is from [MSigDB](http://software.broadinstitute.org/gsea/msigdb/index.jsp). After gene enrichment analysis, champ.GSEA() function would automatically return pathway with p value smaller then adjPval cutoff.
 
 User may use following command to do GSEA:
 ```{r eval=FALSE}
-myGSEA <- champ.GSEA(beta=myNorm,MVP=myMVP,DMR=myDMR,arraytype="450K",adjPval=0.05)
-# myMVP and myDMR could (not must) be used directly.
+myGSEA <- champ.GSEA(beta=myNorm,DMP=myDMP,DMR=myDMR,arraytype="450K",adjPval=0.05)
+# myDMP and myDMR could (not must) be used directly.
 ```
-After the calculation, for each list (MVP,DMR or other list), one GSEA result would be returned. User may check the result like below:
+After the calculation, for each list (DMP,DMR or other list), one GSEA result would be returned. User may check the result like below:
 
 ```{r eval=FALSE}
-head(myGSEA$MVP)
+head(myGSEA$DMP)
 # Above is the GSEA result for differential methylation probes.
 head(myGSEA$DMR)
 # Above is the GSEA result for differential methylation regions.

@@ -1,15 +1,15 @@
 \name{champ.GSEA}
 \alias{champ.GSEA}
 \title{
-    Do GSEA for MVP and DMR results.
+    Do GSEA for DMP, DMR and other methylation data related results.
 }
 \description{
-    This function would do GSEA on the results of champ functions like MVP and DMR. However users may also add individual CpGs and genes in it.
+    This function would do GSEA on the results of champ functions like DMP and DMR. However users may also add individual CpGs and genes in it.
 }
 
 \usage{
     champ.GSEA(beta=myNorm,
-               MVP=myMVP,
+               DMP=myDMP,
                DMR=myDMR,
                CpGlist=NULL,
                Genelist=NULL,
@@ -19,7 +19,7 @@
 
 \arguments{
 	\item{beta}{A matrix of values representing the methylation scores for each sample (M or B). Better to be imputed and normalized data. (default = myNorm)}
-	\item{MVP}{Results from champ.MVP() function. (default = myMVP)}
+	\item{DMP}{Results from champ.DMP() function. (default = myDMP)}
     \item{DMR}{Results from champ.DMR() function. (default = myDMR)}
     \item{CpGlist}{Apart from previous parameters, if you have any other CpGs list want to do GSEA, you can input them here as a list. (default = NULL)}
     \item{Genelist}{Apart from previous parameters, if you have any other Gene list want to do GSEA. you can inpute them here as a list. (default = NULL)}
@@ -39,7 +39,7 @@
     \dontrun{
         myLoad <- champ.load(directory=system.file("extdata",package="ChAMPdata"))
         myNorm <- champ.norm()
-        myMVP <- champ.MVP()
+        myDMP <- champ.DMP()
         myDMR <- champ.DMR()
         myGSEA <- champ.GSEA()
         }

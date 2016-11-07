@@ -17,7 +17,7 @@ champ.DMR <- function(beta=myNorm,
                       B=250,
                       nullMethod="bootstrap",
                       ## following parameters are specifically for probe ProbeLasso method.
-                      MVP=myMVP,
+                      DMP=myDMP,
                       meanLassoRadius=375,
                       minDmrSep=1000,
                       minDmrSize=50,
@@ -117,12 +117,12 @@ champ.DMR <- function(beta=myNorm,
         message("<< Find DMR with ProbeLasso Method >>")
         gc()
         if(arraytype=="EPIC") data(illuminaEPICGr) else data(illumina450Gr)
-        if(length(which(MVP$adj.P.Val < adjPvalProbe))==0) stop("There is no probe show significant difference from champ.MVP() function.")
+        if(length(which(DMP$adj.P.Val < adjPvalProbe))==0) stop("There is no probe show significant difference from champ.DMP() function.")
 
 
-        myResultsGr <- illumina450Gr[match(rownames(MVP), names(illumina450Gr))]
-        myResultsGr$P.Value <- MVP$P.Value[match(names(myResultsGr), rownames(MVP))];
-        myResultsGr$adj.P.Val <- MVP$adj.P.Val[match(names(myResultsGr), rownames(MVP))]
+        myResultsGr <- illumina450Gr[match(rownames(DMP), names(illumina450Gr))]
+        myResultsGr$P.Value <- DMP$P.Value[match(names(myResultsGr), rownames(DMP))];
+        myResultsGr$adj.P.Val <- DMP$adj.P.Val[match(names(myResultsGr), rownames(DMP))]
         seqlevels(myResultsGr) <- sort(seqlevels(myResultsGr));
         myResultsGr <- sort(myResultsGr,ignore.strand=T) # sort for later
         ### readjust pValues after masking
@@ -319,6 +319,6 @@ champ.DMR <- function(beta=myNorm,
     }
     message("[<<<<<< ChAMP.DMR END >>>>>>]")
     message("[===========================]")
-    message("[You may want to process champ.GSEA() next.]\n")
+    message("[You may want to process DMR.GUI() or champ.GSEA() next.]\n")
     return(OutputDMR)
 }

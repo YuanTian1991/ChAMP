@@ -1,7 +1,7 @@
-if(getRversion() >= "3.1.0") utils::globalVariables(c("myMVP","myDMR","myNorm","PathwayList"))
+if(getRversion() >= "3.1.0") utils::globalVariables(c("myDMP","myDMR","myNorm","PathwayList"))
 
 champ.GSEA <- function(beta=myNorm,
-                       MVP=myMVP,
+                       DMP=myDMP,
                        DMR=myDMR,
                        CpGlist=NULL,
                        Genelist=NULL,
@@ -38,10 +38,10 @@ champ.GSEA <- function(beta=myNorm,
     ueid.v <- unique(unlist(sapply(RSanno$UCSC_RefGene_Name,function(x) strsplit(x,split=";")[[1]])))
 
     loi.lv <- list()
-    if(!is.null(MVP))
+    if(!is.null(DMP))
     {
-        cpg.idx <- rownames(MVP)[which(MVP$adj.P.Val <= adjPval)]
-        loi.lv[["MVP"]] <- unique(unlist(sapply(RSanno[cpg.idx,"UCSC_RefGene_Name"],function(x) strsplit(x,split=";")[[1]])))
+        cpg.idx <- rownames(DMP)[which(DMP$adj.P.Val <= adjPval)]
+        loi.lv[["DMP"]] <- unique(unlist(sapply(RSanno[cpg.idx,"UCSC_RefGene_Name"],function(x) strsplit(x,split=";")[[1]])))
     }
     if(!is.null(DMR))
     {
@@ -56,7 +56,7 @@ champ.GSEA <- function(beta=myNorm,
             loi.lv[["CpG"]] <- unique(unlist(sapply(RSanno[cpg.idx,"UCSC_RefGene_Name"],function(x) strsplit(x,split=";")[[1]])))
         }else if(class(CpGlist)=="list")
         {
-            if(names(CpGlist) %in% c("MVP","DMR","CpG","Gene")) stop("Your CpG list can not contain names as follows: \"MVP\",\"DMR\",\"CpG\",\"Gene\".")
+            if(names(CpGlist) %in% c("DMP","DMR","CpG","Gene")) stop("Your CpG list can not contain names as follows: \"DMP\",\"DMR\",\"CpG\",\"Gene\".")
             if(names(CpGlist)==NULL | length(is.na(names(CpGlist)))!=0) stop("Please specify your CpG list names.")
             cpg.tmp <- lapply(CpGlist,function(x) unique(unlist(sapply(RSanno[x,"UCSC_RefGene_Name"],function(x) strsplit(x,split=";")[[1]]))))
             loi.lv <- c(loi.lv,cpg.tmp)
@@ -72,7 +72,7 @@ champ.GSEA <- function(beta=myNorm,
             loi.lv[["Gene"]] <- Genelist
         }else if(class(Genelist)=="list")
         {
-            if(names(Genelist) %in% c("MVP","DMR","CpG","Gene")) stop("Your Gene list can not contain names as follows: \"MVP\",\"DMR\",\"CpG\",\"Gene\".")
+            if(names(Genelist) %in% c("DMP","DMR","CpG","Gene")) stop("Your Gene list can not contain names as follows: \"DMP\",\"DMR\",\"CpG\",\"Gene\".")
             if(names(Genelist)==NULL | length(is.na(names(Genelist)))!=0) stop("Please specify your Gene list names.")
             loi.lv <- c(loi.lv,Genelist)
         }else

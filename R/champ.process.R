@@ -16,8 +16,8 @@ champ.process <- function(runload=TRUE,
                           #---champ.runCombat parameters below---#
                           runCombat=TRUE,
                           batchname=c("Slide"),
-                          #---champ.MVP parameters below---#
-                          runMVP=TRUE,
+                          #---champ.DMP parameters below---#
+                          runDMP=TRUE,
                           #---champ.DMR parameters below---#
                           runDMR=TRUE,
                           DMRmethod="Bumphunter",
@@ -206,11 +206,11 @@ champ.process <- function(runload=TRUE,
         message("Run champ.runCombat() Over!\n")
     }
 
-    ### Applying champ.MVP() function.
-    if(runMVP)
+    ### Applying champ.DMP() function.
+    if(runDMP)
     {
-        message("\nRunning champ.MVP()...")
-        myMVP <- champ.MVP(beta = myNorm,
+        message("\nRunning champ.DMP()...")
+        myDMP <- champ.DMP(beta = myNorm,
                            pheno = tmppd$Sample_Group,
                            adjPVal = adjPVal,
                            adjust.method = "BH",
@@ -219,12 +219,12 @@ champ.process <- function(runload=TRUE,
 
         if(saveStepresults)
         {
-            save(myMVP,file=paste(resultsDir,"/myMVP.rda",sep=""))
-            message("champ.MVP()'s result \"myMVP\" has been saved in ",resultsDir," as \"myMVP.rda.\"")
+            save(myDMP,file=paste(resultsDir,"/myDMP.rda",sep=""))
+            message("champ.DMP()'s result \"myDMP\" has been saved in ",resultsDir," as \"myDMP.rda.\"")
         }
         gc()
-        CHAMP.RESULT[["champ.MVP"]] <- myMVP
-        message("Run champ.MVP() Over!\n")
+        CHAMP.RESULT[["champ.DMP"]] <- myDMP
+        message("Run champ.DMP() Over!\n")
     }
 
     ### Applying champ.DMR() function.
@@ -249,7 +249,7 @@ champ.process <- function(runload=TRUE,
                            nullMethod="bootstrap",
                            cores=cores,
                            ## following parameters are specifically for probe ProbeLasso method.
-                           MVP=myMVP,
+                           DMP=myDMP,
                            meanLassoRadius=375,
                            minDmrSep=1000,
                            minDmrSize=50,
@@ -303,7 +303,7 @@ champ.process <- function(runload=TRUE,
     {
         message("\nRunning champ.GSEA()...")
         myGSEA <- champ.GSEA(beta=myNorm,
-                             MVP=myMVP,
+                             DMP=myDMP,
                              DMR=myDMR,
                              CpGlist=NULL,
                              Genelist=NULL,

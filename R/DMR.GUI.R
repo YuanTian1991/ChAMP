@@ -3,17 +3,17 @@ if(getRversion() >= "3.1.0") utils::globalVariables(c("myDMR","myLoad","myNorm",
 DMR.GUI <- function(DMR=myDMR,
                     beta=myNorm,
                     pheno=myLoad$pd$Sample_Group,
-                    runMVP=TRUE,
+                    runDMP=TRUE,
                     compare.group=NULL,
                     arraytype="450K")
 {
     if(arraytype == "EPIC") data(probe.features.epic) else data(probe.features)
     probe.features <- probe.features[rownames(beta),]
 
-    if(runMVP)
+    if(runDMP)
     {
-        message("Calculating MVP")
-        MVP <- champ.MVP(beta=beta,
+        message("Calculating DMP")
+        DMP <- champ.DMP(beta=beta,
                          pheno=pheno,
                          adjPVal=1,
                          adjust.method="BH",
@@ -261,7 +261,7 @@ DMR.GUI <- function(DMR=myDMR,
                         ## Generate data for geneenrichplot
                         mygeneselect <- Anno[which(Anno$DMRindex %in% rownames(mydmr)),]
 
-                        if(runMVP) mygeneselect <- data.frame(mygeneselect,MVP[rownames(mygeneselect),c("t","adj.P.Val")])
+                        if(runDMP) mygeneselect <- data.frame(mygeneselect,DMP[rownames(mygeneselect),c("t","adj.P.Val")])
                         
                         ## Generate data for heatmap
                         mydata <- beta[rownames(mygeneselect),]

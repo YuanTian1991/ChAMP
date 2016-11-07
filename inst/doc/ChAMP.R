@@ -25,8 +25,8 @@ knitr::include_graphics("Figure/ChAMP_Pipeline.png")
 #  myNorm <- champ.norm()
 #  champ.SVD()
 #  # If Batch detected, run champ.runCombat() here.
-#  myMVP <- champ.MVP()
-#  MVP.GUI()
+#  myDMP <- champ.DMP()
+#  DMP.GUI()
 #  myDMR <- champ.DMR()
 #  DMR.GUI()
 #  myBlock <- champ.Block()
@@ -49,8 +49,8 @@ knitr::include_graphics("Figure/ChAMP_Pipeline.png")
 #  myNorm <- champ.norm(arraytype="EPIC")
 #  champ.SVD()
 #  # If Batch detected, run champ.runCombat() here.This data is not suitable.
-#  myMVP <- champ.MVP(arraytype="EPIC")
-#  MVP.GUI()
+#  myDMP <- champ.DMP(arraytype="EPIC")
+#  DMP.GUI()
 #  myDMR <- champ.DMR()
 #  DMR.GUI()
 #  myDMR <- champ.DMR(arraytype="EPIC")
@@ -105,29 +105,29 @@ champ.SVD(beta=myNorm,pd=myLoad$pd)
 ## ----eval=FALSE----------------------------------------------------------
 #  myCombat <- champ.runCombat(beta=myNorm,pd=myLoad$pd,batchname=c("Slide"))
 
-## ----eval=FALSE,warning=FALSE,message=FALSE------------------------------
-#  myMVP <- champ.MVP(beta = myNorm,pheno=myLoad$pd$Sample_Group)
+## ----eval=TRUE,warning=FALSE,message=FALSE-------------------------------
+myDMP <- champ.DMP(beta = myNorm,pheno=myLoad$pd$Sample_Group)
 
 ## ----eval=TRUE-----------------------------------------------------------
-head(myMVP)
+head(myDMP)
 
 ## ----eval=FALSE----------------------------------------------------------
-#  MVP.GUI((MVP=myMVP,beta=myNorm,pheno=myLoad$pd$Sample_Group)
+#  DMP.GUI(DMP=myDMP,beta=myNorm,pheno=myLoad$pd$Sample_Group)
 
 ## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
-knitr::include_graphics("Figure/MVP-1.png")
+knitr::include_graphics("Figure/DMP-1.png")
 
 ## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
-knitr::include_graphics("Figure/MVP-2.png")
+knitr::include_graphics("Figure/DMP-2.png")
 
 ## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
-knitr::include_graphics("Figure/MVP-3.png")
+knitr::include_graphics("Figure/DMP-3.png")
 
 ## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
-knitr::include_graphics("Figure/MVP-4.png")
+knitr::include_graphics("Figure/DMP-4.png")
 
 ## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
-knitr::include_graphics("Figure/MVP-5.png")
+knitr::include_graphics("Figure/DMP-5.png")
 
 ## ----eval=FALSE,message=FALSE,warning=TRUE-------------------------------
 #  myDMR <- champ.DMR(beta=myNorm,pheno=myLoad$pd$Sample_Group,method="Bumphunter")
@@ -158,7 +158,7 @@ knitr::include_graphics("Figure/DMR-4.png")
 head(myBlock$Block)
 
 ## ----eval=FALSE----------------------------------------------------------
-#  Block.GUI(Block=myBlock,beta=myNorm,pheno=myLoad$pd$Sample_Group,runMVP=TRUE,compare.group=NULL,arraytype="450K")
+#  Block.GUI(Block=myBlock,beta=myNorm,pheno=myLoad$pd$Sample_Group,runDMP=TRUE,compare.group=NULL,arraytype="450K")
 
 ## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
 knitr::include_graphics("Figure/Block-1.png")
@@ -170,11 +170,11 @@ knitr::include_graphics("Figure/Block-2.png")
 knitr::include_graphics("Figure/Block-3.png")
 
 ## ----eval=FALSE----------------------------------------------------------
-#  myGSEA <- champ.GSEA(beta=myNorm,MVP=myMVP,DMR=myDMR,arraytype="450K",adjPval=0.05)
-#  # myMVP and myDMR could (not must) be used directly.
+#  myGSEA <- champ.GSEA(beta=myNorm,DMP=myDMP,DMR=myDMR,arraytype="450K",adjPval=0.05)
+#  # myDMP and myDMR could (not must) be used directly.
 
 ## ----eval=FALSE----------------------------------------------------------
-#  head(myGSEA$MVP)
+#  head(myGSEA$DMP)
 #  # Above is the GSEA result for differential methylation probes.
 #  head(myGSEA$DMR)
 #  # Above is the GSEA result for differential methylation regions.

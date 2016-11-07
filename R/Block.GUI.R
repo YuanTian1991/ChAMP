@@ -3,7 +3,7 @@ if(getRversion() >= "3.1.0") utils::globalVariables(c("myBlock","myLoad","myNorm
 Block.GUI <- function(Block=myBlock,
                       beta=myNorm,
                       pheno=myLoad$pd$Sample_Group,
-                      runMVP=TRUE,
+                      runDMP=TRUE,
                       compare.group=NULL,
                       arraytype="450K")
 {
@@ -13,26 +13,26 @@ Block.GUI <- function(Block=myBlock,
     design <- model.matrix( ~ 0 + pheno)
     fit <- lmFit(Block$avbetaCL.m, design)
     fit2 <- eBayes(fit)
-    clusterMVP <- topTable(fit2,coef=1,number=nrow(Block$avbetaCL.m),adjust.method="BH")
+    clusterDMP <- topTable(fit2,coef=1,number=nrow(Block$avbetaCL.m),adjust.method="BH")
 
     B2 <- makeGRangesFromDataFrame(Block$Block[,1:4])
     A2 <- makeGRangesFromDataFrame(data.frame(seqnames=Block$posCL.m[,2],start=Block$posCL.m[,1],end=Block$posCL.m[,1]))
     C <- as.data.frame(findOverlaps(B2,A2))
     clustertmp <- data.frame(Blockindex=paste("Block",C$queryHits,sep="_"),Block$posCL.m[C$subjectHits,2:1])
-    clustertmp <- data.frame(clustertmp,clusterMVP[rownames(clustertmp),])
+    clustertmp <- data.frame(clustertmp,clusterDMP[rownames(clustertmp),])
 
     message("Generation CpG information")
     cpgtmp <- probe.features[names(Block$allCLID.v[which(Block$allCLID.v %in% rownames(clustertmp))]),c(1,2,5,6,7)]
-    if(runMVP)
+    if(runDMP)
     {
-        message("Calculating MVP")
-        cpgMVP <- champ.MVP(beta=beta,
+        message("Calculating DMP")
+        cpgDMP <- champ.DMP(beta=beta,
                             pheno=pheno,
                             adjPVal=1,
                             adjust.method="BH",
                             compare.group=compare.group,
                             arraytype=arraytype)
-        cpgtmp <- data.frame(cpgtmp,cpgMVP[rownames(cpgtmp),c(1,3,4,5)])
+        cpgtmp <- data.frame(cpgtmp,cpgDMP[rownames(cpgtmp),c(1,3,4,5)])
     }
     cpgtmp <- data.frame(Clusterindex=Block$allCLID.v[rownames(cpgtmp)],cpgtmp)
     cpgtmp <- data.frame(Blockindex=clustertmp[as.character(cpgtmp$Clusterindex),"Blockindex"],cpgtmp)
