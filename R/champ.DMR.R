@@ -259,7 +259,7 @@ champ.DMR <- function(beta=myNorm,
             dev.off()
         }
         DMRProbes <- as.data.frame(myDmrProbesGr)
-        DMRProbes <- data.frame(probe.features[rownames(DMRProbes),],DMRProbes[,33:37])
+        DMRProbes <- data.frame(probe.features[rownames(DMRProbes),],DMRProbes[,which(colnames(DMRProbes)=="P.Value"):which(colnames(DMRProbes)=="dmrNo")])
         DMRProbes <- split(DMRProbes,DMRProbes$dmrNo)
         DMR <- as.data.frame(myDmrGr)
 

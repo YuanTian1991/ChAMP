@@ -61,7 +61,7 @@ champ.norm <- function(beta=myLoad$beta,
         beta.p=DoPBC(beta,design.v)
 	}else if(method=="FunctionNormalization")
     {
-        beta.p <- preprocessFunnorm(rgSet)
+        beta.p <- getBeta(preprocessFunnorm(rgSet))
     }else
     {
         stop("Please Select Normalization Method from: BMIQ,PBC and SWAN.")
