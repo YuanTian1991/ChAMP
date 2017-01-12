@@ -50,7 +50,9 @@ DMR.GUI <- function(DMR=myDMR,
         G <- lapply(G,function(h) data.frame(Sample=rep(colnames(h),each=nrow(h)),ID=rep(rownames(h),ncol(h)),pos=rep(as.numeric(as.factor(select$MAPINFO)),ncol(h)),Value=as.vector(h)))
         for(i in 1:length(G)) G[[i]] <- data.frame(G[[i]],pheno=names(G)[i])
         X <- do.call(rbind,G)
-        p <- plot_ly(data=X, x=pos, y=Value, mode = "markers", text = paste("cpgID:",ID," Sample:",Sample,sep=""),color=pheno,marker=list(opacity = 0.6,size = 4))
+        X <- cbind(X,showtext=paste("cpgID:",X$ID," Sample:",X$Sample,sep=""))
+        p <- plot_ly()
+        p <- add_trace(p,data=X, x=~pos, y=~Value,type="scatter", mode = "markers", text =~showtext,color=~pheno,marker=list(opacity = 0.6,size = 4))
 
         message("<< Dots Plotted >>")
 
@@ -60,7 +62,7 @@ DMR.GUI <- function(DMR=myDMR,
                          y = unlist(lapply(Fit, "[[", "Mean")),
                          ID = unlist(lapply(Fit, "[[", "ID")),
                          cut = unlist(lapply(Fit, "[[", "pheno")))
-        p <- add_trace(data=df, x = x, y = y, text = ID, color = cut,line = list(shape = "spline",width = 3,opacity = 0.3),marker=list(size = 6))
+        p <- add_trace(p,data=df, x =~x, y =~y, text =~ID, color =~cut,line = list(shape = "spline",width = 3,opacity = 0.3),marker=list(size = 1))
 
         message("<< Mean line Plotted >>")
 
@@ -70,7 +72,7 @@ DMR.GUI <- function(DMR=myDMR,
                          y = unlist(lapply(Fit2, "[[", "Fitted")),
                          ID = unlist(lapply(Fit2, "[[", "ID")),
                          cut = unlist(lapply(Fit2, "[[", "pheno")))
-        p <- add_trace(data=df2, x = x, y = y, text = ID, color = cut,line =list(shape ="spline",width=3,opacity=0.3,dash = "dash"),marker=list(size = 6))
+        p <- add_trace(p,data=df2, x =~x, y =~y, text =~ID, color =~cut,line =list(shape ="spline",width=3,opacity=0.3,dash = "dash"),marker=list(size = 1))
 
         message("<< Loess line Plotted >>")
 
@@ -142,13 +144,13 @@ DMR.GUI <- function(DMR=myDMR,
             h <- cbind(h[,c(4,2)],rowSums(h[,c(1,3)]))
             colnames(h) <- c("Hyper","Hypo","Not Significance")
             h <- data.frame(Variance=rep(colnames(h),each=nrow(h)),gene=rep(rownames(h),ncol(h)),Number=as.vector(h))
-            p <- plot_ly(data=h,x =gene, y = Number, type = "bar", color = Variance)
+            p <- plot_ly(data=h,x =~gene, y =~Number, type = "bar", color =~Variance)
         }else
         {
             h <- data.frame(table(as.character(select$gene)))
             colnames(h) <- c("gene","Number")
             h <- h[order(h$Number,decreasing=T),]
-            p <- plot_ly(data=h,x=gene,y=Number,type="bar")
+            p <- plot_ly(data=~h,x=~gene,y=~Number,type="bar")
         }
         m = list(l = 70,r = 30,b = 150,t = 50,pad = 10)
         p <- layout(p, title = paste("All ",length(unique(h$gene))," Gene Enriched by DMR-related CpGs",sep=""),margin=m,barmode = "stack")

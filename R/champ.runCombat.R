@@ -25,6 +25,7 @@ champ.runCombat <- function(beta=myNorm,
     valid.idx <- which(!colnames(pd) %in% c("Sample_Name","Sample_Group","Project","filenames","Basename") &
                        apply(pd,2,function(x) length(unique(x)))!=1 &
                        apply(pd,2,function(x) all(table(x)>=2)))
+    if(length(valid.idx)==0) stop("There is not valid factor can be corrected. Factor can be corrected must contian at least two phenotypes, each of them must contain at least two samples. Please check if your covariates fulfill these requirement.")
     PhenoTypes.lv_tmp <- as.data.frame(pd[,valid.idx])
     colnames(PhenoTypes.lv_tmp) <- colnames(pd)[valid.idx]
     PhenoTypes.lv <- as.data.frame(apply(PhenoTypes.lv_tmp,2,function(x) if(class(x)!="numeric") as.factor(as.numeric(as.factor(x)))))

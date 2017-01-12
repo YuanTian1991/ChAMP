@@ -4,7 +4,7 @@
 Identify Differential Methylation Blocks in Illumina HumanMethylation450 or HumanMethylationEPIC data.
 }
 \description{
-    This function would detect all methylation Blocks exist in your dataset, methylation Block should be calculated based on the average value of clusters across whole genome. Firstly champ.Block would calculate all clusters in the dataset with clustermaker() function provided by Bumphunter package. Then, only OpenSea Clusters would be picked out to calculate Block. Eventually, Bumphunter Algrorithms would be applied on averaged clusters to get final Blocks.
+    This function would detect all methylation Blocks exist in your dataset, methylation Block should be calculated based on the average value of clusters across whole genome. Firstly champ.Block would calculate all clusters in the dataset with clustermaker() function provided by Bumphunter package. Then, only OpenSea Clusters would be picked out to calculate Block. Block can be seen as "large clusters" generated from all small OpenSea Clusters. The algrorithms is similar to the normal DMR-detection one. We will firstly collapse all OpenSea Clusters (or to say regions) into one dot on genome, using average beta value to represent their beta value, and using average position to represent their position. Then we do clustering on these collapsed regions with Bumphunter algrorithms but bigger ranges.
 }
 
 \usage{
@@ -51,7 +51,7 @@ Identify Differential Methylation Blocks in Illumina HumanMethylation450 or Huma
 }
 
 \references{
-    Berman BP, Weisenberger DJ, Aman JF, Hinoue T, Ramjan Z, et al. (2012) Regions of focal dna hypermethylation and long-range hypomethylation in colorectal cancer coincide with nuclear lamna-associated domains. Nat Genet 44: 40-6.
+    Hansen KD, Timp W, Bravo HC, et al. Increased methylation variation in epigenetic domains across cancer types. Nat Genet. 2011;43(8):768-775.
 }
 
 \author{

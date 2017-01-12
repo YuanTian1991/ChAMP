@@ -23,7 +23,7 @@ DMP.GUI <- function(DMP=myDMP,
     {
         h <- apply(h,1,function(x) if(sum(x>0)!=0) prop.table(x) else x)
         h <- data.frame(cgi=rep(colnames(h),each=nrow(h)),probe=rep(rownames(h),ncol(h)),proportion=as.vector(h))
-        p <- plot_ly(data=h,x = probe, y = proportion, type = "bar", color = cgi)
+        p <- plot_ly(data=h,x = ~probe, y = ~proportion, type = "bar", color =~cgi)
         m = list(l = 70,r = 30,b = 50,t = 50,pad = 10)
         p <- layout(p, title = "cgi proportion barplot",margin=m)
     }
@@ -31,7 +31,7 @@ DMP.GUI <- function(DMP=myDMP,
     {
         h <- apply(h,1,function(x) if(sum(x>0)!=0) prop.table(x) else x)
         h <- data.frame(cgi=rep(colnames(h),each=nrow(h)),probe=rep(rownames(h),ncol(h)),proportion=as.vector(h))
-        p <- plot_ly(data=h,x = probe, y = proportion, type = "bar", color = cgi)
+        p <- plot_ly(data=h,x = ~probe, y = ~proportion, type = "bar", color = ~cgi)
         m = list(l = 70,r = 30,b = 50,t = 50,pad = 10)
         p <- layout(p, title = "feature proportion barplot",margin=m)
     }
@@ -39,7 +39,7 @@ DMP.GUI <- function(DMP=myDMP,
     {
         h <- apply(h,1,function(x) if(sum(x>0)!=0) prop.table(x) else x)
         h <- data.frame(cgi=rep(colnames(h),each=nrow(h)),probe=rep(rownames(h),ncol(h)),proportion=as.vector(h))
-        p <- plot_ly(data=h,x = probe, y = proportion, type = "bar", color = cgi)
+        p <- plot_ly(data=h,x = ~probe, y = ~proportion, type = "bar", color = ~cgi)
         m = list(l = 70,r = 30,b = 100,t = 50,pad = 10)
         p <- layout(p, title = "feature-cgi proportion barplot",margin=m)
     }
@@ -53,7 +53,7 @@ DMP.GUI <- function(DMP=myDMP,
         h <- h[order(rowSums(h),decreasing=T),]
         colnames(h) <- c("Hypo","Hyper")
         h <- data.frame(Variance=rep(colnames(h),each=nrow(h)),gene=rep(rownames(h),ncol(h)),Number=as.vector(h))
-        p <- plot_ly(data=h,x =gene, y = Number, type = "bar", color = Variance)
+        p <- plot_ly(data=h,x = ~gene, y = ~Number, type = "bar", color = ~Variance)
         m = list(l = 70,r = 30,b = 150,t = 50,pad = 10)
         p <- layout(p, title = paste("Top ",length(rank)," Gene Mostly Enriched by Significant CpGs",sep=""),margin=m,barmode = "stack")
     }
@@ -65,7 +65,10 @@ DMP.GUI <- function(DMP=myDMP,
         G <- lapply(G,function(h) data.frame(Sample=rep(colnames(h),each=nrow(h)),ID=rep(rownames(h),ncol(h)),pos=rep(as.numeric(as.factor(select$MAPINFO)),ncol(h)),Value=as.vector(h)))
         for(i in 1:length(G)) G[[i]] <- data.frame(G[[i]],pheno=names(G)[i])
         X <- do.call(rbind,G)
-        p <- plot_ly(data=X, x=pos, y=Value, mode = "markers", text = paste("cpgID:",ID," Sample:",Sample,sep=""),color=pheno,marker=list(opacity = 0.6,size = 4))
+        X <- cbind(X,showtext=paste("cpgID:",X$ID," Sample:",X$Sample,sep=""))
+
+        p <- plot_ly()
+        p <- add_trace(p,data=X, x=~pos, y=~Value,type="scatter", mode ="markers",text=~showtext,color=~pheno,marker=list(opacity = 0.6,size = 4))
 
         message("<< Dots Plotted >>")
 
@@ -75,7 +78,7 @@ DMP.GUI <- function(DMP=myDMP,
                          y = unlist(lapply(Fit, "[[", "Mean")),
                          ID = unlist(lapply(Fit, "[[", "ID")),
                          cut = unlist(lapply(Fit, "[[", "pheno")))
-        p <- add_trace(data=df, x = x, y = y, text = ID, color = cut,line = list(shape = "spline",width = 3,opacity = 0.3),marker=list(size = 6))
+        p <- add_trace(p,data=df, x = ~x, y = ~y, text = ~ID, color = ~cut,mode = 'lines+markers',line = list(shape = "spline",width = 3,opacity = 0.3),marker=list(size = 1))
 
         message("<< Mean line Plotted >>")
 
@@ -85,7 +88,7 @@ DMP.GUI <- function(DMP=myDMP,
                          y = unlist(lapply(Fit2, "[[", "Fitted")),
                          ID = unlist(lapply(Fit2, "[[", "ID")),
                          cut = unlist(lapply(Fit2, "[[", "pheno")))
-        p <- add_trace(data=df2, x = x, y = y, text = ID, color = cut,line =list(shape ="spline",width=3,opacity=0.3,dash = "dash"),marker=list(size = 6))
+        p <- add_trace(p,data=df2, x = ~x, y = ~y, text = ~ID, color = ~cut,mode = 'lines+markers',line =list(shape ="spline",width=3,opacity=0.3,dash = "dash"),marker=list(size = 1))
 
         message("<< Loess line Plotted >>")
 
@@ -166,7 +169,7 @@ DMP.GUI <- function(DMP=myDMP,
     }
     innercpgplot <- function(c,cpgname)
     {
-        p <- plot_ly(c, y = Beta_Value, color = Pheno, type = "box", boxpoints = "all", jitter = 0.3,pointpos = 0)
+        p <- plot_ly(c, y = ~Beta_Value, color = ~Pheno, type = "box", boxpoints = "all", jitter = 0.3,pointpos = 0)
         m = list(l = 70,r = 70,b = 50,t = 50,pad = 10)
         p <- layout(p, title = paste("Boxplot for",cpgname),margin=m)
     }

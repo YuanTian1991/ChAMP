@@ -89,7 +89,7 @@ champ.CNA <- function(intensity=myLoad$intensity,
                 plot(segment.smoothed.CNA.object, plot.type = "w", ylim=c(-6,6))
 			if(PDFplot)
 			{
-				imageName<-paste(colnames(intsqnlog)[i],"qn.jpg",sep="")
+				imageName <- paste(colnames(intsqnlog)[i],"qn.jpg",sep="")
 				imageName=paste(resultsDir,imageName,sep="/")
 				pdf(imageName)
 				plot(segment.smoothed.CNA.object, plot.type = "w", ylim=c(-6,6))

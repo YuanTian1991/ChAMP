@@ -44,7 +44,9 @@ Block.GUI <- function(Block=myBlock,
 
         for(i in 1:length(G)) G[[i]] <- data.frame(G[[i]],pheno=names(G)[i])
         X <- do.call(rbind,G)
-        p <- plot_ly(data=X, x=pos, y=Value, mode = "markers", text = paste("cpgID:",ID," Sample:",Sample,sep=""),color=pheno,marker=list(opacity = 0.6,size = 4))
+        X <- cbind(X,showtext=paste("cpgID:",X$ID," Sample:",X$Sample,sep=""))
+        p <- plot_ly()
+        p <- add_trace(p,data=X, x=~pos, y=~Value,type="scatter", mode = "markers", text =~showtext,color=~pheno,marker=list(opacity = 0.6,size = 4))
 
         message("<< Dots Plotted >>")
 
@@ -54,7 +56,8 @@ Block.GUI <- function(Block=myBlock,
                          y = unlist(lapply(Fit, "[[", "Mean")),
                          ID = unlist(lapply(Fit, "[[", "ID")),
                          cut = unlist(lapply(Fit, "[[", "pheno")))
-        p <- add_trace(data=df, x = x, y = y, text = ID, color = cut,line = list(shape = "linear",width = 3,opacity = 0.3),marker=list(size = 1))
+
+        p <- add_trace(p,data=df, x =~x, y =~y, text =~ID, color =~cut,line = list(shape = "linear",width = 3,opacity = 0.3),marker=list(size = 1))
 
         message("<< Mean line Plotted >>")
 
@@ -64,12 +67,12 @@ Block.GUI <- function(Block=myBlock,
                          y = unlist(lapply(Fit2, "[[", "Fitted")),
                          ID = unlist(lapply(Fit2, "[[", "ID")),
                          cut = unlist(lapply(Fit2, "[[", "pheno")))
-        p <- add_trace(data=df2, x = x, y = y, text = ID, color = cut,line =list(shape ="spline",width=3,opacity=0.3,dash = "dash"),marker=list(size = 1))
+        p <- add_trace(p,data=df2, x =~x, y =~y, text =~ID, color =~cut,line =list(shape ="spline",width=3,opacity=0.3,dash = "dash"),marker=list(size = 1))
 
         message("<< Loess line Plotted >>")
 
         if(!is.null(cpgidf))
-            p <- add_trace(data=cpgidf,x=pos,y=y,text=ID,mode="markers",name="CpG Islands",marker=list(opacity = 0.6,size = 10,color="#8b3a62"))
+            p <- add_trace(p,data=cpgidf,x=~pos,y=~y,text=~ID,mode="markers",name="CpG Islands",marker=list(opacity = 0.6,size = 10,color="#8b3a62"))
         p <- layout(p, title = paste("Block",block.idx,sep="_"))
     }
     innertestplot <- function()

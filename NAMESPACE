@@ -26,6 +26,7 @@ import(sva)
 import(IlluminaHumanMethylationEPICmanifest)
 import(FEM)
 import(impute)
+import(goseq)
 
 importFrom(RPMM, blc)
 
@@ -48,6 +49,7 @@ importFrom("stats", "aggregate", "as.dendrogram", "as.formula","bartlett.test",
 export(
 	champ.process, 
     champ.load,
+    champ.filter,
 	champ.impute, 
     champ.QC,
     champ.norm,

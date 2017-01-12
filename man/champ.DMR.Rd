@@ -17,7 +17,8 @@
               cores=3,
               ## following parameters are specifically for Bumphunter method.
               maxGap=300,
-              cutoff=0.5,
+              cutoff=NULL,
+              pickCutoff=TRUE,
               smooth=TRUE,
               smoothFunction=loessByCluster,
               useWeights=FALSE,
@@ -53,7 +54,8 @@
 
     Parameters specific for Bumphunter algorithm:
     \item{maxGap}{The maximum length for a DMR should be detected, regions longer then this would be discarded. (default = 300)}
-    \item{cutoff}{A numeric value. Values of the estimate of the genomic profile above the cutoff or below the negative of the cutoff will be used as candidate regions. It is possible to give two separate values (upper and lower bounds). If one value is given, the lower bound is minus the value. (default = 0.5)}
+    \item{cutoff}{A numeric value. Values of the estimate of the genomic profile above the cutoff or below the negative of the cutoff will be used as candidate regions. It is possible to give two separate values (upper and lower bounds). If one value is given, the lower bound is minus the value. (default = NULL)}
+    \item{pickCutoff}{A bool value to indicate if bumphunter algorithm will automatically select the threshold of DMRs. If the value is TRUE, bumphunter will automatically generated 0.99 cutoff from permutation. If user think this threshold is not suitable, user may set their own cutoff here. (default = TRUE)}
     \item{smooth}{A logical value. If TRUE the estimated profile will be smoothed with the smoother defined by \code{smoothFunction}. (default = TRUE)}
     \item{smoothFunction}{A function to be used for smoothing the estimate of the genomic profile. Two functions are provided by the package: \code{loessByCluster} and \code{runmedByCluster}. (default = loessByCluster)}
     \item{useWeights}{A logical value. If \code{TRUE} then the standard errors of the point-wise estimates of the profile function will be used as weights in the loess smoother \code{loessByCluster}. If the \code{runmedByCluster} smoother is used this argument is ignored. (default = FALSE)}
@@ -97,22 +99,18 @@
     You can try to use DMR.GUI() to do interactively analysis on the result of champ.DMR().
 }
 
-
-\references{
-    Aryee MJ, Jaffe AE, Corrada-Bravo H, Ladd-Acosta C, Feinberg AP, Hansen KD and Irizarry RA (2014). "Minfi: A flexible and comprehensive Bioconductor package for the analysis of Infinium DNA Methylation microarrays." Bioinformatics, 30(10), pp. 1363-1369. http://doi.org/10.1093/bioinformatics/btu049.
-
-    Butcher LM and Beck S (2015). "Probe Lasso: A novel method to rope in differentially methylated regions with 450K DNA methylation data." Methods, 72, pp. 21-28. http://doi.org/10.1016\%2Fj.ymeth.2014.10.036.
-    
-    Peters T.J., Buckley M.J., Statham, A., Pidsley R., Samaras K., Lord R.V., Clark S.J. and Molloy
-P.L. "De novo identification of differentially methylated regions in the human genome". Epigenetics
-& Chromatin 2015, 8:6, doi:10.1186/1756-8935-8-6
-}
-
 \note{
     The internal structure of the result of champ.DMR() function should not be modified if it's not necessary caused it would be assigned as inpute for some other functions like DMR.GUI() and champ.GSEA().
     You can try to use DMR.GUI() to do interactively analysis on the result of champ.DMR().
 }
 
+\references{
+    Jaffe AE et a. Bump hunting to identify differentially methylated regions in epigenetic epidemiology studies. Int J Epidemiol. 2012;41(1):200-209.
+
+    Butcher LM, Beck S. Probe lasso: A novel method to rope in differentially methylated regions with 450K dna methylation data. Methods. 2015;72:21-28.
+
+    Peters TJ, Buckley MJ, Statham AL, et al. De novo identification of differentially methylated regions in the human genome. Epigenetics & Chromatin. 2015;8(1):1-16.
+}
 
 \author{
     Butcher, L,Aryee MJ, Irizarry RA, Andrew Teschendorff, Yuan Tian

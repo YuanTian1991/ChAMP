@@ -36,6 +36,9 @@ This function formats data to run through ComBat batch correction. If beta value
         }
 }
 
+\references{
+    Johnson WE et a. Adjusting batch effects in microarray expression data using empirical bayes methods. Biostatistics. 2007;8(1):118-127.
+}
 
 \author{
     Yuan Tian

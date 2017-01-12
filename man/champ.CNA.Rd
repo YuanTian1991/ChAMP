@@ -47,7 +47,6 @@
 }
 \references{
 Feber, A et. al. (2014). CNA profiling using high density DNA methylation arrays. Genome Biology.
-
 }
 \author{
 Feber, A\cr

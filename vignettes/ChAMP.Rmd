@@ -17,14 +17,36 @@ vignette: >
   %\VignetteIndexEntry{ChAMP: The Chip Analysis Methylation Pipeline}
 ---
 
+# New Updates
+
+1: **ChAMP now fully support new plotly (version 4.5.6).** Previously, ChAMP's plot function can only works on plotly 3.6.1. Now it can support newest plotly version 4.5.6 already. You may update your plotly version.
+
+2: **Added "goseq" Method into GSEA** to correct bia might be caused by inequivalence between genes and CpG probes on them. "Note that "goseq" method has been assgined as default method".
+
+3: **Added message in champ.runCombat()** for user who has no qualified factor to correct. **Merely for Error "Error in `row.names<-.data.frame`(`*tmp*`, value = value) : invalid 'row.names' length".**
+
+4: **Replace SNP list with new SNP list provided by Zhou's Paper[@Zhou2016]**. User may assign population for different SNP list, the new parameter is in champ.load() function. This parameter also can be ignored so that a general SNP wil be used. Correspondingly, we upgraded ChAMPdata package into version 2.6.0, if you failed to install ChAMP_2.6.0, you may need to upgrade ChAMPdata package.
+
+5: **Added two section "New Updates" and "Citing ChAMP" into vignette.** So that user may find newest updated features and correctly cite other scientists' work. 
+
+6: **Modifed detected P filtering system to filter samples as well.** There are many case that in a data set, only one or two samples' quality is bad, while most other samples are qualified for analysis. Now ChAMP will check qualification of samples first and do filtering on sample first, then do filtering on probes. All these can be controled by detSamplecut and detPcut parameters in champ.load() and champ.filter() functions.
+
+7: **Added champ.filter() function for users have no IDAT file to do filtering on SNP, detP...** This function is very much similar to champ.load() but only works on one beta matrix, instead of rgSet or Intensity data. 
+
+8: **Modifed default cutoff threshold of Bumphunter Algorithm in champ.DMR() from 0.5 to 99% cutoff** of all permulation value, which would be suitable for more situations. User may set parameter "cutoff" as 0.5 to retain old result.
+
+9: **Modifed Demo(this vignette) GSEA result into new method's result**. Since we set "goseq" method as default method, we changed the result of GSEA from this data into new result. Note that old champ.GSEA() would return gene list, which will no longer provided. Only GSEA result will be returned.
+
+10: **Modified some reference.** According to reviewer's suggestion, I modified some reference for minfi package, block algorithm, GSEA method, SNP list, Multi-hit list.
+
 # Introduction
 
-The ChAMP package is a pipeline that integrates currently available 450k and EPIC analysis methods and also offers its own novel functionality. It utilises the data import from .idat file and normal beta matrix; Quality Control Plots; SWAN [@Maksimovic12] and Functional Normalization [@Fortin2014] functions offered by the minfi [@minfi] package.
+The ChAMP package is a pipeline that integrates currently available 450k and EPIC analysis methods and also offers its own novel functionality. It utilises the data import from .idat file and normal beta matrix; Quality Control Plots; SWAN [@Maksimovic12] and Functional Normalization [@Fortin2014] functions offered by the minfi [@minfi] [@Fortin065490] package.
 
 In addition, the ChAMP package includes the Peak Based Correction (PBC) method [@Dedeurwaerder11] and the BMIQ Normalization [@Teschendorff13] is set as the default method.
 
 A number of other pipelines and packages are available for 450k or EPIC array analysis
-including IMA [@Wang12IMA], minfi [@minfi], methylumi [@methylumi], RnBeads [@rnbeads] and watermelon [@watermelon]. However, ChAMP provides a comprehensive and compelete analysis pipeline from origin data file to final GSEA result, which would make researchers' work much easyer. Also, the new version ChAMP provides a series of Shiny-based WebBrower Interactive analysis function (GUI functions), which should benifit even more scientists' work. 
+including IMA [@Wang12IMA], minfi [@minfi], methylumi [@methylumi], RnBeads [@rnbeads] and watermelon [@watermelon]. However, ChAMP provides a comprehensive and compelete analysis pipeline from origin data file to final GSEA result, which would make researchers' work much easier. Also, the new version ChAMP provides a series of Shiny-based WebBrower Interactive analysis function (GUI functions), which should benifit even more scientists' work. 
 
 There are also some other advantages for ChAMP. First of all ChAMP is both available for 450k or EPIC array. Also this package contains multiple novel functions. The singular value decomposition (SVD) method [@Teschendorff09] allows an in-depth look at batch effects and for correction of multiple batch effect the ComBat method [@Johnson07] has been implemented. For the identification of differential methylated regions (DMR) ChAMP offers the new Probe Lasso method [@Butcher201521]. Also another two effective DMR detection function Bumphunter [@Jaffe12] and DMRcate [@Peters2015] is also integrated. Users have more freedom to select their prefered methods.
 
@@ -32,9 +54,11 @@ For the purpose of dealing with cell heterogeneity problem, we included two func
 
 Except new functions, all functions and scripts exist already in old version ChAMP, which all have been enhanced and checked carefully. Also, some new functions are included as well:
 
-For users who need to find methylation Blocks [@Berman2012]. New version ChAMP includes a function to detect methylation Blocks. Another important function is GSEA, which would take singnificant genes related with DMPs and DMRs and do GSEA analysis, to see what pathways are enriched by significant CpGs or DMRs. Also, new version ChAMP incoporates FEM package [@Jiao15082014], which would calculate modules in pathways show differential methylation changes between two phenotypes.
+For users who need to find methylation Blocks [@Hansen2011]. New version ChAMP includes a function to detect methylation Blocks. Another important function is GSEA, which would take singnificant genes related with DMPs and DMRs and do GSEA analysis, to see what pathways are enriched by significant CpGs or DMRs. To correct biased might be caused by ininequality between genes and CpG probes, we used goseq pacakge to correct the bias [@Young2010]. Also, new version ChAMP incoporates FEM package [@Jiao15082014], which would calculate modules in pathways show differential methylation changes between two phenotypes.
 
 > Apart from that, new version ChAMP provides a [Shiny](http://shiny.rstudio.com/) and [Plotly](https://plot.ly/) based GUI framework, to help scientists to view ChAMP result. This is an interactive WebBrower-based framework, calling for Graph System locally or remotely. **For example X11 for most Linux System.**
+
+**If you have any bug to report, or any suggestions for ChAMP, please email champ450k@gmail.com, or tianyuan1991hit@gmail.com. I will respond you as fast as I can.**
 
 # Installation
 
@@ -51,18 +75,19 @@ If you have any problem with traffic with Bioconductor, another option is instal
 
 ```{r eval=FALSE}
 source("http://bioconductor.org/biocLite.R")
-biocLite(c("minfi","ChAMPdata","Illumina450ProbeVariants.db","sva","IlluminaHumanMethylation450kmanifest","limma","RPMM","DNAcopy","preprocessCore","impute","marray","wateRmelon","plyr","GenomicRanges","RefFreeEWAS","qvalue","isva","doParallel","bumphunter","quadprog","shiny","shinythemes","plotly","RColorBrewer","DMRcate","dendextend","IlluminaHumanMethylationEPICmanifest","FEM","matrixStats"))
+biocLite(c("minfi","ChAMPdata","Illumina450ProbeVariants.db","sva","IlluminaHumanMethylation450kmanifest","limma","RPMM","DNAcopy","preprocessCore","impute","marray","wateRmelon","goseq","plyr","GenomicRanges","RefFreeEWAS","qvalue","isva","doParallel","bumphunter","quadprog","shiny","shinythemes","plotly","RColorBrewer","DMRcate","dendextend","IlluminaHumanMethylationEPICmanifest","FEM","matrixStats"))
 ```
 
->**Note** that ChAMP calls for newest version FEM package [FEM_3.1.0.tar.gz](http://www.bioconductor.org/packages/devel/bioc/html/FEM.html) instead of old version 2.8.0/. If you failed to install version 3.1.0, you may need to download FEM_3.1.0.tar.gz package and install it with following code **in Bash**:
+
+>**Note:** ChAMP used plotly to generate interactive plots, at the time ChAMP was firstly developed, plotly was on [3.6.1 version](https://github.com/ropensci/plotly/releases/tag/v3.6.1), which caused some error report in user's GUI function. Now we have made it fully support [version 4.5.6](https://cran.r-project.org/web/packages/plotly/index.html), user may download then use following code **in Bash** to install it, so that the plotly in your system will be upgraded:
 
 ```{bash eval=FALSE}
-R CMD INSTALL FEM_3.1.0.tar.gz
+R CMD INSTALL plotly-4.5.6.tar.gz
 ```
 
 After you did all above work, you may use code below to install ChAMP:
 ```{bash eval=FALSE}
-R CMD INSTALL ChAMP_2.0.1.tar.gz
+R CMD INSTALL ChAMP_2.6.0.tar.gz
 ```
 After installation, you may easily load ChAMP package:
 ```{r eval=TRUE,message=FALSE, warning=FALSE}
@@ -188,13 +213,13 @@ GUI functions requires more things. A basic framework for a GUI environment is r
 > A significant improvement for new version ChAMP is that: User can also conduct full analysis even if they are not started from .idat file. As long as you have a methylation beta matrix and corresponding Phenotypes pd file, you can conduct all ChAMP analysis. It should be much more easier for user get data from TCGA or GEO, but without original .idat file.
 
 
-#Description of ChAMP Pipelines
+# Description of ChAMP Pipelines
 
 As previously mentioned, the user has the option to run each of the ChAMP functions individually to allow integration with other pipelines or to save the results of each step. Here each function is described in detail.
 
 ## Loading Data
 
-Loading Data is first step for all analysis. ChAMP provides a loading function to get data from .idat file (with pd file (Sample_Sheet.csv) in it). The champ.load() function utilises minfi to load data from .idat files. By default this loads data from the current working directory, in this directory you should have all .idat files and a sample sheet. The sample sheet currently needs to be a .csv file as came with your results following hybridization. You can choose whether you want M-values or beta-values. For small datasets M-values are recommended [@Zhuang12]. The minfi function used to load the data from the idat files would automatically filters out the 65 SNP probes that were included on the chip as internal controls which can useful for identifying sample mix ups. As such, for 450k bead array data, before filtering for low quality probes, the dataset will include 485,512 probes. And for EPIC bead array data, before filtering probes the dataset, will include 867,531 probes.
+Loading Data is first step for all analysis. ChAMP provides a loading function to get data from .idat file (with pd file (Sample_Sheet.csv) in it). The champ.load() function utilises minfi to load data from .idat files. By default this loads data from the current working directory, in this directory you should have all .idat files and a sample sheet. The sample sheet currently needs to be a .csv file as came with your results following hybridization. You can choose whether you want M-values or beta-values. For small datasets M-values are recommended [@Zhuang12]. The minfi function used to load the data from the idat files would automatically filters out the SNPs that might influent the analyais result. The SNP list are generated from [Zhou's Nucleic Acids Research paper in 2016](http://zwdzwd.github.io/InfiniumAnnotation) [@Zhou2016], which is designed specifically for 450K and EPIC, also with population difference considered. As such, for 450k bead array data, before filtering for low quality probes, the dataset will include 485,512 probes. And for EPIC bead array data, before filtering probes the dataset, will include 867,531 probes.
 
 User may use following code to load data set:
 ```{r eval=FALSE}
@@ -215,14 +240,14 @@ As we can see here, the Sample_Group contains two phenotypes: C and T, which is 
 
 During the loading process, champ.load() function would also do some filtering.
 
-* First filter is for probes with detection p-value (< 0.01). This utilises minfi method for calculating the detection p-value which differs from the method used in Genome Studio. A failedSamples result will be printed to the screen showing the fraction of failed probes per sample. If any of these values is high (>0.05) you may want to consider removing that sample from the analysis and rerun it.
+* First filter is for probes with detection p-value (< 0.01). This utilises minfi method for calculating the detection p-value which differs from the method used in Genome Studio. A failedSamples result will be printed to the screen showing the fraction of failed probes per sample. If any of these values is high (>0.05) you may want to consider removing that sample from the analysis and rerun it. Previously we found that in many cases, only one or two samples in a big data set are not qualited for analysis, and they may have 70% or even 80% of failed probes. If we only do filtering on probes, about 80% of probes will be masked, so we developed new filtering system on both sample and probe. If certain sample's failed probes' ratio if above certain threshold (default = 0.1), then this sample will be discarded, then filtering to probes will be carried on rest samples. The threshold of sample and probe can be controled by parameter detSamplecut and detPcut separately.
 * Second, ChAMP will filter out probes with <3 beads in at least 5% of samples per probe. This default can changed with the filterBeads parameter or the frequency can be adjusted with the beadCutoff parameter.
 * Third, ChAMP will filter out all None-CpG probes contained in your dataset.
-* Fourth, ChAMP will filter all SNP-related probes.
-* Fifth, ChAMP will filter all multi-hit probes.
+* Fourth, ChAMP will filter all SNP-related probes. The SNP list comes from [Zhou's Nucleic Acids Research paper in 2016](http://zwdzwd.github.io/InfiniumAnnotation).
+* Fifth, ChAMP will filter all multi-hit probes. The multi-hit probe list comes from [Nordlund's Genome Biology Paper in 2013](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2013-14-9-r105)[@Nordlund2013].
 * And the Sixth, ChAMP will filter out all probes located in chromosome X and Y.
 
-All above filtering are controled by parameters in champ.load() function, user may adjust as you wish. Note that, Though most ChAMP functions are supporting isolated beta matrix analysis, which means not relying on .idat file from beginning, **but champ.load() can not do filtering on beta matrix alone**. For users have nothing but beta matrix and Sample_Sheet.csv, you may do filtering yourself and then use following functions to do analysis. Next version ChAMP may support beta matrix import and filtering.
+All above filtering are controled by parameters in champ.load() function, user may adjust as you wish. Note that, Though most ChAMP functions are supporting isolated beta matrix analysis, which means not relying on .idat file from beginning, **but champ.load() can not do filtering on beta matrix alone. For users have nothing but beta matrix and Sample_Sheet.csv, you may do filtering with newly champ.filter() function and then use following functions to do analysis.**
 
 Beside this, we provide a small function CpG.GUI() for user to check their distribution of CpGs. This function can be used for any CpGs list, for example, during your analysis, whenever you get a significant CpG list from DMR, you can user following function to check the distribution of your CpG vector:
 
@@ -303,7 +328,7 @@ champ.SVD(beta=myNorm,pd=myLoad$pd)
 
 This function implements the ComBat normalization method [@Johnson07] that was developed for microarrays. The sva R package is used to implement this function. ComBat is specifically defined in the ChAMP package to correct for batch effects. More advanced users can implement ComBat using sva documentation to adjust for other batch effects.
 
-This version of champ.runCombat() is coded for more than one batch effect. You just need to set parameter `batchname=c("Slides","Array")` in the function to correct them.
+This version of champ.runCombat() is coded for more than one batch effect, but only one batch is suggested. You need to set parameter `batchname=c("Slides","Array")` in the function to correct them.
 
 > Note that champ.runCombat() would extract batch from your batchname, so please make sure you understand you dataset perfectly. **Another important thing is, champ.runCombat() would automatically assume "Sample_Group" is the covariates need to be analysed**, thus for some data set whose disease phenotype is NOT Sample_Group, please assign Sample_Group as the covariate name. 
 
@@ -418,7 +443,7 @@ The fourth tab provide the enrichment information of genes and heatmap. Note tha
 
 ## Differential Methylation Blocks
 
-In recent years, there are more researchs about Differential Methylation Blocks [@Berman2012]. Here we provides a function to calculate methylation blocks. In our Block-finder function, champ.Block() would firstly calculate small clusters (regions) on whole genome based on their locations on genome. Then for each cluster (region), the mean value and mean position would be calcuated, thus you can assume that each region would be collapsed into a dot. Then Bumphunter algorithsm will be used to find "DMRs" over these regions (dots after collapse). **Note that only open sea regions will be used to calculate Blocks**. In our previous paper [@Yuan2015] we demonstrated that Differential Methylation Blocks may show universal feature across various cancers.
+In recent years, there are more researchs about Differential Methylation Blocks [@Hansen2011]. Here we provides a function to calculate methylation blocks. In our Block-finder function, champ.Block() would firstly calculate small clusters (regions) on whole genome based on their locations on genome. Then for each cluster (region), the mean value and mean position would be calcuated, thus you can assume that each region would be collapsed into a dot. Then Bumphunter algorithsm will be used to find "DMRs" over these regions (dots after collapse). **Note that only open sea regions will be used to calculate Blocks**. In our previous paper [@Yuan2015] we demonstrated that Differential Methylation Blocks may show universal feature across various cancers.
 
 User may use following code to generate methylation blocks:
 ```{r eval=FALSE}
@@ -453,9 +478,13 @@ The third tab provides the plot for each Blocks. **Be caution that each Block ma
 ## Gene Set Enrichment Analysis
 Gene Set Enrichment Analysis is an very important step for most Bioinformatics work. After previous steps, you may already get some significant DMPs or DMRs, thus you may want to know if genes involvded in these significant DMPs or DMRs are actually corresponding to some pathways. To achieve this analysis, you can use champ.GSEA() to do GSEA analysis. 
 
-champ.GSEA() woul automatically extract genes in `myDMP` and `myDMR` (No matter what method you have used to generate DMRs). Also if you have your own significant CpG list or gene list calculated from **THE SAME** methylation arrays (450K or EPIC) by other method not included in ChAMP. You may also format them into **list** and input the function to do GSEA. champ.GSEA() would automatically extract gene information, transfer CpG information into gene information then conduct GSEA on each list.
+champ.GSEA() would automatically extract genes in `myDMP` and `myDMR` (No matter what method you have used to generate DMRs). Also if you have your own significant CpG list or gene list calculated from **THE SAME** methylation arrays (450K or EPIC) by other method not included in ChAMP. You may also format them into **list** and input the function to do GSEA. champ.GSEA() would automatically extract gene information, transfer CpG information into gene information then conduct GSEA on each list. During the mapping process between CpGs to genes, if there are multiple CpGs mapped to one gene, that gene would only be counted once in case of over counting.
 
-The pathway network champ.GSEA() used is from [MSigDB](http://software.broadinstitute.org/gsea/msigdb/index.jsp). After gene enrichment analysis, champ.GSEA() function would automatically return pathway with p value smaller then adjPval cutoff.
+There are two ways to do GSEA. In previous version, ChAMP used pathway information downloaded from [MSigDB](http://software.broadinstitute.org/gsea/msigdb/index.jsp). Then **Fisher Exact Test ** will be used to calculate the enrichment status of each pathway. After gene enrichment analysis, champ.GSEA() function would automatically return pathway with p value smaller then adjPval cutoff.
+
+For most situation, above fisher exact test method should works fine. However, as the [Geeleher's Paper](http://bioinformatics.oxfordjournals.org/content/early/2013/06/24/bioinformatics.btt311.full) addressed. Since different genes has different numbers of CpGs contained inside, the two situation that one genes with 50 CpGs inside but only one of them show significant methylation, and one gene with 2 CpGs inside but two are significant methylated should not be eaqualy treated. The solution is use number of CpGs contained by genes to correct significant genes. Here we used [goseq](http://bioconductor.org/packages/release/bioc/html/goseq.html) package [@Young2010] to solve this problem. This package was originally designed to correct bias caused by gene's length during GSEA procedure. Here we used number of CpGs contained by each gene replace length as biased data, to correct this issue.
+
+> Note: If user want to correct the biased caused between genes' number and CpGs' number, they may set **method** parameter in champ.GSEA() function as "goseq" to use goseq method to do GSEA, or user may set it as "fisher" to do normal Gene Set Enrichment Analysis.
 
 User may use following command to do GSEA:
 ```{r eval=FALSE}
@@ -464,7 +493,7 @@ myGSEA <- champ.GSEA(beta=myNorm,DMP=myDMP,DMR=myDMR,arraytype="450K",adjPval=0.
 ```
 After the calculation, for each list (DMP,DMR or other list), one GSEA result would be returned. User may check the result like below:
 
-```{r eval=FALSE}
+```{r eval=TRUE}
 head(myGSEA$DMP)
 # Above is the GSEA result for differential methylation probes.
 head(myGSEA$DMR)
@@ -511,7 +540,7 @@ The main usage of champ.CNA() function is to generate plot for sample and groups
 knitr::include_graphics("Figure/CNAGroupPlot.jpg")
 ```
 
-##Cell Heterogeneity
+## Cell Heterogeneity
 
 While many methylation sample are collected from whole blood, their methylation status actually are combination of various cell types. These cell-type specified methylation may cover ture epigenome signals as well as true relationships between CpGs sites and phenotypes, or themsleves are the reason of some diseases. Thus many methods have be invented to deal with cell heterogeneity problem, like RefbaseEWAS and RefFreeEWAS incoporated
 
@@ -538,10 +567,97 @@ myRefBase <- champ.refbase(beta=myNorm,arraytype="450K")
 # Our test data set is not blood.
 ```
 
-#Summary
+# Summary
 
 Above are all pipeline and functions included in ChAMP. It's a totally new version can different from old one, we hope to provide you most convenient and fast methylation analysis pipeline for 450K and EPIC array. It's a very comprehensive package with thousands of lines of code, we already made our best to make sure it's correct and fast.
 
 In the future we may make it better and faster, along with more functions and usages. If you have question,bug report, suggestion for ChAMP, please email to champ450k@gmail.com.
+
+
+# Citing ChAMP
+
+ChAMP is implemented by incoporated many other very talented scientists' work. Some functions are achieved by adopting other packages, while some functions are coded by ChAMP's author but with ideas and theories provided by other works. So when you are using functions provided by ChAMP, please citate other scientists's work correctly, so that people who invented these theory and method would get corresponding credits and honor.
+
+If you want to citate ChAMP package itself, please add following papers in your article. This article is about ChAMP, an integrated analysis pipeline for DNA methylation analysis:
+
+> Morris, T. J., Butcher, L. M., Feber, A., Teschendorff, A. E., Chakravarthy, A. R., Wojdacz, T. K., and Beck, S. (2014). Champ: 450k chip analysis methylation pipeline pg - 428-30. Bioinformatics, 30(3), 428-30.
+
+The loading part of ChAMP (champ.load) used minfi package, so does FunctionalNormliazation, SWAN normalization methods. If you want used above two normalization methods, you may want to citate below minfi paper:
+
+> Aryee MJ, Jaffe AE, Corrada-Bravo H, Ladd-Acosta C, Feinberg AP, Hansen KD and Irizarry RA (2014). Minfi: A flexible and comprehensive Bioconductor package for the analysis of Infinium DNA Methylation microarrays. Bioinformatics, 30(10), pp. 1363-1369. doi: 10.1093/bioinformatics/btu049.
+
+> Jean-Philippe Fortin, Timothy Triche, Kasper Hansen. Preprocessing, normalization and integration of the Illumina HumanMethylationEPIC array. bioRxiv 065490; doi: https://doi.org/10.1101/065490
+
+Note that during filtering step, we used below paper's SNP list, which included SNP located 5 bp close to CpG sites, with global MAF >1%, and other characters. For more information about SNP being filtered, you may check below paper:
+
+> Zhou W, Laird PW and Shen H: Comprehensive characterization, annotation and innovative use of Infinium DNA Methylation BeadChip probes. Nucleic Acids Research 2016
+
+The default normalization method in ChAMP is BMIQ, which is invented by Andrew Teschendorff. This is a very popular and well-designed normalization function, you may citate below paper:
+
+> Teschendorff AE et al . A beta-mixture quantile normalization method for correcting probe design bias in illumina infinium 450 k dna methylation data. Bioinformatics. 2013;29(2):189-196.
+
+Another included normalization method is PBC, the related paper is below:
+
+> Dedeurwaerder S et a. Evaluation of the infinium methylation 450K technology. Epigenomics. 2011;3(6):771-784.
+
+champ.SVD() function is a very good option to detect effect of factors on dataset. The paper related with this function is below:
+
+> Teschendorff AE et a. An epigenetic signature in peripheral blood predicts active ovarian cancer. PLoS One. 2009;4(12):e8274.
+
+ChAMP used famous batch correction method Combat from `SVA` package for batch correction. You may citate Combat-related paper below:
+
+> Johnson WE et a. Adjusting batch effects in microarray expression data using empirical bayes methods. Biostatistics. 2007;8(1):118-127.
+
+Above are all functions related to **Data Preparation**. Below are functions and methods related to statistic result estimation.
+
+In ChAMP we used [limma](https://bioconductor.org/packages/release/bioc/html/limma.html) to find DMP. According to [user guild of limma](http://159.226.251.230/videoplayer/usersguide.pdf?ich_u_r_i=8289d05ee30461a0bfa23671c3ba865d&ich_s_t_a_r_t=0&ich_e_n_d=0&ich_k_e_y=1645128926750463352442&ich_t_y_p_e=1&ich_d_i_s_k_i_d=6&ich_u_n_i_t=1), research related to differential analysis should citate some specific paper. Below are two papers user may want to use:
+
+> Ritchie, ME, Phipson, B, Wu, D, Hu, Y, Law, CW, Shi, W, and Smyth, GK (2015).
+limma powers differential expression analyses for RNA-sequencing and microarray studies. Nucleic Acids Research 43(7), e47
+
+> Phipson, B, Lee, S, Majewski, IJ, Alexander, WS, and Smyth, GK (2016). Robust hyperparameter estimation protects against hypervariable genes and improves power to detect differential expression. Annals of Applied Statistics 10(2), 946-963.
+
+When it comes to DMR detection, here there are three method incoporated: If you used Bumphunter method, you may use this one:
+
+> Jaffe AE et a. Bump hunting to identify differentially methylated regions in epigenetic epidemiology studies. Int J Epidemiol. 2012;41(1):200-209.
+
+If you used ProbeLasso function, you may use this one:
+
+> Butcher LM, Beck S. Probe lasso: A novel method to rope in differentially methylated regions with 450K dna methylation data. Methods. 2015;72:21-28.
+
+Or if you used [DMRcate](https://bioconductor.org/packages/release/bioc/html/DMRcate.html) function invented by Tim Peters, you may use paper below:
+
+> Peters TJ, Buckley MJ, Statham AL, et al. De novo identification of differentially methylated regions in the human genome. Epigenetics & Chromatin. 2015;8(1):1-16.
+
+In this version of ChAMP, we provided a function to find Differential Methylation Blocks (DMB), this function is totally implemented by author of ChAMP, but the theory is based on below papers:
+
+> Hansen, KD, Timp, W, Bravo, HC, Sabunciyan, S, Langmead, B, McDonald, OG, Wen, B, Wu, H, Liu, Y, Diep, D, Briem, E, Zhang, K, Irizarry, RA, Feinberg, AP (2011). Increased methylation variation in epigenetic domains across cancer types. Nat. Genet., 43, 8:768-75.
+
+For GSEA method, if you used "goseq" method, please cite below paper:
+
+> Paul Geeleher, Lori Hartnett, Laurance J. Egan, Aaron Golden, Raja Affendi Raja Ali, and Cathal Seoighe Gene-set analysis is severely biased when applied to genome-wide methylation data Bioinformatics 2013 : btt311v2-btt311.
+
+> Young MD, Wakefield MJ, Smyth GK and Oshlack A (2010). "Gene ontology analysis for RNA-seq: accounting for selection bias." Genome Biology, 11, pp. R14.
+
+We incoporated [FEM](http://bioconductor.org/packages/release/bioc/html/FEM.html) package to find Differential Methylated Module among huge network. Below is the citation paper for FEM package:
+
+> Jiao Y, Widschwendter M, Teschendorff AE. A systems-level integrative framework for genome-wide dna methylation and gene expression data identifies differential gene expression modules under epigenetic control. Bioinformatics. 2014;30(16):2360-2366.
+
+The CNA detection function was provided by Andy Feber of UCL, you may citate related paper below:
+
+> Feber A, Guilhamon P, Lechner M, et al. Using high-density dna methylation arrays to profile copy number alterations. Genome Biol. 2014;15(2):R30.
+
+Just as above context says, we included two method for cell proportion correction, both are from Professor Houseman and his [RefFreeEWAS](https://cran.r-project.org/web/packages/RefFreeEWAS/index.html) package. If you used Refbase method in ChAMP, please citate following paper:
+
+> Houseman EA, Accomando WP, Koestler DC, et al. DNA methylation arrays as surrogate measures of cell mixture distribution. BMC Bioinformatics. 2012;13(1):1-16.
+
+Or if you used RefFree method, you may want to citate below paper:
+
+> Houseman EA, Molitor J, Marsit CJ. Reference-free cell mixture adjustments in analysis of dna methylation data. Bioinformatics. 2014;30(10):1431-1439.
+
+Above are all citation paper involvded by ChAMP, please remember to add them into your paper so that other scientists's hard word would get proper evaluation and credits.
+
+Finally, all GUI function, and function not mentioned above, like filtering, imputation, preparation between functions, API are all coded by author of ChAMP. We are now prepared a paper for that now, hopefully you can citate a paper for that too soon.
+
 
 # References

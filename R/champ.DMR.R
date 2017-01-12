@@ -9,7 +9,8 @@ champ.DMR <- function(beta=myNorm,
                       cores=3,
                       ## following parameters are specifically for Bumphunter method.
                       maxGap=300,
-                      cutoff=0.5,
+                      cutoff=NULL,
+                      pickCutoff=TRUE,
                       smooth=TRUE,
                       smoothFunction=loessByCluster,
                       useWeights=FALSE,
@@ -87,6 +88,7 @@ champ.DMR <- function(beta=myNorm,
                             pos=Anno[bumphunter.idx,]$pos,
                             cluster=cl[bumphunter.idx],
                             cutoff=cutoff,
+                            pickCutoff=pickCutoff,
                             smooth=smooth,
                             smoothFunction=smoothFunction,
                             useWeights=useWeights,
@@ -293,6 +295,7 @@ champ.DMR <- function(beta=myNorm,
         colnames(M) <- names(myannotation)
 
         dmrcoutput <- dmrcate(myannotation, min.cpgs = minProbes, lambda=lambda, C=C,mc.cores = cores)
+        data(dmrcatedata)
         DMR <- as.data.frame(extractRanges(dmrcoutput, genome = "hg19"))
 
         message("Bumphunter detected ",nrow(DMR)," DMRs with mafcut as= ",adjPvalDmr,".")

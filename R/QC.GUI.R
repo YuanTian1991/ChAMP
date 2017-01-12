@@ -6,13 +6,14 @@ QC.GUI <- function(beta=myLoad$beta,
 {
     innermdsplot <- function(beta,pheno)
     {
+        message("Test Here!!!")
         o <- order(-matrixStats::rowVars(beta))[1:1000]
         d <- dist(t(beta[o, ]))
         fit <- cmdscale(d)
         col <- brewer.pal(8, "Dark2")[as.factor(pheno)]
         pal <- RColorBrewer::brewer.pal(nlevels(pheno), "Set1")
-        data <- list(x=fit[,1],y=fit[,2],pheno=pheno,Sample_Name=colnames(beta))
-        p <- plot_ly(data = data, x = x, y = y, text=Sample_Name, color = pheno,colors = pal, mode = "markers", marker=list(size=15))
+        data <- data.frame(x=fit[,1],y=fit[,2],pheno=pheno,Sample_Name=colnames(beta))
+        p <- plot_ly(data = data, x = ~x, y = ~y, text=~Sample_Name, color = ~pheno,colors = ~pal, mode = "markers", marker=list(size=15))
         m = list(l = 100,r = 50,b = 50,t = 100,pad = 10)
         p <- layout(p, title = 'MDS 1000 most variable positions',margin=m)
     }
@@ -53,8 +54,12 @@ QC.GUI <- function(beta=myLoad$beta,
        if(arraytype=="EPIC") data(probe.features.epic) else data(probe.features)
        d1 <- density(beta[which(probe.features[rownames(beta),"Type"]=="I"),])
        d2 <- density(beta[which(probe.features[rownames(beta),"Type"]=="II"),])
-       p <- plot_ly(x = d1$x, y = d1$y, mode = "lines", name = "Type-I probes")
-       p <- add_trace(p=p,x=d2$x,y=d2$y,mode="lines",name="Type-II probes")
+       twolines <- data.frame(d1x = d1$x, d1y = d1$y, d2x = d2$x, d2y = d2$y)
+
+       p <- plot_ly(data = twolines, x = ~d1x, y = ~d1y, mode = "lines+markers",type="scatter", name="Type-I probes",marker=list(size=1),line=list(width=4)) %>% 
+       add_trace( x= ~d2x , y = ~d2y, mode="lines+markers", type="scatter",name="Type-II probes",marker=list(size=1),line=list(width=4))
+
+       #p <- add_trace(p=p,x= ~d2$x,y= ~d2$y,mode="lines",name="Type-II probes")
        m = list(l = 100,r = 50,b = 50,t = 100,pad = 10)
        p <- layout(p, title = 'Type-I and Type-II density plot',margin=m)
     }

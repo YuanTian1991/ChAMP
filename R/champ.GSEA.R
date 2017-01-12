@@ -5,7 +5,9 @@ champ.GSEA <- function(beta=myNorm,
                        DMR=myDMR,
                        CpGlist=NULL,
                        Genelist=NULL,
+                       method="goseq",
                        arraytype="450K",
+                       Rplot=TRUE,
                        adjPval=0.05)
 {
     message("[===========================]")
@@ -36,6 +38,8 @@ champ.GSEA <- function(beta=myNorm,
     }
     RSanno <- getAnnotation(RSobject)[,c("chr","pos","Name","UCSC_RefGene_Name")]
     ueid.v <- unique(unlist(sapply(RSanno$UCSC_RefGene_Name,function(x) strsplit(x,split=";")[[1]])))
+    bias.Data <- table(unlist(sapply(RSanno$UCSC_RefGene_Name,function(x) unique(strsplit(x,split=";")[[1]]))))
+    bias.Data <- as.numeric(bias.Data[ueid.v])
 
     loi.lv <- list()
     if(!is.null(DMP))
@@ -101,7 +105,7 @@ champ.GSEA <- function(beta=myNorm,
     ### Do enrichment analysis
     listsummary.lm <- list();
 
-    message("<< Do GSEA on each Gene List  >>")
+    message("<< Start Do GSEA on each Gene List  >>")
 
     for(i in 1:length(selGEID.lv))
     {
@@ -114,33 +118,56 @@ champ.GSEA <- function(beta=myNorm,
 
         selEID.v <- selGEID.lv[[i]];
 
-        InMSigDBlist_InList <- unlist(lapply(PathwayList,function(x) length(intersect(x,selEID.v))))
-        NotInMSigDBlist_InList <- length(selEID.v)-InMSigDBlist_InList
-        InMSigDBlist_NotInList <- unlist(lapply(PathwayList,function(x) length(intersect(x,ueid.v))-length(intersect(x,selEID.v)))) 
-        NotInMSigDBlist_NotInList <- length(ueid.v)-InMSigDBlist_InList-NotInMSigDBlist_InList-InMSigDBlist_NotInList 
+        # Blow is pale fisher exact test method.
+        # ==================
+        if(method == "Fisher")
+        {
+            message("<< Pale Fisher Exact Test will be used to do GSEA >>")
+            message(" << The category information is downloaded from MsigDB, and only simple Fisher Exact Test will be used to calculate GSEA. This method is suitable if your genes has equalivalent probability to be enriched. If you are using CpGs mapping genes, goseq method is recommended.>> ")
+            InMSigDBlist_InList <- unlist(lapply(PathwayList,function(x) length(intersect(x,selEID.v))))
+            NotInMSigDBlist_InList <- length(selEID.v)-InMSigDBlist_InList
+            InMSigDBlist_NotInList <- unlist(lapply(PathwayList,function(x) length(intersect(x,ueid.v))-length(intersect(x,selEID.v)))) 
+            NotInMSigDBlist_NotInList <- length(ueid.v)-InMSigDBlist_InList-NotInMSigDBlist_InList-InMSigDBlist_NotInList 
 
-        ovlapG.lv_2 <- lapply(PathwayList,function(x) intersect(x,selEID.v))
-        fisher.lm_2 <- cbind(InMSigDBlist_InList,NotInMSigDBlist_InList,InMSigDBlist_NotInList,NotInMSigDBlist_NotInList) 
-        listPV.v_2 <- t(apply(fisher.lm_2,1,function(x) unlist(fisher.test(matrix(x,2,2),alternative="greater")[c(1,3)])))
-        info <- cbind(fisher.lm_2,listPV.v_2)
+            ovlapG.lv_2 <- lapply(PathwayList,function(x) intersect(x,selEID.v))
+            fisher.lm_2 <- cbind(InMSigDBlist_InList,NotInMSigDBlist_InList,InMSigDBlist_NotInList,NotInMSigDBlist_NotInList) 
+            listPV.v_2 <- t(apply(fisher.lm_2,1,function(x) unlist(fisher.test(matrix(x,2,2),alternative="greater")[c(1,3)])))
+            info <- cbind(fisher.lm_2,listPV.v_2)
 
-        selL.idx <- which(nrepGEID.m[,3]>0.6); ### remove lists with less than 60% representation on array
-        listsummary.m_2 <- data.frame("Gene_List"=listnames.v[selL.idx],
-                                 nrepGEID.m[selL.idx,],
-                                 "nOVLAP"=fisher.lm_2[,1][selL.idx],
-                                 "OR"=listPV.v_2[selL.idx,2],
-                                 "P-value"=listPV.v_2[selL.idx,1],
-                                 "adjPval"=p.adjust(listPV.v_2[selL.idx,1],method="BH"),
-                                 "Genes"=unlist(lapply(ovlapG.lv_2[selL.idx],function(x) PasteVector(x))))
-        listsummary.m_2 <- listsummary.m_2[order(listsummary.m_2$adjPval),]
-        listsummary.m_2 <- listsummary.m_2[which(listsummary.m_2$adjPval <= adjPval),]
-        listsummary.lm[[i]] <- listsummary.m_2;
+            selL.idx <- which(nrepGEID.m[,3]>0.6); ### remove lists with less than 60% representation on array
+            listsummary.m_2 <- data.frame("Gene_List"=listnames.v[selL.idx],
+                                          nrepGEID.m[selL.idx,],
+                                          "nOVLAP"=fisher.lm_2[,1][selL.idx],
+                                          "OR"=listPV.v_2[selL.idx,2],
+                                          "P-value"=listPV.v_2[selL.idx,1],
+                                          "adjPval"=p.adjust(listPV.v_2[selL.idx,1],method="BH"),
+                                          "Genes"=unlist(lapply(ovlapG.lv_2[selL.idx],function(x) PasteVector(x))))
+            listsummary.m_2 <- listsummary.m_2[order(listsummary.m_2$adjPval),]
+            pvals <- listsummary.m_2[which(listsummary.m_2$adjPval <= adjPval),]
+        }else if(method == "goseq")
+        {
+            message("goseq method will be used to do GSEA")
+            message("This method is supported by goseq package, which is developed to address inequalivalent issue between number of CpGs and genes.")
+            # Below is goseq method
+            # goseq method is incoperated here because not all genes contain same length of CpGs.
+            # goseq would generated a probability weight function between significant genes and 
+            # number of CpGs contained by each genes, one plot will be plotted on that.
+            # Then goseq function would use corrected gene list to do GSEA.
+            # ===================
+            DE.genes <- as.integer(ueid.v %in% selEID.v)
+            names(DE.genes) <- ueid.v
+            pwf <- nullp(DE.genes,"hg19","geneSymbol",bias.data=bias.Data,plot.fit=Rplot)
+            pvals <- goseq(pwf,'hg19','geneSymbol')
+            over_represented_adjPvalue <- p.adjust(pvals$over_represented_pvalue,method="BH")
+            pvals <- cbind(pvals,over_represented_adjPvalue)
+        }
 
+        listsummary.lm[[i]] <- pvals;
         message("<< Done for Gene list ",names(selGEID.lv)[i]," >>");
     }
     names(listsummary.lm) <- names(selGEID.lv);
 
     message("[<<<<< ChAMP.GSEA END >>>>>>]")
     message("[===========================]")
-    return(list(GSEA=listsummary.lm,GeneList=loi.lv))
+    return(listsummary.lm)
 } 

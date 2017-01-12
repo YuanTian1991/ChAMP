@@ -41,6 +41,12 @@ This function would use limma package to calculate differential methylation prob
     You can try to use DMP.GUI() to do interactively analysis on the result of champ.DMP().
 }
 
+\references{
+    Ritchie, ME, Phipson, B, Wu, D, Hu, Y, Law, CW, Shi, W, and Smyth, GK (2015). limma powers differential expression analyses for RNA-sequencing and microarray studies. Nucleic Acids Research 43(7), e47
+
+    Phipson, B, Lee, S, Majewski, IJ, Alexander, WS, and Smyth, GK (2016). Robust hyperparameter estimation protects against hypervariable genes and improves power to detect differential expression. Annals of Applied Statistics 10(2), 946-963.
+
+}
 
 \author{
 Yuan Tian

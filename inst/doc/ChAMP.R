@@ -1,6 +1,6 @@
 ## ----eval=FALSE----------------------------------------------------------
 #  source("http://bioconductor.org/biocLite.R")
-#  biocLite(c("minfi","ChAMPdata","Illumina450ProbeVariants.db","sva","IlluminaHumanMethylation450kmanifest","limma","RPMM","DNAcopy","preprocessCore","impute","marray","wateRmelon","plyr","GenomicRanges","RefFreeEWAS","qvalue","isva","doParallel","bumphunter","quadprog","shiny","shinythemes","plotly","RColorBrewer","DMRcate","dendextend","IlluminaHumanMethylationEPICmanifest","FEM","matrixStats"))
+#  biocLite(c("minfi","ChAMPdata","Illumina450ProbeVariants.db","sva","IlluminaHumanMethylation450kmanifest","limma","RPMM","DNAcopy","preprocessCore","impute","marray","wateRmelon","goseq","plyr","GenomicRanges","RefFreeEWAS","qvalue","isva","doParallel","bumphunter","quadprog","shiny","shinythemes","plotly","RColorBrewer","DMRcate","dendextend","IlluminaHumanMethylationEPICmanifest","FEM","matrixStats"))
 
 ## ----eval=TRUE,message=FALSE, warning=FALSE------------------------------
 library("ChAMP")
@@ -173,12 +173,12 @@ knitr::include_graphics("Figure/Block-3.png")
 #  myGSEA <- champ.GSEA(beta=myNorm,DMP=myDMP,DMR=myDMR,arraytype="450K",adjPval=0.05)
 #  # myDMP and myDMR could (not must) be used directly.
 
-## ----eval=FALSE----------------------------------------------------------
-#  head(myGSEA$DMP)
-#  # Above is the GSEA result for differential methylation probes.
-#  head(myGSEA$DMR)
-#  # Above is the GSEA result for differential methylation regions.
-#  # Too many information may be printed, so we are not going to show the result here.
+## ----eval=TRUE-----------------------------------------------------------
+head(myGSEA$DMP)
+# Above is the GSEA result for differential methylation probes.
+head(myGSEA$DMR)
+# Above is the GSEA result for differential methylation regions.
+# Too many information may be printed, so we are not going to show the result here.
 
 ## ----eval=FALSE----------------------------------------------------------
 #  myEpiMod <- champ.EpiMod(beta=myNorm,pheno=myLoad$pd$Sample_Group)
