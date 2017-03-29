@@ -286,10 +286,10 @@ champ.DMR <- function(beta=myNorm,
 
         if(arraytype=="450K")
         {
-            myannotation <- cpg.annotate(datatype="array", myMs,design=design,coef=ncol(design), analysis.type="differential",annotation=c(array = "IlluminaHumanMethylation450k", annotation = "ilmn12.hg19"))
+            myannotation <- cpg.annotate(datatype="array", myMs,design=design,coef=ncol(design), analysis.type="differential",annotation=c(array = "IlluminaHumanMethylation450k", annotation = "ilmn12.hg19"),what="M")
         }else
         {
-            myannotation <- cpg.annotate(datatype="array", myMs,design=design,coef=ncol(design), analysis.type="differential",annotation=c(array = "IlluminaHumanMethylationEPIC", annotation = "ilm10b2.hg19"))
+            myannotation <- cpg.annotate(datatype="array", myMs,design=design,coef=ncol(design), analysis.type="differential",annotation=c(array = "IlluminaHumanMethylationEPIC", annotation = "ilm10b2.hg19"),what="M")
         }
         M <- do.call("cbind", lapply(myannotation, as.data.frame))
         colnames(M) <- names(myannotation)
