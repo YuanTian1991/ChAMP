@@ -6,14 +6,15 @@ QC.GUI <- function(beta=myLoad$beta,
 {
     innermdsplot <- function(beta,pheno)
     {
-        message("Test Here!!!")
         o <- order(-matrixStats::rowVars(beta))[1:1000]
         d <- dist(t(beta[o, ]))
         fit <- cmdscale(d)
         col <- brewer.pal(8, "Dark2")[as.factor(pheno)]
-        pal <- RColorBrewer::brewer.pal(nlevels(pheno), "Set1")
+        color_number <- nlevels(pheno)
+        if(color_number < 3) color_number <- 3
+        pal <- RColorBrewer::brewer.pal(color_number, "Set1")
         data <- data.frame(x=fit[,1],y=fit[,2],pheno=pheno,Sample_Name=colnames(beta))
-        p <- plot_ly(data = data, x = ~x, y = ~y, text=~Sample_Name, color = ~pheno,colors = ~pal, mode = "markers", marker=list(size=15))
+        p <- plot_ly(data = data, x = ~x, y = ~y, text=~Sample_Name, color = ~pheno,colors = ~pal, type="scatter", mode = "markers", marker=list(size=15))
         m = list(l = 100,r = 50,b = 50,t = 100,pad = 10)
         p <- layout(p, title = 'MDS 1000 most variable positions',margin=m)
     }
@@ -26,7 +27,10 @@ QC.GUI <- function(beta=myLoad$beta,
                         )
 
         newdf <- do.call(rbind,lapply(dens,function(x) c(x$x,x$y)))
-        mycol <- brewer.pal(length(unique(pheno)), "Set2")
+
+        color_number <- length(unique(pheno))
+        if(color_number < 3) color_number <- 3
+        mycol <- brewer.pal(color_number, "Set2")
         names(mycol) <- unique(pheno)
         newdf <- data.frame(newdf[,seq(1,1024,by=2)],names(dens),mycol[pheno])
         ###
@@ -42,7 +46,7 @@ QC.GUI <- function(beta=myLoad$beta,
                            hoverinfo = "text",
                            # Create custom hover text
                            text = newdf[i,513],
-                           evaluate = T)
+                           type="scatter")
         }
 
         ###

@@ -4,7 +4,7 @@
     Applying Bumphunter, DMRcate or ProbeLasso Algorithms to detect Different Methylation Regions in a beta valued Methylation Dataset.
 }
 \description{
-    Applying Bumphunter, DMRcate or ProbeLasso Algorithms to Estimate regions for which a genomic profile deviates from its baseline value. Originally implemented to detect differentially methylated genomic regions between two populations. By default, we recommend user do champ.DMR on normalized beta value on two populations, like case to control. The function will return detected DMR and estimated p value. The three algorithms specified in this function is different, while Bumphunter and DMRcate calcuated averaged candidate bumps methylation value between case and control, ProbeLasso need Different Methylated Probes (DMP) from champ.DMP as input parameter and find DMRs around those DMPs. Thus parameters is different for three algorithms. Note that the result of champ.DMR() would be used as inpute of champ.GSEA() function, thus we suggest user not change the internal structure of the result of champ.DMR() function.
+    Applying Bumphunter, DMRcate or ProbeLasso Algorithms to Estimate regions for which a genomic profile deviates from its baseline value. Originally implemented to detect differentially methylated genomic regions between two populations. By default, we recommend user do champ.DMR on normalized beta value on two populations, like case to control. The function will return detected DMR and estimated p value. The three algorithms specified in this function is different, while Bumphunter and DMRcate calcuated averaged candidate bumps methylation value between case and control. Thus parameters is different for three algorithms. Note that the result of champ.DMR() would be used as inpute of champ.GSEA() function, thus we suggest user not change the internal structure of the result of champ.DMR() function.
 }
 
 \usage{
@@ -26,7 +26,6 @@
               B=250,
               nullMethod="bootstrap",
               ## following parameters are specifically for probe ProbeLasso       method.
-              DMP=myDMP,
               meanLassoRadius=375,
               minDmrSep=1000,
               minDmrSize=50,
@@ -64,7 +63,6 @@
     \item{nullMethod}{Method used to generate null candidate regions, must be one of \sQuote{bootstrap} or \sQuote{permutation} (defaults to \sQuote{permutation}). However, if covariates in addition to the outcome of interest are included in the design matrix (ncol(design)>2), the \sQuote{permutation} approach is not recommended. See vignette and original paper for more information. (default = "bootstrap")}
 
     Parameters specific for ProbeLasso algorithm:
-    \item{DMP}{Different Methylated Probes (DMP) detected from champ.DMP() function, which used limma function to find all CpGs show significant different methylation value. It's a MUST provided parameter for ProbeLasso algorithm. (default = myDMP)}
     \item{meanLassoRadius}{Radius around each DMP to detect DMR. (default = 375)}
     \item{minDmrSep}{The minimum seperation (bp) between neighbouring DMRs. (default = 1000.)}
     \item{minDmrSize}{The minimum DMR size (bp). (default = 50)}

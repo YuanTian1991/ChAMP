@@ -69,8 +69,7 @@ champ.refbase <- function(beta=myNorm,
 
     message("All cell proportion influence except the one with least cell proportion get corrected.\n")
 
-	return(list(CorrectedBeta=tmp.m,CellFraction=cellFrac))
-
     message("[<<<< ChAMP.REFBASE END >>>>]")
     message("[===========================]")
+	return(list(CorrectedBeta=tmp.m,CellFraction=cellFrac))
 }

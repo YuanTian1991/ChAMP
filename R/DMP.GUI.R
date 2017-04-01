@@ -78,7 +78,7 @@ DMP.GUI <- function(DMP=myDMP,
                          y = unlist(lapply(Fit, "[[", "Mean")),
                          ID = unlist(lapply(Fit, "[[", "ID")),
                          cut = unlist(lapply(Fit, "[[", "pheno")))
-        p <- add_trace(p,data=df, x = ~x, y = ~y, text = ~ID, color = ~cut,mode = 'lines+markers',line = list(shape = "spline",width = 3,opacity = 0.3),marker=list(size = 1))
+        p <- add_trace(p,data=df, x = ~x, y = ~y, text = ~ID, type="scatter", color = ~cut,mode = 'lines+markers',line = list(shape = "spline",width = 3,opacity = 0.3),marker=list(size = 1))
 
         message("<< Mean line Plotted >>")
 
@@ -88,7 +88,7 @@ DMP.GUI <- function(DMP=myDMP,
                          y = unlist(lapply(Fit2, "[[", "Fitted")),
                          ID = unlist(lapply(Fit2, "[[", "ID")),
                          cut = unlist(lapply(Fit2, "[[", "pheno")))
-        p <- add_trace(p,data=df2, x = ~x, y = ~y, text = ~ID, color = ~cut,mode = 'lines+markers',line =list(shape ="spline",width=3,opacity=0.3,dash = "dash"),marker=list(size = 1))
+        p <- add_trace(p,data=df2, x = ~x, y = ~y, text = ~ID, color = ~cut, type="scatter" ,mode = 'lines+markers',line =list(shape ="spline",width=3,opacity=0.3,dash = "dash"),marker=list(size = 1))
 
         message("<< Loess line Plotted >>")
 
@@ -98,11 +98,17 @@ DMP.GUI <- function(DMP=myDMP,
         {
             index <- which(select$feature==i)
             if(length(index)==0) next
+
+            oldw <- getOption("warn")
+            options(warn = -1)
+
             featureregion[[i]]<- data.frame(x1 = index-0.5,
                                             x2 = index+0.5,
                                             y = -0.05,
                                             IDfeature = i,
                                             color = regioncol[i])
+
+            options(warn = oldw)
         }
         cgicol <- c("island"="#ff83fa","opensea"="#ffdab9","shelf"="#bbffff","shore"="#98fb98")
         cgiregion <- list()
@@ -110,11 +116,18 @@ DMP.GUI <- function(DMP=myDMP,
         {
             index <- which(select$cgi==i)
             if(length(index)==0) next
+
+            oldw <- getOption("warn")
+            options(warn = -1)
+
             cgiregion[[i]]<- data.frame(x1 = index-0.5,
                                         x2 = index+0.5,
                                         y = -0.1,
                                         IDfeature = i,
                                         color = cgicol[i])
+
+            options(warn = oldw)
+
         }
         #############################################
         df <- rbind(do.call(rbind,featureregion),do.call(rbind,cgiregion))
@@ -137,7 +150,7 @@ DMP.GUI <- function(DMP=myDMP,
                            hoverinfo = "text",
                            # Create custom hover text
                            text = df$IDfeature[i],
-                           evaluate = T)
+                           type="scatter")
         }
         #############################################
 
@@ -172,6 +185,7 @@ DMP.GUI <- function(DMP=myDMP,
         p <- plot_ly(c, y = ~Beta_Value, color = ~Pheno, type = "box", boxpoints = "all", jitter = 0.3,pointpos = 0)
         m = list(l = 70,r = 70,b = 50,t = 50,pad = 10)
         p <- layout(p, title = paste("Boxplot for",cpgname),margin=m)
+
     }
     innertest <- function()
     {

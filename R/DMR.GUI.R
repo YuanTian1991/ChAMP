@@ -62,7 +62,7 @@ DMR.GUI <- function(DMR=myDMR,
                          y = unlist(lapply(Fit, "[[", "Mean")),
                          ID = unlist(lapply(Fit, "[[", "ID")),
                          cut = unlist(lapply(Fit, "[[", "pheno")))
-        p <- add_trace(p,data=df, x =~x, y =~y, text =~ID, color =~cut,line = list(shape = "spline",width = 3,opacity = 0.3),marker=list(size = 1))
+        p <- add_trace(p,data=df, x =~x, y =~y, text =~ID,type="scatter",mode="lines+markers", color =~cut,line = list(shape = "spline",width = 3,opacity = 0.3),marker=list(size = 1))
 
         message("<< Mean line Plotted >>")
 
@@ -72,7 +72,7 @@ DMR.GUI <- function(DMR=myDMR,
                          y = unlist(lapply(Fit2, "[[", "Fitted")),
                          ID = unlist(lapply(Fit2, "[[", "ID")),
                          cut = unlist(lapply(Fit2, "[[", "pheno")))
-        p <- add_trace(p,data=df2, x =~x, y =~y, text =~ID, color =~cut,line =list(shape ="spline",width=3,opacity=0.3,dash = "dash"),marker=list(size = 1))
+        p <- add_trace(p,data=df2, x =~x, y =~y, text =~ID,type="scatter",mode="lines+markers", color =~cut,line =list(shape ="spline",width=3,opacity=0.3,dash = "dash"),marker=list(size = 1))
 
         message("<< Loess line Plotted >>")
 
@@ -82,11 +82,14 @@ DMR.GUI <- function(DMR=myDMR,
         {
             index <- which(select$feature==i)
             if(length(index)==0) next
+            oldw <- getOption("warn")
+            options(warn = -1)
             featureregion[[i]]<- data.frame(x1 = index-0.5,
                                             x2 = index+0.5,
                                             y = -0.05,
                                             IDfeature = i,
                                             color = regioncol[i])
+            options(warn = oldw)
         }
         cgicol <- c("island"="#ff83fa","opensea"="#ffdab9","shelf"="#bbffff","shore"="#98fb98")
         cgiregion <- list()
@@ -94,11 +97,14 @@ DMR.GUI <- function(DMR=myDMR,
         {
             index <- which(select$cgi==i)
             if(length(index)==0) next
+            oldw <- getOption("warn")
+            options(warn = -1)
             cgiregion[[i]]<- data.frame(x1 = index-0.5,
                                         x2 = index+0.5,
                                         y = -0.1,
                                         IDfeature = i,
                                         color = cgicol[i])
+            options(warn = oldw)
         }
         #############################################
         df <- rbind(do.call(rbind,featureregion),do.call(rbind,cgiregion))
@@ -121,7 +127,7 @@ DMR.GUI <- function(DMR=myDMR,
                            hoverinfo = "text",
                            # Create custom hover text
                            text = df$IDfeature[i],
-                           evaluate = T)
+                           type="scatter")
         }
         #############################################
 

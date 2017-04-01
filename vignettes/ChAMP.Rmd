@@ -19,25 +19,15 @@ vignette: >
 
 # New Updates
 
-1: **ChAMP now fully support new plotly (version 4.5.6).** Previously, ChAMP's plot function can only works on plotly 3.6.1. Now it can support newest plotly version 4.5.6 already. You may update your plotly version.
+1: ** Fixed Error in DMRcate pacakge in cpg.annotate() function: ** DMRcate pacakge get updated for "Error in if (nsig == 0) { : missing value where TRUE/FALSE needed.".
 
-2: **Added "goseq" Method into GSEA** to correct bia might be caused by inequivalence between genes and CpG probes on them. "Note that "goseq" method has been assgined as default method".
+2: ** Replace 0 into smallest positive value : ** In champ.load(), instead of replacing all 0 and negative value into 0.0001, we relplace them as smallest positive now, which might result to slightly different from previous result.
 
-3: **Added message in champ.runCombat()** for user who has no qualified factor to correct. **Merely for Error "Error in `row.names<-.data.frame`(`*tmp*`, value = value) : invalid 'row.names' length".**
+3: ** Fixed warnings() in all GUI() functions : ** Previously, there are some warnings in GUI() functions, which are merely because we did not assign some parameters in painting, it will NOT cause any error in plot. Based on reviewer's suggestion, in this version pacakge, we fixed most warnings.
 
-4: **Replace SNP list with new SNP list provided by Zhou's Paper[@Zhou2016]**. User may assign population for different SNP list, the new parameter is in champ.load() function. This parameter also can be ignored so that a general SNP wil be used. Correspondingly, we upgraded ChAMPdata package into version 2.6.0, if you failed to install ChAMP_2.6.0, you may need to upgrade ChAMPdata package.
+4: ** More flexible for champ.runCombat() function : ** In previous champ.runCombat() function, we restricted that user can NOT do correction on factors like Sample_Group or Sample_Name. Based on reviewer's suggestion, we removed this restriction in this version,  which means users can fix all covariates by using champ.runCombat() function. Also, we added "variablename" parameter so that user may assign other variables other then "Sample_Group" to be corrected for.
 
-5: **Added two section "New Updates" and "Citing ChAMP" into vignette.** So that user may find newest updated features and correctly cite other scientists' work. 
-
-6: **Modifed detected P filtering system to filter samples as well.** There are many case that in a data set, only one or two samples' quality is bad, while most other samples are qualified for analysis. Now ChAMP will check qualification of samples first and do filtering on sample first, then do filtering on probes. All these can be controled by detSamplecut and detPcut parameters in champ.load() and champ.filter() functions.
-
-7: **Added champ.filter() function for users have no IDAT file to do filtering on SNP, detP...** This function is very much similar to champ.load() but only works on one beta matrix, instead of rgSet or Intensity data. 
-
-8: **Modifed default cutoff threshold of Bumphunter Algorithm in champ.DMR() from 0.5 to 99% cutoff** of all permulation value, which would be suitable for more situations. User may set parameter "cutoff" as 0.5 to retain old result.
-
-9: **Modifed Demo(this vignette) GSEA result into new method's result**. Since we set "goseq" method as default method, we changed the result of GSEA from this data into new result. Note that old champ.GSEA() would return gene list, which will no longer provided. Only GSEA result will be returned.
-
-10: **Modified some reference.** According to reviewer's suggestion, I modified some reference for minfi package, block algorithm, GSEA method, SNP list, Multi-hit list.
+5: ** Removed "DMP" parameter in champ.DMR() function : ** Modified ProbeLasso method in champ.DMR() function, there is no need to input "myDMP" anymore, ProbeLasso function would calculate inside the function. Previously, ProbeLasso needs result from champ.DMP() to calculate DMRs, now we have updated it, so that ProbeLasso would calculate DMPs inside champ.DMR() function instead of calling for myDMP parameter.
 
 # Introduction
 

@@ -100,6 +100,6 @@ champ.Block <- function(beta=myNorm,
 
     message("[<<<<< ChAMP.BLOCK END >>>>>]")
     message("[===========================]")
-    message("[You may want to process champ.GSEA() next.]\n")
+    message("[You may want to process Block.GUI() next.]\n")
     return(list(Block=Block,clusterInfo=blockPROP.m,allCLID.v=allCLID.v,avbetaCL.m=avbetaCL.m,posCL.m=posCL.m))
 }

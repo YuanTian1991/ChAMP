@@ -2,6 +2,7 @@ if(getRversion() >= "3.1.0") utils::globalVariables(c("myNorm","myLoad"))
 
 champ.runCombat <- function(beta=myNorm,
                             pd=myLoad$pd,
+                            variablename = "Sample_Group",
                             batchname=c("Slide"),
                             logitTrans=TRUE)
 {
@@ -22,10 +23,13 @@ champ.runCombat <- function(beta=myNorm,
     if(is.null(pd) | class(pd)=="list") stop("pd parameter in Data Frame or Matrix is necessary And must contain at least tow factors. If your pd is a list, please change its Format.")
     if(class(pd)=="matrix") pd <- as.data.frame(pd)
 
-    valid.idx <- which(!colnames(pd) %in% c("Sample_Name","Sample_Group","Project","filenames","Basename") &
+    if(is.null(variablename) | !variablename %in% colnames(pd)) stop("variablename parameter MUST contains variable in pd file.")
+
+    valid.idx <- which(!colnames(pd) == variablename &
                        apply(pd,2,function(x) length(unique(x)))!=1 &
                        apply(pd,2,function(x) all(table(x)>=2)))
-    if(length(valid.idx)==0) stop("There is not valid factor can be corrected. Factor can be corrected must contian at least two phenotypes, each of them must contain at least two samples. Please check if your covariates fulfill these requirement.")
+    if(length(valid.idx)==0) stop("There is no valid factor can be corrected. Factor can be corrected must contian at least two phenotypes, each of them must contain at least two samples. Also batch factors can be variable factor. Please check if your covariates fulfill these requirement.")
+
     PhenoTypes.lv_tmp <- as.data.frame(pd[,valid.idx])
     colnames(PhenoTypes.lv_tmp) <- colnames(pd)[valid.idx]
     PhenoTypes.lv <- as.data.frame(apply(PhenoTypes.lv_tmp,2,function(x) if(class(x)!="numeric") as.factor(as.numeric(as.factor(x)))))
@@ -45,7 +49,7 @@ champ.runCombat <- function(beta=myNorm,
     {
         message("\n<< Following Factors in your pd(sample_sheet.csv) can not be corrected: >>")
         sapply(setdiff(colnames(pd),colnames(PhenoTypes.lv)),function(x) message("<",x,">"))
-        message("[Factors are ignored because they only indicate Name or Project, or they contain ONLY ONE value across all Samples, or some phenotype contains less than 2 Samples.]")
+        message("[Factors are ignored because they are conflict with variablename, or they contain ONLY ONE value across all Samples, or some phenotype contains less than 2 Samples.]")
     }
 
     if(all(batchname %in% colnames(PhenoTypes.lv)))
@@ -56,10 +60,10 @@ champ.runCombat <- function(beta=myNorm,
         stop(setdiff(batchname,colnames(PhenoTypes.lv))," factors is not valid to run Combat, please recheck your dataset.")
     }
  	
-    if(min(beta)==0)
+    if(min(beta)<=0)
     {
-        message("Zeros in your dataset have been replaced with 0.000001")
-        beta[beta==0]<-0.000001
+        message("Zeros in your dataset have been replaced with smallest positive value.")
+        beta[beta<=0] <- min(beta[beta > 0])
     }
 
     beta_2 <- beta 
@@ -77,9 +81,9 @@ champ.runCombat <- function(beta=myNorm,
     {
         message("\n<< Start Correcting ",batchname[i]," >>")
         if(i+1 <= length(batchname))
-            formdf <- as.formula(paste(" ~ ",paste(c("Sample_Group",batchname[(i+1):length(batchname)]),collapse=" + "),sep=""))
+            formdf <- as.formula(paste(" ~ ",paste(c(variablename,batchname[(i+1):length(batchname)]),collapse=" + "),sep=""))
         else
-            formdf <- as.formula(" ~ Sample_Group")
+            formdf <- as.formula(paste(" ~",variablename))
         beta <- innercombat(beta,pd[,batchname[i]],formdf)
     }
 

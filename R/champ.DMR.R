@@ -18,7 +18,6 @@ champ.DMR <- function(beta=myNorm,
                       B=250,
                       nullMethod="bootstrap",
                       ## following parameters are specifically for probe ProbeLasso method.
-                      DMP=myDMP,
                       meanLassoRadius=375,
                       minDmrSep=1000,
                       minDmrSize=50,
@@ -118,6 +117,9 @@ champ.DMR <- function(beta=myNorm,
 
         message("<< Find DMR with ProbeLasso Method >>")
         gc()
+
+        DMP <- champ.DMP(beta,pheno,adjPVal = 1, arraytype = arraytype)
+
         if(arraytype=="EPIC") data(illuminaEPICGr) else data(illumina450Gr)
         if(length(which(DMP$adj.P.Val < adjPvalProbe))==0) stop("There is no probe show significant difference from champ.DMP() function.")
 
@@ -284,11 +286,9 @@ champ.DMR <- function(beta=myNorm,
         if(rmSNPCH) myMs <- rmSNPandCH(myMs, dist=dist, mafcut=mafcut)
         design <- model.matrix(~ pheno)
 
-        if(arraytype=="450K")
-        {
+        if(arraytype == "450K"){
             myannotation <- cpg.annotate(datatype="array", myMs,design=design,coef=ncol(design), analysis.type="differential",annotation=c(array = "IlluminaHumanMethylation450k", annotation = "ilmn12.hg19"),what="M")
-        }else
-        {
+        } else{
             myannotation <- cpg.annotate(datatype="array", myMs,design=design,coef=ncol(design), analysis.type="differential",annotation=c(array = "IlluminaHumanMethylationEPIC", annotation = "ilm10b2.hg19"),what="M")
         }
         M <- do.call("cbind", lapply(myannotation, as.data.frame))
@@ -298,7 +298,7 @@ champ.DMR <- function(beta=myNorm,
         data(dmrcatedata)
         DMR <- as.data.frame(extractRanges(dmrcoutput, genome = "hg19"))
 
-        message("Bumphunter detected ",nrow(DMR)," DMRs with mafcut as= ",adjPvalDmr,".")
+        message("DMRcate detected ",nrow(DMR)," DMRs with mafcut as= ",adjPvalDmr,".")
         if(nrow(DMR) == 0) stop("No DMR detected.")
 
         if(nrow(DMR)!=0)

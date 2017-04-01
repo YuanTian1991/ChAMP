@@ -160,8 +160,11 @@ champ.load <- function(directory = getwd(),
     intensity <-  minfi::getMeth(mset) + minfi::getUnmeth(mset)
     detP <- detP[which(row.names(detP) %in% row.names(beta.raw)),]
 
-    if(min(beta.raw, na.rm=TRUE)==0) beta.raw[beta.raw==0] <- 0.000001
-    message("Zeros in your dataset have been replaced with 0.000001\n")
+    if(min(beta.raw, na.rm=TRUE)<=0) beta.raw[beta.raw<=0] <- min(beta.raw[beta.raw > 0])
+    message("Zeros in your dataset have been replaced with smallest positive value.\n")
+
+    if(max(beta.raw, na.rm=TRUE)>=0) beta.raw[beta.raw>=1] <- max(beta.raw[beta.raw < 1])
+    message("One in your dataset have been replaced with largest value below 1.\n")
 
     message("The analysis will be proceed with ", dim(beta.raw)[1], " probes and ",dim(beta.raw)[2], " samples.\n")
     message("[<<<<< ChAMP.LOAD END >>>>>>]")

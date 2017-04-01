@@ -61,10 +61,10 @@ champ.norm <- function(beta=myLoad$beta,
         beta.p=DoPBC(beta,design.v)
 	}else if(method=="FunctionNormalization")
     {
-        beta.p <- getBeta(preprocessFunnorm(rgSet))
+        beta.p <- getBeta(preprocessFunnorm(rgSet))[rownames(beta),]
     }else
     {
-        stop("Please Select Normalization Method from: BMIQ,PBC and SWAN.")
+        stop("Please Select Normalization Method from: BMIQ,PBC, FunctionNormalization and SWAN.")
     }
     rownames(beta.p) <- rownames(beta)
     colnames(beta.p) <- colnames(beta)
