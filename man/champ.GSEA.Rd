@@ -13,7 +13,7 @@
                DMR=myDMR,
                CpGlist=NULL,
                Genelist=NULL,
-               method="goseq"
+               method="goseq",
                arraytype="450K",
                Rplot=TRUE,
                adjPval=0.05)

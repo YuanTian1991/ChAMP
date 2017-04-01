@@ -251,7 +251,6 @@ champ.process <- function(runload=TRUE,
                            nullMethod="bootstrap",
                            cores=cores,
                            ## following parameters are specifically for probe ProbeLasso method.
-                           DMP=myDMP,
                            meanLassoRadius=375,
                            minDmrSep=1000,
                            minDmrSize=50,
