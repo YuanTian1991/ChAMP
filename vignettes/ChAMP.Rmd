@@ -19,15 +19,17 @@ vignette: >
 
 # New Updates
 
-1: ** Fixed Error in DMRcate pacakge in cpg.annotate() function: ** DMRcate pacakge get updated for "Error in if (nsig == 0) { : missing value where TRUE/FALSE needed.".
+1: **Fixed Error in DMRcate pacakge in cpg.annotate() function: ** DMRcate pacakge get updated for "Error in if (nsig == 0) { : missing value where TRUE/FALSE needed.".
 
-2: ** Replace 0 into smallest positive value : ** In champ.load(), instead of replacing all 0 and negative value into 0.0001, we relplace them as smallest positive now, which might result to slightly different from previous result.
+2: **Replace 0 into smallest positive value : ** In champ.load(), instead of replacing all 0 and negative value into 0.0001, we relplace them as smallest positive now, which might result to slightly different from previous result.
 
-3: ** Fixed warnings() in all GUI() functions : ** Previously, there are some warnings in GUI() functions, which are merely because we did not assign some parameters in painting, it will NOT cause any error in plot. Based on reviewer's suggestion, in this version pacakge, we fixed most warnings.
+3: **Fixed warnings() in all GUI() functions : ** Previously, there are some warnings in GUI() functions, which are merely because we did not assign some parameters in painting, it will NOT cause any error in plot. Based on reviewer's suggestion, in this version pacakge, we fixed most warnings.
 
-4: ** More flexible for champ.runCombat() function : ** In previous champ.runCombat() function, we restricted that user can NOT do correction on factors like Sample_Group or Sample_Name. Based on reviewer's suggestion, we removed this restriction in this version,  which means users can fix all covariates by using champ.runCombat() function. Also, we added "variablename" parameter so that user may assign other variables other then "Sample_Group" to be corrected for.
+4: **More flexible for champ.runCombat() function : ** In previous champ.runCombat() function, we restricted that user can NOT do correction on factors like Sample_Group or Sample_Name. Based on reviewer's suggestion, we removed this restriction in this version,  which means users can fix all covariates by using champ.runCombat() function. Also, we added "variablename" parameter so that user may assign other variables other then "Sample_Group" to be corrected for.
 
-5: ** Removed "DMP" parameter in champ.DMR() function : ** Modified ProbeLasso method in champ.DMR() function, there is no need to input "myDMP" anymore, ProbeLasso function would calculate inside the function. Previously, ProbeLasso needs result from champ.DMP() to calculate DMRs, now we have updated it, so that ProbeLasso would calculate DMPs inside champ.DMR() function instead of calling for myDMP parameter.
+5: **Removed "DMP" parameter in champ.DMR() function : ** Modified ProbeLasso method in champ.DMR() function, there is no need to input "myDMP" anymore, ProbeLasso function would calculate inside the function. Previously, ProbeLasso needs result from champ.DMP() to calculate DMRs, now we have updated it, so that ProbeLasso would calculate DMPs inside champ.DMR() function instead of calling for myDMP parameter.
+
+6: **Changed jpg in champ.CNA() into pdf: ** Previously champ.CNA() generate some jpg figures, now they have been replaced into pdf figures.
 
 # Introduction
 
