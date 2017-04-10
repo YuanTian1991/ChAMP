@@ -75,7 +75,7 @@ QC.GUI <- function(beta=myLoad$beta,
         }else
         {
             SVD <- svd(beta)
-            rmt.o <- EstDimRMT(beta)
+            rmt.o <- EstDimRMT(beta - rowMeans(beta))
             k <- rmt.o$dim
             if(k < 2) k <- 2
             M <- SVD$v[,1:k]

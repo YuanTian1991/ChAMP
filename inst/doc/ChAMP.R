@@ -88,7 +88,7 @@ knitr::include_graphics("Figure/CpGGUI.png")
 champ.QC()
 
 ## ----eval=FALSE----------------------------------------------------------
-#  CpG.GUI(CpG=rownames(myLoad$beta),arraytype="450K")
+#  QC.GUI(CpG=rownames(myLoad$beta),arraytype="450K")
 
 ## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
 knitr::include_graphics("Figure/QCGUI.jpg")

@@ -273,6 +273,9 @@ champ.DMR <- function(beta=myNorm,
         rownames(DMR) <- paste("DMR",DMR$dmrNo,sep="_")
         names(DMRProbes) <- rownames(DMR)
 
+        if(arraytype=="EPIC")
+            DMR[,1] <- paste("chr",DMR[,1],sep="")
+
         #OutputDMR <- list(ProbeLassoDMR=DMR,ProbeLassoDMRProbes=DMRProbes)
         OutputDMR <- list(ProbeLassoDMR=DMR)
 

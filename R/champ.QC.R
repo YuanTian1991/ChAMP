@@ -57,7 +57,7 @@ champ.QC <- function(beta = myLoad$beta,
         {
             message("< Dendrogram Feature Selection Method >: Use top SVD CpGs to calculate distance matrix.")
             SVD <- svd(beta)
-            rmt.o <- EstDimRMT(beta)
+            rmt.o <- EstDimRMT(beta - rowMeans(beta))
             M <- SVD$v[,1:rmt.o$dim]
             rownames(M) <- colnames(beta)
             colnames(M) <- paste("Component",c(1:rmt.o$dim))

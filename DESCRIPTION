@@ -1,8 +1,8 @@
 Package: ChAMP
 Type: Package
 Title: Chip Analysis Methylation Pipeline for Illumina HumanMethylation450 and EPIC
-Version: 2.6.2
-Date: 2017-4-1
+Version: 2.6.4
+Date: 2017-4-10
 Description: The package includes quality control metrics, a selection of normalization methods and novel methods to identify differentially methylated regions and to highlight copy number alterations.
 Authors@R: c(person("Tian","Yuan", role = c("cre", "aut"),
                     email = "champ450k@gmail.com"),
@@ -30,4 +30,4 @@ Author: Yuan Tian [cre,aut],
 Maintainer: Yuan Tian  <champ450k@gmail.com>
 NeedsCompilation: no
 LazyData: true
-Packaged: 2017-01-12 09:18:20 UTC; regmtyu@pogb.cancer.ucl.ac.uk
+Packaged: 2017-04-10 13:43:53 UTC; regmtyu@pogb.cancer.ucl.ac.uk
