@@ -303,12 +303,12 @@ champ.DMR <- function(beta=myNorm,
 
         if(nrow(DMR)!=0)
         {
-            DMRProbes <- apply(DMR,1,function(x) M[which(M[,3]==x[1] & M[,4]>= as.numeric(x[2]) & M[,4]<= as.numeric(x[3])),])
+            #DMRProbes <- apply(DMR,1,function(x) M[which(M[,3]==x[1] & M[,4]>= as.numeric(x[2]) & M[,4]<= as.numeric(x[3])),])
             rownames(DMR) <- paste("DMR",1:nrow(DMR),sep="_")
-            names(DMRProbes) <- rownames(DMR)
-            for(i in names(DMRProbes)) rownames(DMRProbes[[i]]) <- DMRProbes[[i]]$ID
-            X <- lapply(DMRProbes,as.data.frame)
-            DMRProbes <- lapply(X,function(x) cbind(ID=x[,1],probe.features[rownames(x),],x[,c(2,5,6,7)]))
+            #names(DMRProbes) <- rownames(DMR)
+            #for(i in names(DMRProbes)) rownames(DMRProbes[[i]]) <- DMRProbes[[i]]$ID
+            #X <- lapply(DMRProbes,as.data.frame)
+            #DMRProbes <- lapply(X,function(x) cbind(ID=x[,1],probe.features[rownames(x),],x[,c(2,5,6,7)]))
             
             OutputDMR <- list(DMRcateDMR=DMR)
         }else
