@@ -2,10 +2,11 @@ if(getRversion() >= "3.1.0") utils::globalVariables(c("sampleNames<-","EPIC.mani
 
 champ.load <- function(directory = getwd(),
                        methValue="B",
+                       autoimpute=TRUE,
                        filterDetP=TRUE,
-                       detSamplecut=0.1,
+                       ProbeCutoff=0,
+                       SampleCutoff=0.1,
                        detPcut=0.01,
-                       removeDetP=0,
                        filterBeads=TRUE,
                        beadCutoff=0.05,
                        filterNoCG=TRUE,
@@ -29,59 +30,87 @@ champ.load <- function(directory = getwd(),
 	pd <- pData(rgSet)
 	mset <- preprocessRaw(rgSet)
     detP <- detectionP(rgSet)
-	
     message("<< Read DataSet Success. >>\n")
 
+    if(methValue=="B") tmp = getBeta(mset, "Illumina") else tmp = getM(mset)
+    tmp[detP >= detPcut] <- NA 
     message("The fraction of failed positions per sample\n 
             (You may need to delete samples with high proportion of failed probes\n): ")
-    numfail <- matrix(colMeans(detP>detPcut))
+
+    numfail <- matrix(colMeans(is.na(tmp)))
     rownames(numfail) <- colnames(detP)
     colnames(numfail) <- "Failed CpG Fraction."
     print(numfail)
-    RemainSample <- which(numfail < detSamplecut)
+    RemainSample <- which(numfail < SampleCutoff)
 
-    if(any(numfail >= detSamplecut))
-    message("The detSamplecut parameter is : ",detSamplecut, "\nSamples : ",
-            paste(rownames(numfail)[which(numfail >= detSamplecut)],collapse=",")," will be deleted.\n",
+    if(any(numfail >= SampleCutoff))
+    message("The detSamplecut parameter is : ",SampleCutoff, "\nSamples : ",
+            paste(rownames(numfail)[which(numfail >= SampleCutoff)],collapse=",")," will be deleted.\n",
             "There are ",length(RemainSample)," samples left for analysis.\n")
     
     rgSet <- rgSet[,RemainSample]
     detP <- detP[,RemainSample]
     mset <- mset[,RemainSample]
     pd <- pd[RemainSample,]
+    tmp <- tmp[,RemainSample]
+
 
     if(filterDetP)
     {
-        mset.f = mset[rowSums(detP >= detPcut) <= removeDetP*ncol(detP),]
+        mset.f = mset[rowSums(is.na(tmp)) <= ProbeCutoff*ncol(detP),]
         
-        if(removeDetP==0)
+        if(ProbeCutoff==0)
         {
             message("Filtering probes with a detection p-value above ",detPcut," in one or more samples has removed ",dim(mset)[1]-dim(mset.f)[1]," probes from the analysis. If a large number of probes have been removed, ChAMP suggests you to identify potentially bad samples.")
         }else{
-            message("Filtering probes with a detection p-value above ",detPcut," in at least ",removeDetP*100,"% of samples has removed ",dim(mset)[1]-dim(mset.f)[1]," probes from the analysis. If a large number of probes have been removed, ChAMP suggests you look at the failedSample.txt file to identify potentially bad samples.")
+            message("Filtering probes with a detection p-value above ",detPcut," in at least ",ProbeCutoff*100,"% of samples has removed ",dim(mset)[1]-dim(mset.f)[1]," probes from the analysis. If a large number of probes have been removed, ChAMP suggests you look at the failedSample file to identify potentially bad samples.")
         }
         mset=mset.f
+        tmp <- tmp[rowSums(is.na(tmp)) <= ProbeCutoff*ncol(detP),]
+        message("<< Filter DetP Done. >>\n")
+    }
+
+    if(sum(is.na(tmp))==0){
+       message("\nThere is no NA values in your matrix, there is no need to imputation.\n")
+    }else
+    {
+        message("\nThere are ",sum(is.na(tmp))," NA remain in filtered Data Set. Impute can be done for remain NAs, but not suitable for small number samples. For small Data Set (like only 20 samples), we suggest you set parameter ProbeCutoff as 0 in champ.load() here, which would remove all NA involved probe no matter how many samples of those probes are NA.\n")
+    }
+
+    if(autoimpute & sum(is.na(tmp)) > 0){
+        message("Impute will be conducted here for remain ",sum(is.na(tmp)),"  NAs. Note that if you don't do this, NA values would be kept in your data set. You may use champ.impute() function to do more complex imputation as well.")
+        # Open a file to send messages to save lot's of information from impute.knn
+        message("\nImpute function is working now, it may need couple minutes...")
+        zz <- file("ImputeMessage.Rout", open="wt")
+        sink(zz)
+        sink(zz, type="message")
+        tmp <- impute.knn(tmp,k=5)$data
+        sink(type="message")
+        sink()
+        message("<< Imputation Done. >>\n")
     }
     
-    message("<< Filter DetP Done. >>\n")
 
     if(filterBeads)
     {
         bc=beadcount(rgSet)
         bc2=bc[rowSums(is.na(bc))< beadCutoff*(ncol(bc)),]
+
         mset.f2 = mset[featureNames(mset) %in% row.names(bc2),]
+        tmp <- tmp[rownames(tmp) %in% row.names(bc2),]
         message("Filtering probes with a beadcount <3 in at least ",beadCutoff*100,"% of samples, has removed ",dim(mset)[1]-dim(mset.f2)[1]," from the analysis.")
         mset=mset.f2
+        message("<< Filter Beads Done. >>\n")
     }
-    message("<< Filter Beads Done. >>\n")
 
     if(filterNoCG)
     {
         mset.f2=dropMethylationLoci(mset,dropCH=T)
+        tmp <- tmp[rownames(tmp) %in% featureNames(mset.f2),]
         message("Filtering non-cg probes, has removed ",dim(mset)[1]-dim(mset.f2)[1]," from the analysis.")
         mset <- mset.f2
+        message("<< Filter NoCG Done. >>\n")
     }
-    message("<< Filter NoCG Done. >>\n")
 
     if(filterSNPs)
     {
@@ -129,33 +158,36 @@ champ.load <- function(directory = getwd(),
             }
         }
         mset.f2=mset[!featureNames(mset) %in% maskname,]
+        tmp <- tmp[!rownames(tmp) %in% maskname,]
         message("Filtering probes with SNPs as identified in Zhou's Nucleic Acids Research Paper, 2016, has removed ",dim(mset)[1]-dim(mset.f2)[1]," from the analysis.")
         mset=mset.f2
+        message("<< Filter SNP Done. >>\n")
     }
-    message("<< Filter SNP Done. >>\n")
     
     if(filterMultiHit)
     {
         data(multi.hit)
         mset.f2=mset[!featureNames(mset) %in% multi.hit$TargetID,]
+        tmp <- tmp[!rownames(tmp) %in% multi.hit$TargetID,]
         message("Filtering probes that align to multiple locations as identified in Nordlund et al, has removed ",dim(mset)[1]-dim(mset.f2)[1]," from the analysis.")
         mset=mset.f2
+        message("<< Filter MultiHit Done. >>\n")
     }
-    message("<< Filter MultiHit Done. >>\n")
 
     if(filterXY)
 	{
         if(arraytype=="EPIC") data(probe.features.epic) else data(probe.features)
 		autosomes=probe.features[!probe.features$CHR %in% c("X","Y"), ]
         mset.f2=mset[featureNames(mset) %in% row.names(autosomes),]
+        tmp <- tmp[rownames(tmp) %in% row.names(autosomes),]
         message("Filtering probes on the X or Y chromosome has removed ",dim(mset)[1]-dim(mset.f2)[1]," from the analysis.")
         mset=mset.f2
+        message("<< Filter XY chromosome Done. >>\n")
 	}
-    message("<< Filter XY chromosome Done. >>\n")
 
     
-    if(methValue=="B")beta.raw = getBeta(mset, "Illumina") else beta.raw = getM(mset)
     message(paste(if(methValue=="B") "[Beta" else "[M","value is selected as output.]\n"))
+    beta.raw <- tmp
 
     intensity <-  minfi::getMeth(mset) + minfi::getUnmeth(mset)
     detP <- detP[which(row.names(detP) %in% row.names(beta.raw)),]
@@ -167,6 +199,8 @@ champ.load <- function(directory = getwd(),
     message("One in your dataset have been replaced with largest value below 1.\n")
 
     message("The analysis will be proceed with ", dim(beta.raw)[1], " probes and ",dim(beta.raw)[2], " samples.\n")
+    message("Current Data Set contains ",sum(is.na(beta.raw))," NA in ", if(methValue=="B") "[Beta]" else "[M]"," Matrix.\n")
+
     message("[<<<<< ChAMP.LOAD END >>>>>>]")
     message("[===========================]")
     message("[You may want to process champ.QC() next.]\n")

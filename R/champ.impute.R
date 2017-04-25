@@ -15,15 +15,17 @@ champ.impute <- function(beta=myLoad$beta,
     {
         message("<method>:Combine. (Suitable for Large Data Set)")
         ## Eliminate probes and samples with too many NA values
-        rowNA <- apply(beta,1,function(x) length(which(is.na(x)))/length(x))
-        rowValid <- which(rowNA < ProbeCutoff)
-        message("(1): ",nrow(beta)-length(rowValid)," Probes contain ",ProbeCutoff," or above NA will be removed.")
-
         colNA <- apply(beta,2,function(x) length(which(is.na(x)))/length(x))
         colValid <- which(colNA < SampleCutoff)
-        message("(2): ",ncol(beta)-length(colValid)," Samples contain ",SampleCutoff," or above NA will be removed.")
+        message("(1): ",ncol(beta)-length(colValid)," Samples contain ",SampleCutoff," or above NA will be removed.")
 
-        beta <- beta[rowValid,colValid]
+        tmp_beta <- beta[,colValid]
+
+        rowNA <- apply(tmp_beta,1,function(x) length(which(is.na(x)))/length(x))
+        rowValid <- which(rowNA < ProbeCutoff)
+        message("(2): ",nrow(tmp_beta)-length(rowValid)," Probes contain ",ProbeCutoff," or above NA will be removed.")
+
+        beta <- tmp_beta[rowValid,]
         if(!is.null(pd)) pd <- pd[colValid,]
         data.m <- impute.knn(beta)$data
         message("(3): The rest NA are imputed by KNN method which parameter k as ",k,".")

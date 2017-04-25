@@ -10,10 +10,11 @@
 \usage{
 champ.load(directory = getwd(),
            methValue="B",
+           autoimpute=TRUE,
            filterDetP=TRUE,
-           detSamplecut=0.1,
+           ProbeCutoff=0,
+           SampleCutoff=0.1,
            detPcut=0.01,
-           removeDetP = 0,
            filterBeads=TRUE,
            beadCutoff=0.05,
            filterNoCG=TRUE,
@@ -28,8 +29,10 @@ champ.load(directory = getwd(),
 	
 	\item{directory}{Location of IDAT files, default is current working directory.(default = getwd())}
 	\item{methValue}{Indicates whether you prefer m-values M or beta-values B. (default = "B")}
+    \item{autoimpute}{If after filtering (or not do filtering) there are NA values in it, should impute.knn(k=3) should be done for the rest NA?}
 	\item{filterDetP}{If filter = TRUE, then probes above the detPcut will be filtered out.(default = TRUE)}
-    \item{detSamplecut}{The detection p value threshhold for samples. Samples with above proportion of failed p value will be removed.}
+    \item{ProbeCutoff}{The NA ratio threshhold for probes. Probes with above proportion of NA will be removed.}
+    \item{SampleCutoff}{The failed p value (or NA) threshhold for samples. Samples with above proportion of failed p value (NA) will be removed.}
   	\item{detPcut}{The detection p-value threshhold. Probes about this cutoff will be filtered out. (default = 0.01)}
   	\item{removeDetP}{The removeDetP parameter represents the fraction of samples that can contain a detection p-value above the detPcut.(default = 0)}
   	\item{filterBeads}{If filterBeads=TRUE, probes with a beadcount less than 3 will be removed depending on the beadCutoff value.(default = TRUE)}
