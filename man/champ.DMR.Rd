@@ -35,6 +35,7 @@
               resultsDir="./CHAMP_ProbeLasso/",
               ## following parameters are specifically for DMRcate method.
               rmSNPCH=T,
+              fdr=0.05,
               dist=2,
               mafcut=0.05,
               lambda=1000,
@@ -73,6 +74,7 @@
 
     Parameters specific for Dmrcate algorithm:
     \item{rmSNPCH}{Filters a matrix of M-values (or beta values) by distance to SNP. Also (optionally) removes crosshybridising probes and sex-chromosome probes. (default = TRUE)}
+    \item{fdr}{FDR cutoff (Benjamini-Hochberg) for which CpG sites are individually called as significant. Used to index default thresholding in dmrcate(). Highly recommended as the primary thresholding parameter for calling DMRs.}
     \item{dist}{Maximum distance (from CpG to SNP) of probes to be filtered out. See details for when Illumina occasionally lists a CpG-to-SNP distance as being < 0. (default = 2)}
     \item{mafcut}{Minimum minor allele frequency of probes to be filtered out. (default = 0.05)}
     \item{lambda}{Gaussian kernel bandwidth for smoothed-function estimation. Also informs DMR bookend definition; gaps >= lambda between significant CpG sites will be in separate DMRs. Support is truncated at 5*lambda. See DMRcate package for further info. (default = 1000)}

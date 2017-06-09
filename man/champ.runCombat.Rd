@@ -5,7 +5,7 @@
 Function that uses ComBat to correct for batch effects. Multiple batch effect correction is allowed.
 }
 \description{
-This function formats data to run through ComBat batch correction. If beta values are used the data is first logit transformed. Them Combat function from "sva" package would be used to do batch correction. Note that multi-batch correction is supported, user just need to assign name of batch need to be corrected. Note Combat function is a little bit critical to dataset, thus you have futher question or higher lever of application of Combat, you may turn to "sva" pacakge for help. After inputing pd file, champ.runCombat() would automatically detect all correctable factors and list them below, if your assigned batchname is correct, champ.runCombat() would start to do batch correction.
+This function formats data to run through ComBat batch correction. If beta values are used the data is first logit transformed. Them Combat function from "sva" package would be used to do batch correction. Note that multi-batch correction is supported, user just need to assign name of batch need to be corrected. Note Combat function is a little bit critical to dataset, thus you have futher question or higher lever of application of Combat, you may turn to "sva" pacakge for help. After inputing pd file, champ.runCombat() would automatically detect all correctable factors and list them below, if your assigned batchname is correct, champ.runCombat() would start to do batch correction. Note that in new version champ.runCombat() function, we will check if user's variable and batch confound with each other.
 }
 
 \usage{

@@ -59,6 +59,36 @@ champ.runCombat <- function(beta=myNorm,
     {
         stop(setdiff(batchname,colnames(PhenoTypes.lv))," factors is not valid to run Combat, please recheck your dataset.")
     }
+
+    # Do rank test
+    for(i in 1:length(batchname))
+    {
+        message("\n<< Checking confounded status between ",batchname[i]," and ", variablename ," >>")
+        if(i+1 <= length(batchname))
+            tmp_formdf <- as.formula(paste(" ~ ",paste(c(variablename,batchname[(i+1):length(batchname)]),collapse=" + "),sep=""))
+        else
+            tmp_formdf <- as.formula(paste(" ~",variablename))
+
+        message("--------------------------")
+        message("Model for Correction is: ")
+        print(tmp_formdf)
+        tmp_mod <- model.matrix(tmp_formdf,data=pd)
+        tmp_batchmod <- model.matrix(~-1 + pd[,batchname[i]])
+        n.batch <- length(unique(pd[,batchname[i]]))
+
+        tmp_design <- cbind(tmp_batchmod,tmp_mod)
+        check <- apply(tmp_design, 2, function(x) all(x == 1))
+        tmp_design <- as.matrix(tmp_design[,!check])
+            
+        # Number of covariates or covariate levels
+        cat("Combat can adjust for ",ncol(tmp_design)-ncol(tmp_batchmod),' covariate(s) or covariate level(s)\n')
+        if(qr(tmp_design)$rank < ncol(tmp_design)){
+            message("\nSorry, Your covariate is confounded with batch, which means, some of your covariates or can be totally represented by batches. In other word, your Model generated from ",variablename," and ",batchname[i]," for correction is not a full rank matrix, which is not in accord of the condition of Combat.\n")
+            stop("Sorry, your covariate ", variablename, " is confounded with batch ", batchname[i])
+        }
+        message("--------------------------")
+    }
+    message("<< Rank Check Complete, you data is good to proceed. >> ^_^")
  	
     if(min(beta)<=0)
     {

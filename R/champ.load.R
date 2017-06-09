@@ -1,6 +1,7 @@
 if(getRversion() >= "3.1.0") utils::globalVariables(c("sampleNames<-","EPIC.manifest.hg38","EPIC.manifest.pop.hg38","hm450.manifest.hg38","hm450.manifest.pop.hg38","multi.hit","probe.features","probe.features.epic"))
 
 champ.load <- function(directory = getwd(),
+                       method = "ChAMP",
                        methValue="B",
                        autoimpute=TRUE,
                        filterDetP=TRUE,
@@ -19,6 +20,12 @@ champ.load <- function(directory = getwd(),
     message("[===========================]")
     message("[<<<< ChAMP.LOAD START >>>>>]")
     message("-----------------------------")
+
+    if(method=="minfi")
+    {
+        message("\n[ Loading Data with Minfi Method ]")
+        message("----------------------------------")
+    
 	message("Loading data from ", directory)
 	
     myDir <- directory
@@ -205,4 +212,64 @@ champ.load <- function(directory = getwd(),
     message("[===========================]")
     message("[You may want to process champ.QC() next.]\n")
 	return(list(mset=mset,rgSet=rgSet,pd=pd,intensity=intensity,beta=beta.raw,detP=detP))
+
+    } else {
+        message("\n[ Loading Data with ChAMP Method ]")
+        message("----------------------------------")
+
+        message("Note that ChAMP method will NOT return rgSet or mset, they object defined by minfi. Which means, if you use ChAMP method to load data, you can not use SWAN or FunctionNormliazation method in champ.norm() (you can use BMIQ or PBC still). But All other function should not be influenced.\n")
+
+
+        myImport <- champ.import(directory,arraytype=arraytype)
+        
+        if(methValue=="B")
+            myLoad <- champ.filter(beta=myImport$beta,
+                                   M=NULL,
+                                   pd=myImport$pd,
+                                   intensity=myImport$intensity,
+                                   Meth=NULL,
+                                   UnMeth=NULL,
+                                   detP=myImport$detP,
+                                   beadcount=myImport$beadcount,
+                                   autoimpute=autoimpute,
+                                   filterDetP=filterDetP,
+                                   ProbeCutoff=ProbeCutoff,
+                                   SampleCutoff=SampleCutoff,
+                                   detPcut=detPcut,
+                                   filterBeads=filterBeads,
+                                   beadCutoff=beadCutoff,
+                                   filterNoCG=filterNoCG,
+                                   filterSNPs=filterSNPs,
+                                   population=population,
+                                   filterMultiHit=filterMultiHit,
+                                   filterXY=filterXY,
+                                   arraytype=arraytype)
+        else
+            myLoad <- champ.filter(beta=NULL,
+                                   M=myImport$M,
+                                   pd=myImport$pd,
+                                   intensity=myImport$intensity,
+                                   Meth=NULL,
+                                   UnMeth=NULL,
+                                   detP=myImport$detP,
+                                   beadcount=myImport$beadcount,
+                                   autoimpute=autoimpute,
+                                   filterDetP=filterDetP,
+                                   ProbeCutoff=ProbeCutoff,
+                                   SampleCutoff=SampleCutoff,
+                                   detPcut=detPcut,
+                                   filterBeads=filterBeads,
+                                   beadCutoff=beadCutoff,
+                                   filterNoCG=filterNoCG,
+                                   filterSNPs=filterSNPs,
+                                   population=population,
+                                   filterMultiHit=filterMultiHit,
+                                   filterXY=filterXY,
+                                   arraytype=arraytype)
+
+    message("[<<<<< ChAMP.LOAD END >>>>>>]")
+    message("[===========================]")
+    message("[You may want to process champ.QC() next.]\n")
+	return(myLoad)
+    }
 }

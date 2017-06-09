@@ -27,7 +27,11 @@ import(IlluminaHumanMethylationEPICmanifest)
 import(FEM)
 import(impute)
 import(goseq)
+import(illuminaio)
+import(IlluminaHumanMethylationEPICanno.ilm10b2.hg19)
+import(rmarkdown)
 
+importFrom("utils", "read.csv")
 importFrom(RPMM, blc)
 
 importFrom("grDevices", "dev.off", "jpeg", "pdf", "rainbow")
@@ -49,6 +53,7 @@ importFrom("stats", "aggregate", "as.dendrogram", "as.formula","bartlett.test",
 export(
 	champ.process, 
     champ.load,
+    champ.import,
     champ.filter,
 	champ.impute, 
     champ.QC,

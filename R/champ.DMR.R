@@ -27,6 +27,7 @@ champ.DMR <- function(beta=myNorm,
                       resultsDir="./CHAMP_ProbeLasso/",
                       ## following parameters are specifically for DMRcate method.
                       rmSNPCH=T,
+                      fdr=0.05,
                       dist=2,
                       mafcut=0.05,
                       lambda=1000,
@@ -144,7 +145,7 @@ champ.DMR <- function(beta=myNorm,
 
         message("<< Get expend ranges for each probe >>")
         myResultsGrSp <- split(myResultsGr, myResultsGr$featureCgi) # splits myResultsGr by 'featureCgi'; length = 28
-        lassoGr <- mapply(function(x, y) promoters(x, upstream = y, downstream = y, ignore.strand = TRUE), x = myResultsGrSp, y = lassoSizes)
+        lassoGr <- mapply(function(x, y) promoters(x, upstream = y, downstream = y), x = myResultsGrSp, y = lassoSizes)
         lassoGr <- unlist(GRangesList(lassoGr)); rm(myResultsGrSp)
         myResultsSigGr <- myResultsGr[which(mcols(myResultsGr)$adj.P.Val < adjPvalProbe)]
         lassoProbeCountOverlap <- countOverlaps(lassoGr, myResultsSigGr, ignore.strand = T);rm(myResultsSigGr)
@@ -290,9 +291,9 @@ champ.DMR <- function(beta=myNorm,
         design <- model.matrix(~ pheno)
 
         if(arraytype == "450K"){
-            myannotation <- cpg.annotate(datatype="array", myMs,design=design,coef=ncol(design), analysis.type="differential",annotation=c(array = "IlluminaHumanMethylation450k", annotation = "ilmn12.hg19"),what="M")
+            myannotation <- cpg.annotate(datatype="array",fdr=fdr, myMs,design=design,coef=ncol(design), analysis.type="differential",annotation=c(array = "IlluminaHumanMethylation450k", annotation = "ilmn12.hg19"),what="M")
         } else{
-            myannotation <- cpg.annotate(datatype="array", myMs,design=design,coef=ncol(design), analysis.type="differential",annotation=c(array = "IlluminaHumanMethylationEPIC", annotation = "ilm10b2.hg19"),what="M")
+            myannotation <- cpg.annotate(datatype="array",fdr=fdr, myMs,design=design,coef=ncol(design), analysis.type="differential",annotation=c(array = "IlluminaHumanMethylationEPIC", annotation = "ilm10b2.hg19"),what="M")
         }
         M <- do.call("cbind", lapply(myannotation, as.data.frame))
         colnames(M) <- names(myannotation)

@@ -19,21 +19,20 @@ vignette: >
 
 # New Updates
 
-1: **Added Demo on github:** In respond to our reviewer's question and to make users have better understanding on our package, we processed ChAMP fully on some data sets and saved all messages shown during processing. We upload these information to [github](https://github.com/JoshuaTian/ChAMPDemos) so that user could use them to check. Currently we added to Demo Report in repositories, [Demo450](https://github.com/JoshuaTian/ChAMPDemos/tree/master/Demo450K%20DataSet) of this vignette and [DemoEPIC](https://github.com/JoshuaTian/ChAMPDemos/tree/master/DemoEPIC%20DataSet) in our paper's supplementary.
+> We noticed recently champ.load() might not be working on R 3.4, or latest minfi verion. Based on our check, the reason is minfi's updating seems influenced other package, say wateRmelon, champ.load() used to use wateRmelon to get bead count information to do filtering, but now seems not working. **We provided another loading method "ChAMP" for you to load data. The result should be the same as minfi's result and filterings would also be done by champ.filter() function.** Meanwhile, for users want tp use minfi loading function (old ChAMP mode). You may assign "method" parameter in champ.load() as "minfi" to use old ways. Based on our test, on 450K situation, "ChAMP" method and "minfi" method returns EXACTLY the same result, but on EPIC array, since "ChAMP" is now using latest B4 manifest, the results between minfi and ChAMP method would be slightly different.
 
-2: **Fixed Error in DMRcate pacakge in cpg.annotate() function:** DMRcate pacakge get updated for "Error in if (nsig == 0) { : missing value where TRUE/FALSE needed.". Thanks professor Timothy Peters upgraded DMRcate to make it more robust.
+1: **Updated EPIC annotation to B4 version:** The B4 version is downloaded from [illumina website](https://support.illumina.com/array/array_kits/infinium-methylationepic-beadchip-kit/downloads.html).
 
-3: **Replace 0 into smallest positive value :** In champ.load(), instead of replacing all 0 and negative value into 0.000001, we relplace them as the smallest positive value now, which might leads to slightly difference from previous result from same code and data set.
+2: **Provided ChAMP method for loading data: **Added one new parameter "method" in champ.load() function, which allows user to choose which method they want to use to read data. ChAMP or Minfi. More detail can be found on Manual of champ.load()
 
-4: **Fixed warnings() in all GUI() functions :** Previously, there were some warnings in GUI() functions, which are merely because we did not assign some parameters in painting (we used default parameter, which is correct but would trigger warnings), it will NOT cause any error in plot but some warnings. Based on reviewer's suggestion, in this version pacakge, we fixed most warnings.
+3: **champ.filter() has been totally recoded:** Now users can do any filtering on any data set they want. Merely champ.filter() is focused to take champ.import() result as input and        generate filtered beta value for future analysis. In theory, champ.import() + champ.filter()'s result should be EXACTLY the same as old loading function (minfi method), but since now ChAMP is using B4 verion for EPIC array, the two method have slightly difference on final result, but merely the same. For 450K array, ChAMP method and minfi method are exactly the same.
 
-5: **More flexible for champ.runCombat() function :** In previous champ.runCombat() function, we setted restriction that user can NOT do correction on factors like Sample_Group or Sample_Name. Based on reviewer's suggestion, we removed this restriction in this version,  which means users can fix all covariates by using champ.runCombat() function. Also, we added "variablename" parameter so that user may assign other variables other then "Sample_Group" to be corrected for.
+4: **Provide Whole New function champ.import() to read IDAT file to R:**, which is similar to minfi's read.meth.exp() function, but will NOT return rgSet or Mset object. Also remember that "ChAMP" method's result can not be run in SWAN and FunctionalNormliazation method. If you want to use them, please set "metehod" parameter in champ.load() as "minfi" and use minfi method.
 
-6: **Removed "DMP" parameter in champ.DMR() function :** We modified ProbeLasso method in champ.DMR() function, there is no need to input "myDMP" parameter anymore, ProbeLasso function would calculate it inside the function. Previously, ProbeLasso needs result from champ.DMP() to calculate DMRs, now we have updated it, so that ProbeLasso would calculate DMPs inside champ.DMR() function instead of calling for myDMP parameter from users.
+5: **Conflict Checking in champ.runCombat():** Added more strict checking in champ.runCombat(), now champ.runCombat() would check if your variable and batches conflict with each other. When it comes to "conflict", it means one group of your variable (default is Sample_Name), is totally belongs to only one batches. Combat() function from SVA can not do batch correction on this situation.
 
-7: **Changed jpg in champ.CNA() into pdf:** Previously champ.CNA() generate some jpg figures, now they have been replaced into pdf figures.
+6: **Added Demo on github**: In respond to our reviewer's question and to make users have better understanding on our package, we processed ChAMP fully on some data sets and saved all messages shown during processing. We upload these information to [github](https://github.com/JoshuaTian/ChAMPDemos).
 
-8: **Accelerated champ.DMR() :** We did some modification to make champ.DMR() faster then before, especially for DMRcate function.
 
 # Introduction
 
@@ -137,6 +136,7 @@ Note that champ.process() may not always successfully run, because any small pro
 
 ```{r eval=FALSE}
 myLoad <- cham.load(testDir)
+# Or you may separate about code as champ.import(testDir) + champ.filter()
 CpG.GUI()
 champ.QC() # Alternatively: QC.GUI()
 myNorm <- champ.norm()
@@ -214,7 +214,9 @@ As previously mentioned, users has the option to run each of the ChAMP functions
 
 ## Loading Data
 
-Loading Data is the first step for all analysis. ChAMP provides a loading function to get data from .idat file (with pd file (Sample_Sheet.csv) in it). The champ.load() function utilises minfi to load data from .idat files. By default this loads data from the current working directory, in this directory you should have all .idat files and a sample sheet. The sample sheet currently needs to be a .csv file as came with your results following hybridization. You can choose whether you want M-values or beta-values. For small datasets M-values are recommended [@Zhuang12]. The minfi function used to load the data from the idat files would automatically filters out the SNPs that might influent the analyais result. The SNP list are generated from [Zhou's Nucleic Acids Research paper in 2016](http://zwdzwd.github.io/InfiniumAnnotation) [@Zhou2016], which is designed specifically for 450K and EPIC, also with population differences considered. As such, for 450k bead array data, before filtering for low quality probes, the dataset will include 485,512 probes. And for EPIC bead array data, before filtering probes the dataset, will include 867,531 probes.
+Loading Data is the first step for all analysis. ChAMP provides a loading function to get data from .idat file (with pd file (Sample_Sheet.csv) in it). The old champ.load() function utilises minfi to load data from .idat files, but now we provided a neww method "ChAMP" to read data. They would return merely the same result except minfi would also return rgSet and mset, which might be used in SWAN and FunctionNormliazation method in champ.norm(). By default this loads data from the current working directory, in this directory you should have all .idat files and a sample sheet. The sample sheet currently needs to be a .csv file as came with your results following hybridization. You can choose whether you want M-values or beta-values. For small datasets M-values are recommended [@Zhuang12]. The champ.load() function used to load the data from the idat files would automatically filters out the SNPs that might influent the analyais result. The SNP list are generated from [Zhou's Nucleic Acids Research paper in 2016](http://zwdzwd.github.io/InfiniumAnnotation) [@Zhou2016], which is designed specifically for 450K and EPIC, also with population differences considered. As such, for 450k bead array data, before filtering for low quality probes, the dataset will include 485,512 probes. And for EPIC bead array data, before filtering probes the dataset, will include 867,531 probes.
+
+Currently the default method for loading is "ChAMP". You may set "method" in champ.load() to use classical minfi way. **Note that "ChAMP" method in champ.load() is merely a combination of champ.import() and champ.filter()**. If you are not satisfied with result returned by champ.load(), say you want to get beadcount,detect P matrix, or Meth UnMeth matrix, you may use champ.import() to generate them.
 
 User may use following code to load data set:
 ```{r eval=FALSE}
@@ -233,12 +235,32 @@ myLoad$pd
 ```
 As we can see here, the Sample_Group contains two phenotypes: C and T, which is what we want to compare.
 
-During the loading process, champ.load() function would also do some filtering.
+## Filtering Data
+ChAMP provided a comprehensive filtering function called `champ.filter()` which could take any data matrix (beta, M, Meth, UnMeth, intensity) and do all filtering on them, including imputation, which is done by champ.impute() function. champ.filter() does not call for any specific object or class result, nor need IDAT file, as long as you have a single beta matrix, the filtering can be done. 
+
+Of course for some filtering method, some accesory data need to be provided, say if you want to do filtering on detect P value, at least you need to provide detect P matrix. Als if you want to do filtering on beadcount, at least you need to provide beadcount. 
+
+champ.filter() would check your inpute strictly beforehead, basically there are some rules:
+
+* First, you must input at least on data matrix.
+* Second, if you inputted multiple matrix, they must have EXACTLY the same rownames and colnames. For example, if you want to do filtering on intensity data and M value at the same time, you MUST make sure they have the same name, otherwise, ChAMP would suspect they are data comes from different source.
+* Third, if you want to filter pd too. (filterDetP process might remove some low quality samples.) Please make sure Sample_Name in your pd file is exactly the same as colnames of your data matrix.
+* Fourth, if you want to do imputation, you must provide detect P matrix, beta or M matrix, and parameter ProbeCutoff can not be 0. If any of these three condition fails, champ.filter() would reset autoimpute parameter as FALSE.
+* Five, if you want to filter beadcount, you must provie beadcount as well.
+
+Merely champ.filter() is the after process of champ.import() which is a noval loading function coded by ChAMP team. You may use them like below:
+```{r eval=FALSE}
+myImport <- champ.import(testDir)
+myLoad <- champ.filter()
+```
+Then the result of champ.filter() (myLoad in above code), should be the same result as old minfi method.
+
+Actually During the loading process, champ.load() function would also do some filtering. Below are filtering would be done by both champ.load() and champ.filter().
 
 * First filter is for probes with detection p-value (< 0.01). This utilises minfi method for calculating the detection p-value which differs from the method used in Genome Studio. A failedSamples result will be printed to the screen, showing the fraction of failed probes per sample. If any of these values is high (>0.05) you may want to consider removing that sample from the analysis and rerun it. Previously we found that in many cases, only one or two samples in a big data set are not qualited for analysis, and they may have 70% or even 80% of failed probes. If we only do filtering on probes, about 80% of probes will be masked, so we developed new filtering system on both sample and probe. If certain sample's failed probes' ratio if above certain threshold (default = 0.1), then this sample will be discarded, then filtering to probes will be carried on rest samples. The threshold of sample and probe can be controled by parameter detSamplecut and detPcut separately.
 * Second, ChAMP will filter out probes with <3 beads in at least 5% of samples per probe. This default can changed with the filterBeads parameter or the frequency can be adjusted with the beadCutoff parameter.
 * Third, ChAMP will filter out all None-CpG probes contained in your dataset.
-* Fourth, ChAMP will filter all SNP-related probes. The SNP list comes from [Zhou's Nucleic Acids Research paper in 2016](http://zwdzwd.github.io/InfiniumAnnotation).
+* Fourth, ChAMP will filter all SNP-related probes. The SNP list comes from [Zhou's Nucleic Acids Research paper in 2016](http://zwdzwd.github.io/InfiniumAnnotation). Note that if you know which population your data is, you can choose certian population to do filtering. Otherwise ChAMP would use General Recommended Probes provided by Zhou to do filtering.
 * Fifth, ChAMP will filter all multi-hit probes. The multi-hit probe list comes from [Nordlund's Genome Biology Paper in 2013](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2013-14-9-r105)[@Nordlund2013].
 * And the Sixth, ChAMP will filter out all probes located in chromosome X and Y.
 
@@ -328,6 +350,8 @@ This function implements the ComBat normalization method [@Johnson07] that was d
 ComBat algorithsm uses an empirical Bayes method to correct for technical variation. If ComBat were applied directly to beta values zeros could be introduced as beta values have a range between 0 and 1. For this reason ChAMP logit transforms beta values before ComBat adjustment and then computes the reverse logit transformation following the ComBat adjustment. If the user has chosen to use M-values, please assign `logitTrans=FALSE`. 
 
 During the function champ.runCombat(), the program would automatically detect all valid factors might be corrected and list on screen, so that user may check if there are the batches you want to correct. Then if the batchname assigned by user are correct, the function would started to do batch correction.
+
+In the latest version, champ.runCombat() would also check if user's Batch and Variable conflict with each other. Conflict likes all samples from one phenotype of your Sample_Name are comes from certain one Batch, which means, if you correct batches, your Sample_Name-contained information are also gone, which is not allowed in Combat function of SVA package, that's why we made check beforehead.
 
 You can use following code to do batch correction:
 ```{r eval=FALSE}
