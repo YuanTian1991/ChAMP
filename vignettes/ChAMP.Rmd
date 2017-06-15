@@ -21,6 +21,8 @@ vignette: >
 
 > We noticed recently champ.load() might not be working on R 3.4, or latest minfi verion. Based on our check, the reason is minfi's updating seems influenced other package, say wateRmelon, champ.load() used to use wateRmelon to get bead count information to do filtering, but now seems not working. **We provided another loading method "ChAMP" for you to load data. The result should be the same as minfi's result and filterings would also be done by champ.filter() function.** Meanwhile, for users want tp use minfi loading function (old ChAMP mode). You may assign "method" parameter in champ.load() as "minfi" to use old ways. Based on our test, on 450K situation, "ChAMP" method and "minfi" method returns EXACTLY the same result, but on EPIC array, since "ChAMP" is now using latest B4 manifest, the results between minfi and ChAMP method would be slightly different.
 
+> **Note that you MUST install [latest ChAMPdata package(version 2.8.1)](https://bioconductor.org/packages/release/data/experiment/html/ChAMPdata.html) to make new ChAMP works.**
+
 1: **Updated EPIC annotation to B4 version:** The B4 version is downloaded from [illumina website](https://support.illumina.com/array/array_kits/infinium-methylationepic-beadchip-kit/downloads.html).
 
 2: **Provided ChAMP method for loading data: **Added one new parameter "method" in champ.load() function, which allows user to choose which method they want to use to read data. ChAMP or Minfi. More detail can be found on Manual of champ.load()
@@ -32,6 +34,8 @@ vignette: >
 5: **Conflict Checking in champ.runCombat():** Added more strict checking in champ.runCombat(), now champ.runCombat() would check if your variable and batches conflict with each other. When it comes to "conflict", it means one group of your variable (default is Sample_Name), is totally belongs to only one batches. Combat() function from SVA can not do batch correction on this situation.
 
 6: **Added Demo on github**: In respond to our reviewer's question and to make users have better understanding on our package, we processed ChAMP fully on some data sets and saved all messages shown during processing. We upload these information to [github](https://github.com/JoshuaTian/ChAMPDemos).
+
+7: **Added Hydroxymethylation in Vignette:** ChAMP can also be used to analysis hydroxymethylation data, we provided a small demo part in vignette to show user how to use it.
 
 
 # Introduction
@@ -413,6 +417,17 @@ knitr::include_graphics("Figure/DMP-5.png")
 The fifth tab includes two plots. At the top is the enrichment plot for top 70 genes involved in significant CpGs you select by left cutoff parameters. The number in each bar indicates how many hyper or hypo differential methylated CpGs are included in this gene. Users may use this plot to find intereted genes then use tab 4 to plot these genes. At the bottom of this tab, is the boxplot of certain CpGs, which is controled by parameter on the left panel.
 
 > **Note that all plots here can be Zoomed in or out. And can be downloaded directly. You may even change the shape of the brower to change the resize of plot then download it with different resolution.**
+
+### Hydroxymethylation Analysis
+Some users might want to analysis hydroxymethylation data, which can be done with champ.DMP() function, here we provided some demo code below for user to check.
+
+```{r eval=FALSE}
+myDMP <- champ.DMP(beta=myNorm, pheno=myLoad$pd$Sample_Group, compare.group=c("oxBS", "BS"))
+# In above code, you can set compare.group() as "oxBS" and "BS" to do DMP detection between hydroxymethylatio and normal methylation.
+
+hmc <- dmps[dmps$deltaBeta>0,]
+# Then you can use above code to extract hydroxymethylation CpGs.
+```
 
 ## Differential Methylation Regions
 
