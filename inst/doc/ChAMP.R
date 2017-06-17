@@ -134,6 +134,13 @@ knitr::include_graphics("Figure/DMP-4.png")
 ## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
 knitr::include_graphics("Figure/DMP-5.png")
 
+## ----eval=FALSE----------------------------------------------------------
+#  myDMP <- champ.DMP(beta=myNorm, pheno=myLoad$pd$Sample_Group, compare.group=c("oxBS", "BS"))
+#  # In above code, you can set compare.group() as "oxBS" and "BS" to do DMP detection between hydroxymethylatio and normal methylation.
+#  
+#  hmc <- dmps[dmps$deltaBeta>0,]
+#  # Then you can use above code to extract hydroxymethylation CpGs.
+
 ## ----eval=FALSE,message=FALSE,warning=TRUE-------------------------------
 #  myDMR <- champ.DMR(beta=myNorm,pheno=myLoad$pd$Sample_Group,method="Bumphunter")
 

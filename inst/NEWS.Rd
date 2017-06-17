@@ -2,6 +2,14 @@
 \title{ChAMP News}
 \encoding{UTF-8}
 
+\section{Version 2.8.3}{
+  \itemize{
+    \item Updated zzz.R file, which means the loading messages would be different.
+    \item Fixed a warning in champ.load.Rd file.
+  }
+}
+
+
 \section{Version 2.8.2}{
   \itemize{
     \item Updated EPIC annotation to B4 version. The B4 version is downloaded from illumina website.

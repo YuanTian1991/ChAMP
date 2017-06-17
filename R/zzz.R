@@ -9,7 +9,7 @@
       \\___|_||_/_/ \\_\\_|  |_|_|  
       ------------------------------
 "
-    mes2 <- "ChAMP provides comprehensive integrated analysis pipeline for DNA methylation HumanMethylation Beadchip.\n\n You may use vignette(\"ChAMP\") to view html version guildbook.\n\n If you have any question or suggestion about ChAMP, please email to champ450k@gmail.com."
-    packageStartupMessage("Package loaded\n",mes,mes2)
+    mes2 <- "--- 1: ChAMP provides comprehensive integrated analysis pipeline for DNA methylation HumanMethylation Beadchip.\n--- 2: You may use vignette(\"ChAMP\") to view html version guildbook.\n--- 3: If you have any question or suggestion about ChAMP, please email to champ450k@gmail.com."
+    packageStartupMessage(">> Package version 2.8.3 loaded <<\n",mes,mes2)
 }
 
