@@ -6,6 +6,7 @@
   \itemize{
     \item Updated zzz.R file, which means the loading messages would be different.
     \item Fixed a warning in champ.load.Rd file.
+    \item Fixed bug in champ.filter(), if filerDetP is false, update pd part would faile because of lacking of RemainSample variable.
   }
 }
 

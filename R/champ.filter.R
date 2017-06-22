@@ -321,6 +321,11 @@ champ.filter <- function(beta=myImport$beta,
     if(!is.null(pd))
     {
         message("\n  Updating PD file")
+        if(FilterOption$filterDetP==FALSE)
+        {
+            message("    filterDetP parameter is FALSE, so no Sample Would be removed.")
+            RemainSample <- 1:nrow(pd)
+        }
         pd <- pd[RemainSample,]
         Objects <- append(Objects,list(pd=pd))
     }
