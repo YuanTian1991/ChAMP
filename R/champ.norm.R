@@ -17,7 +17,7 @@ champ.norm <- function(beta=myLoad$beta,
     message("champ.norm Results will be saved in ",resultsDir)
 
 
-    message("[ SWAN method call for BOTH rgSet and mset input, FunctionNormalization call for rgset only , while PBC and BMIQ only needs beta value. Please set parameter correctly. ]\n")
+    message("[ SWAN method call for BOTH rgSet and mset input, FunctionalNormalization call for rgset only , while PBC and BMIQ only needs beta value. Please set parameter correctly. ]\n")
 
     if(method=="SWAN")
     {
@@ -59,12 +59,14 @@ champ.norm <- function(beta=myLoad$beta,
             message("Zeros in your dataset have been replaced with 0.000001\n")
         }
         beta.p=DoPBC(beta,design.v)
-	}else if(method=="FunctionNormalization")
+	}else if(method=="FunctionalNormalization")
     {
+        if(is.null(rgSet)) stop("rgSet not found, it is required for FunctionalNormalization")
+        if(arraytype=="EPIC") rgSet@annotation[2] <- "ilm10b2.hg19"
         beta.p <- getBeta(preprocessFunnorm(rgSet))[rownames(beta),]
     }else
     {
-        stop("Please Select Normalization Method from: BMIQ,PBC, FunctionNormalization and SWAN.")
+        stop("Please Select Normalization Method from: BMIQ,PBC, FunctionalNormalization and SWAN.")
     }
     rownames(beta.p) <- rownames(beta)
     colnames(beta.p) <- colnames(beta)
