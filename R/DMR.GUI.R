@@ -7,26 +7,56 @@ DMR.GUI <- function(DMR=myDMR,
                     compare.group=NULL,
                     arraytype="450K")
 {
-    if(arraytype == "EPIC") data(probe.features.epic) else data(probe.features)
-    probe.features <- probe.features[rownames(beta),]
+    message("!!! important !!! Since we just upgrated champ.DMP() function, which is now can support multiple phenotypes. Here in DMR.GUI() function, if you want to use \"runDMP\" parameter, and your pheno contains more than two groups of phenotypes, you MUST specify compare.group parameter as compare.group=c(\"A\",\"B\") to get DMP value between group A and group B.")
 
+    message("\n[ Section 1: Calculate DMP Start  ]\n")
     if(runDMP)
     {
+        tmpbeta <- beta
+        tmppheno <- pheno
+        if(class(pheno)=="numeric") {
+            message("  Your pheno parameter is numeric, champ.DMP() function would calculate linear regression for your CpGs.")
+        } else {
+            message("  You pheno is ",class(pheno)," type.")
+            message("    Your pheno information contains following groups. >>")
+            sapply(unique(pheno),function(x) message("    <",x,">:",sum(pheno==x)," samples."))
+            
+            if(length(unique(pheno))==2) {
+                message("  Your pheno contains EXACTLY two phenotypes, which is good, compare.group is not needed.")
+            } else {
+                message("  Your pheno contains more than 2 phenotypes, please use compare.group to specify only two of them here.")
+                if(is.null(compare.group)){
+                    stop("  compare.group is needed here, please specify compare.group.")
+                } else if (sum(compare.group %in% unique(pheno))==2) {
+                    message("  Your compare.group is in accord with your pheno, which is good, now we are about to extract information for your compare.group.")
+                    tmpbeta <- beta[,which(pheno %in% compare.group)]
+                    tmppheno <- pheno[which(pheno %in% compare.group)]
+                } else {
+                    stop("  Seems your compare.group is not in accord with your pheno, please recheck your pheno and your compare.group.")
+                }
+            }
+        }
         message("Calculating DMP")
-        DMP <- champ.DMP(beta=beta,
-                         pheno=pheno,
+        DMP <- champ.DMP(beta=tmpbeta,
+                         pheno=tmppheno,
                          adjPVal=1,
                          adjust.method="BH",
                          compare.group=compare.group,
                          arraytype=arraytype)
-
+        DMP <- DMP[[1]]
     }
+    message("\n[ Section 1: Calculate DMP Done  ]\n")
 
-    message("<< Generating Annotation File >>")
+    if(arraytype == "EPIC") data(probe.features.epic) else data(probe.features)
+    probe.features <- probe.features[rownames(beta),]
+
+    message("\n[ Section 2: Mapping DMR to annotation Start  ]\n")
+
+    message("  Generating Annotation File")
     DMR[[1]]$seqnames <- as.factor(substr(DMR[[1]]$seqnames,4,100))
     index <- apply(DMR[[1]],1,function(x) which(probe.features$CHR==x[1] & probe.features$MAPINFO >= as.numeric(x[2]) & probe.features$MAPINFO <= as.numeric(x[3])))
     Anno <- data.frame(DMRindex=unname(unlist(sapply(names(index),function(x) rep(x,length(index[[x]]))))),probe.features[do.call(c,index),1:8])
-    message("<< Generating Annotation File Success >>")
+    message("  Generating Annotation File Success")
 
     if(identical(names(DMR),"DMRcateDMR"))
     {
@@ -41,6 +71,7 @@ DMR.GUI <- function(DMR=myDMR,
         sig <- data.frame(DMR.pvalue=DMR$ProbeLassoDMR$dmrP,
                           DMR.probes=unlist(lapply(index,length)))
     }
+    message("\n[ Section 2: Mapping DMR to annotation Done  ]\n")
 
     innerdmrplot <- function(select,Group,dmr.idx)
     {

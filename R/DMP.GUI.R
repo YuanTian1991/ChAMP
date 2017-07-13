@@ -1,8 +1,9 @@
 if(getRversion() >= "3.1.0") utils::globalVariables(c("myLoad","myDMP","myNorm","probe","proportion","cgi","gene","Number","Variance","Value","ID","Sample","diamonds","logFC","negtive_log10P.adj","info","size","Beta_Value","Pheno","economics","unemploy","pop","MatchGeneName"))
 
-DMP.GUI <- function(DMP=myDMP,
+DMP.GUI <- function(DMP=myDMP[[1]],
                     beta=myNorm,
-                    pheno=myLoad$pd$Sample_Group)
+                    pheno=myLoad$pd$Sample_Group,
+                    cutgroupnumber=4)
 {
     data(MatchGeneName)
     innerheatmap <- function(data)
@@ -57,6 +58,7 @@ DMP.GUI <- function(DMP=myDMP,
         m = list(l = 70,r = 30,b = 150,t = 50,pad = 10)
         p <- layout(p, title = paste("Top ",length(rank)," Gene Mostly Enriched by Significant CpGs",sep=""),margin=m,barmode = "stack")
     }
+
     innerGenePlot <- function(select,Group)
     {
         message("<< Generating dmrplot >>")
@@ -159,6 +161,7 @@ DMP.GUI <- function(DMP=myDMP,
 
         p <- layout(p, title = select$gene[1])
     }
+
     innervolcanoplot <- function(select)
     {
         h <- diamonds[sample(nrow(diamonds),nrow(select),replace=T),c("carat","price","carat","clarity")]
@@ -180,12 +183,20 @@ DMP.GUI <- function(DMP=myDMP,
             p <- layout(p, title = paste("Volcano plot for 1500 out of total",nrow(h)," significant CpGs (Random)"),margin=m)
         }
     }
+
+
     innercpgplot <- function(c,cpgname)
     {
-        p <- plot_ly(c, y = ~Beta_Value, color = ~Pheno, type = "box", boxpoints = "all", jitter = 0.3,pointpos = 0)
-        m = list(l = 70,r = 70,b = 50,t = 50,pad = 10)
-        p <- layout(p, title = paste("Boxplot for",cpgname),margin=m)
-
+        if(class(c$Pheno)=="numeric")
+        {
+            p <- plot_ly(c, x = ~Pheno, y = ~Beta_Value, text = ~Sample_Name, color = ~Beta_Value, mode = "markers",marker=list(opacity=0.5,size=5))
+            m = list(l = 70,r = 70,b = 50,t = 50,pad = 10)
+            p <- layout(p, title = paste("Scatter plot for",cpgname),margin=m)
+        } else {
+            p <- plot_ly(c, y = ~Beta_Value, color = ~Pheno, type = "box", boxpoints = "all", jitter = 0.3,pointpos = 0)
+            m = list(l = 70,r = 70,b = 50,t = 50,pad = 10)
+            p <- layout(p, title = paste("Boxplot for",cpgname),margin=m)
+        }
     }
     innertest <- function()
     {
@@ -312,7 +323,13 @@ DMP.GUI <- function(DMP=myDMP,
                         ### Generate Data for Geneplot
                         mygeneselect=DMP[which(DMP$gene==genename & DMP$adj.P.Val <= pvalueCutoff & abs(DMP$logFC) >= abslogFCCutoff),]
                         mygeneselect <- mygeneselect[order(mygeneselect$MAPINFO),]
-                        mygroup <- split(as.data.frame(t(beta[rownames(mygeneselect),])),pheno)
+                        if(class(pheno)=="numeric")
+                        {
+                            cut_group <- as.character(cut(pheno,4))
+                            mygroup <- split(as.data.frame(t(beta[rownames(mygeneselect),])),cut_group)
+                        } else {
+                            mygroup <- split(as.data.frame(t(beta[rownames(mygeneselect),])),pheno)
+                        }
                         Parameter <- list(mygeneselect=mygeneselect,mygroup=mygroup,genename=genename)
                     })
         Cutoff_repalce <- eventReactive(input$go,
@@ -322,6 +339,7 @@ DMP.GUI <- function(DMP=myDMP,
                         abslogFCCutoff <- as.numeric(input$logFCbin)
 
                         mydmp <- DMP[which(DMP$adj.P.Val <= pvalueCutoff & abs(DMP$logFC) >= abslogFCCutoff),]
+                        message(dim(mydmp))
                         ### Generate Data for Heatmap
                         myheatmapdata=beta[rownames(mydmp),] 
 
@@ -356,7 +374,11 @@ DMP.GUI <- function(DMP=myDMP,
                     })
 
         output$table <- renderDataTable({
-                                            datatable <- Cutoff_repalce()$mydmp[,c("CHR","MAPINFO","gene","feature","cgi",names(myDMP)[1:9])]
+                                         if(class(pheno)=="numeric") {
+                                            datatable <- Cutoff_repalce()$mydmp[,c("CHR","MAPINFO","gene","feature","cgi",names(DMP)[1:6])]
+                                         } else {
+                                            datatable <- Cutoff_repalce()$mydmp[,c("CHR","MAPINFO","gene","feature","cgi",names(DMP)[1:9])]
+                                         }
                                             datatable <- data.frame(ID=rownames(datatable),datatable)
                                         },options = list(pageLength=20))
         output$heatmap <- renderPlotly({   

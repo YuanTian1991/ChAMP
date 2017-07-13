@@ -2,6 +2,7 @@ if(getRversion() >= "3.1.0") utils::globalVariables(c("myNorm","myLoad","mylimma
 
 champ.DMR <- function(beta=myNorm,
                       pheno=myLoad$pd$Sample_Group,
+                      compare.group=NULL,
                       arraytype="450K",
                       method = "Bumphunter",
                       minProbes=7,
@@ -37,15 +38,46 @@ champ.DMR <- function(beta=myNorm,
     message("[<<<<< ChAMP.DMR START >>>>>]")
     message("-----------------------------")
 
+    message("!!! important !!! We just upgrate champ.DMR() function, since now champ.DMP() could works on multiple phenotypes, but ProbeLasso can only works on one DMP result, so if your pheno parameter contains more than 2 phenotypes, and you want to use ProbeLasso function, you MUST specify compare.group=c(\"A\",\"B\"). Bumphunter and DMRcate should not be influenced.")
+
+    message("\n[ Section 1:  Check Input Pheno Start ]\n")
 
      if(length(which(is.na(beta)))>0) message(length(which(is.na(beta)))," NA are detected in your beta Data Set, which may cause fail or uncorrect of SVD analysis. You may want to impute NA with champ.impute() function first.")
 
+    if(!class(pheno) %in% c("character","factor","numeric")) stop("pheno parameter must be a category vector, could be character, factor or numeric (numeric is not recommended).")
 
-    #if(arraytype=="EPIC"){
-    #    data(probe.features.epic)
-    #}else{
-    #    data(probe.features)
-    #}
+    message("  You pheno is ",class(pheno)," type.")
+    message("    Your pheno information contains following groups. >>")
+    sapply(unique(pheno),function(x) message("    <",x,">:",sum(pheno==x)," samples."))
+
+
+    if(method == "ProbeLasso")
+    {
+        message("  ProbeLasso Method can only be done between two phenotypes. So we need to do more check here...")
+        if(length(unique(pheno))>2)
+        {
+            message("    Your pheno contains more than two phenotypes.")
+            message("    You may specify compare.group to do comparision between certain two phenotypes")
+            if(is.null(compare.group))
+            {
+                stop("    You did not specifically compare.group parameter to specify which two phenotypes you want to analysis.")
+            } else if(sum(compare.group %in% unique(pheno)) == 2) {
+                message("    Your compare.group is in accord with your pheno parameter, which is good.")
+                message("    Now champ.DMR() would extract values for only these two phenotypes to analysis.")
+                beta <- beta[,which(pheno %in% compare.group)]
+                pheno <- pheno[which(pheno %in% compare.group)]
+            } else {
+                stop("    Seems you specified compare.group, but elements in your compare.group are not all found in your pheno parameter. Please recheck your pheno or compare.group.")
+            }
+        } else if(length(unique(pheno))==2) {
+            message("    Your pheno parameter contains extactly two phenotypes, which is good and compare.group is not needed, champ.DMR() would proceed with your whole data set.")
+        } else {
+            stop("    Seems something wrong with your pheno data. champ.DMR() can not proceed. Please recheck your pheno information.")
+        }
+    }
+    message("\n[ Section 1:  Check Input Pheno Done ]\n")
+
+    message("\n[ Section 2:  Run DMR Algorithm Start ]\n")
 
     if(arraytype=="EPIC"){
         RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylationEPIC",annotation = "ilm10b2.hg19"))
@@ -54,14 +86,14 @@ champ.DMR <- function(beta=myNorm,
     }
     probe.features <- getAnnotation(RSobject)
 
-    if(!class(pheno) %in% c("character","factor","numeric")) stop("pheno parameter must be a category vector, could be character, factor or numeric.")
     if(cores > detectCores()) cores <- detectCores()
+
 
     if(method=="Bumphunter")
     {
         message("<< Find DMR with Bumphunter Method >>")
 
-        message(cores," cores will be used to do parallel BMIQ computing.")
+        message(cores," cores will be used to do parallel Bumphunter computing.")
         registerDoParallel(cores = cores)
         
 
@@ -119,7 +151,9 @@ champ.DMR <- function(beta=myNorm,
         message("<< Find DMR with ProbeLasso Method >>")
         gc()
 
-        DMP <- champ.DMP(beta,pheno,adjPVal = 1, arraytype = arraytype)
+        DMP <- champ.DMP(beta=beta,pheno=pheno,adjPVal=1)
+        if(length(DMP) > 1) stop("Your pheno parameter seems contains more than 2 phenotypes. champ.DMR() only take covariates with only 2 phenotypes. Please manually extract your sample and covariates, then retry champ.DMR()")
+        DMP <- DMP[[1]]
 
         if(arraytype=="EPIC") data(illuminaEPICGr) else data(illumina450Gr)
         if(length(which(DMP$adj.P.Val < adjPvalProbe))==0) stop("There is no probe show significant difference from champ.DMP() function.")
@@ -324,6 +358,8 @@ champ.DMR <- function(beta=myNorm,
     } else {
         stop("Please assign correct DMR method: 'Bumphunter' or 'ProbeLasso'")
     }
+    message("\n[ Section 2:  Run DMR Algorithm Done ]\n")
+
     message("[<<<<<< ChAMP.DMR END >>>>>>]")
     message("[===========================]")
     message("[You may want to process DMR.GUI() or champ.GSEA() next.]\n")

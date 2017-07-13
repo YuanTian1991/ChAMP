@@ -13,6 +13,7 @@ champ.Block <- function(beta=myNorm,
     message("[<<<< ChAMP.Block START >>>>]")
     message("-----------------------------")
 
+
     #############  ConstResgion.R  ################
     if(arraytype=="EPIC"){
         RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylationEPIC",annotation = "ilm10b2.hg19"))
@@ -97,6 +98,7 @@ champ.Block <- function(beta=myNorm,
 
     Block <- bh2.o$tab
     rownames(Block) <- paste("Block",1:nrow(Block),sep="_")
+
 
     message("[<<<<< ChAMP.BLOCK END >>>>>]")
     message("[===========================]")

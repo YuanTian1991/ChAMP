@@ -2,6 +2,19 @@
 \title{ChAMP News}
 \encoding{UTF-8}
 
+\section{Version 2.8.5}{
+  \itemize{
+    \item champ.DMP() works on numeric variable now
+    \item champ.DMP() do pairewise comparison between each two categorical phenotypes.
+    \item goseq was replaced by gometh.
+	\item DMP.GUI() is modified heavily.
+	\item SVD plot added legend.
+	\item "minfi" loading method fixed.
+	\item vignette of ChAMP and github Demo pages updated.
+	\item Added some figures from GSE40279 in vignette.
+  }
+}
+
 \section{Version 2.8.3}{
   \itemize{
     \item Updated zzz.R file, which means the loading messages would be different.

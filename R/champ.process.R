@@ -31,8 +31,6 @@ champ.process <- function(runload=TRUE,
                           runCNA=TRUE,
                           control=TRUE,
                           controlGroup="champCtls",
-                          #---champ.reffree parameters below---#
-                          runRefFree=TRUE,
                           #---champ.refbase parameters below---#
                           runRefBase=FALSE,
                           #---universal settings---#
@@ -379,27 +377,6 @@ champ.process <- function(runload=TRUE,
         message("Run champ.CNA() Over!\n")
     }
 
-    ### Applying champ.reffree() function.
-    if(runRefFree)
-    {
-        message("\nRunning champ.CNA()...")
-        
-        myRefFree <- champ.reffree(beta=myNorm,
-                                   pheno=tmppd$Sample_Group,
-                                   K=NULL,
-                                   nboot=10)
-
-        if(saveStepresults)
-        {
-            save(myRefFree,file=paste(resultsDir,"/myRefFree.rda",sep=""))
-            message("champ.reffree()'s result \"myRefFree\" has been saved in ",resultsDir," as \"myRefFree.rda.\"")
-        }
-        gc()
-        CHAMP.RESULT[["champ.reffree"]] <- myRefFree
-        message("Run champ.reffree() Over!\n")
-    }
-
-    ### Applying champ.refbase() function.
     if(runRefBase)
     {
         message("\nRunning champ.refbase()...")

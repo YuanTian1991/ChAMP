@@ -24,7 +24,7 @@
     \item{beta}{A matrix of values representing the methylation scores for each sample (M or B). Better to be imputed and normalized data. (default = myNorm)}
     \item{pheno}{This is a categorical vector representing phenotype of factor wish to be analysed, for example "Cancer", "Normal"...  Tow or even more phenotypes are allowed. (default = myLoad$pd$Sample_Group)}
     \item{runDMP}{If DMP result sould be calculated and combined into the result of CpGs annotation.}
-    \item{compare.group}{compare.group is a parameter to assign which two phenotypes you wish to analysis, if it's missed(NULL) or can not fulfill the condition of the dataset, the first two phenotypes in your pheno would be selected as compare.group automatically. (default = NULL)}
+    \item{compare.group}{compare.group is a parameter to assign which two phenotypes you wish to analysis, if your pheno contains only 2 phenotyes you can leave it as NULL, but if your pheno contains multiple phenotypes, you MUST specify compare.group. (default = NULL)}
     \item{arraytype}{Choose microarray type is 450K or EPIC. (default = "450K")}
 }
 

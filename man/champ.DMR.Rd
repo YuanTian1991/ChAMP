@@ -4,12 +4,13 @@
     Applying Bumphunter, DMRcate or ProbeLasso Algorithms to detect Different Methylation Regions in a beta valued Methylation Dataset.
 }
 \description{
-    Applying Bumphunter, DMRcate or ProbeLasso Algorithms to Estimate regions for which a genomic profile deviates from its baseline value. Originally implemented to detect differentially methylated genomic regions between two populations. By default, we recommend user do champ.DMR on normalized beta value on two populations, like case to control. The function will return detected DMR and estimated p value. The three algorithms specified in this function is different, while Bumphunter and DMRcate calcuated averaged candidate bumps methylation value between case and control. Thus parameters is different for three algorithms. Note that the result of champ.DMR() would be used as inpute of champ.GSEA() function, thus we suggest user not change the internal structure of the result of champ.DMR() function.
+    Applying Bumphunter, DMRcate or ProbeLasso Algorithms to Estimate regions for which a genomic profile deviates from its baseline value. Originally implemented to detect differentially methylated genomic regions between two populations. By default, we recommend user do champ.DMR on normalized beta value on two populations, like case to control. The function will return detected DMR and estimated p value. The three algorithms specified in this function is different, while Bumphunter and DMRcate calcuated averaged candidate bumps methylation value between case and control. Thus parameters is different for three algorithms. Note that the result of champ.DMR() would be used as inpute of champ.GSEA() function, thus we suggest user not change the internal structure of the result of champ.DMR() function. 
 }
 
 \usage{
     champ.DMR(beta=myNorm,
               pheno=myLoad$pd$Sample_Group,
+              compare.group=NULL,
               arraytype="450K",
               method = "Bumphunter",
               minProbes=7,
@@ -46,6 +47,7 @@
     Parameters shared by three algorithms:
     \item{beta}{Methylation beta valueed dataset user want to detect DMR. We recommend to use normalized beta value. In Bumphunter method, beta value will be transformed to M value. NA value is NOT allowed into this function, thus user may need to do some imputation work beforehead. This parameter is essential for both two algorithms. (default = myNorm)}
     \item{pheno}{This is a categorical vector representing phenotype of factor wish to be analysed, for  example "Cancer", "Normal"... Tow or even more phenotypes are allowed. (default = myLoad$pd$Sample_Group)}
+    \item{compare.group}{ProbeLasso Method does not allow pheno contains more than 2 phenotypes, so if your want use ProbeLasso method, but pheno parameter contains more than 2 phenotypes, you MUST specify compare.group as "compare.group=c("A","B")" to make sure ProbeLasso only works on ONLY two phenotypes. If your pheno parameter contains only 2 phenotypes, you can leave it as NULL. (default=NULL)}
     \item{arraytype}{Choose microarray type is 450K or EPIC. (default = "450K")}
     \item{method}{Specify the method users want to use to do DMR detection. There are three options: "Bumphunter", "DMRcate" or "ProbeLasso". (default = "Bumphunter").}
     \item{minProbes}{Threshold to filtering clusters with too few probes in it. After region detection, champ.DMR will only select DMRs contain more than minProbes to continue the program. (default = 7)}

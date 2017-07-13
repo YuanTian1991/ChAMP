@@ -19,95 +19,81 @@ vignette: >
 
 # New Updates
 
-> We noticed recently champ.load() might not be working on R 3.4, or latest minfi verion. Based on our check, the reason is minfi's updating seems influenced other package, say wateRmelon, champ.load() used to use wateRmelon to get bead count information to do filtering, but now seems not working. **We provided another loading method "ChAMP" for you to load data. The result should be the same as minfi's result and filterings would also be done by champ.filter() function.** Meanwhile, for users want tp use minfi loading function (old ChAMP mode). You may assign "method" parameter in champ.load() as "minfi" to use old ways. Based on our test, on 450K situation, "ChAMP" method and "minfi" method returns EXACTLY the same result, but on EPIC array, since "ChAMP" is now using latest B4 manifest, the results between minfi and ChAMP method would be slightly different.
+> **If you are using version above 2.8.3, note that you MUST install [latest ChAMPdata package(version 2.8.1)](https://bioconductor.org/packages/release/data/experiment/html/ChAMPdata.html) to make new ChAMP works.**
 
-> **Note that you MUST install [latest ChAMPdata package(version 2.8.1)](https://bioconductor.org/packages/release/data/experiment/html/ChAMPdata.html) to make new ChAMP works.**
+1: **champ.DMP() works on numeric variable now:** Now champ.DMP() would works on numeric variable like age, you can set "pheno" parameter in champ.DMP() function to make it detect numeric variable related CpGs.
 
-1: **Updated EPIC annotation to B4 version:** The B4 version is downloaded from [illumina website](https://support.illumina.com/array/array_kits/infinium-methylationepic-beadchip-kit/downloads.html).
+2: **champ.DMP() do pairewise comparison between each two categorical phenotypes:** Previously champ.DMP() can only works on two phenotypes, if you have multiple phenotypes in your covariate, you need to set parameters "compare.group" to do comparison between any two of them. Now champ.DMP() would works on each pair of them return a list containing all results.
 
-2: **Provided ChAMP method for loading data: **Added one new parameter "method" in champ.load() function, which allows user to choose which method they want to use to read data. ChAMP or Minfi. More detail can be found on Manual of champ.load()
+3: **goseq was replaced by gometh:** Previously we use goseq to do CpG number corrected GSEA, now we used another implementation of goseq algotithm. gometh is published in missMethyl package and also use numbers of CpGs to do correction when doing GSEA.
 
-3: **champ.filter() has been totally recoded:** Now users can do any filtering on any data set they want. Merely champ.filter() is focused to take champ.import() result as input and        generate filtered beta value for future analysis. In theory, champ.import() + champ.filter()'s result should be EXACTLY the same as old loading function (minfi method), but since now ChAMP is using B4 verion for EPIC array, the two method have slightly difference on final result, but merely the same. For 450K array, ChAMP method and minfi method are exactly the same.
+4: **[missMethyl](https://bioconductor.org/packages/release/bioc/html/missMethyl.html) and [combinat](https://cran.r-project.org/web/packages/combinat/index.html) pacakges are needed now:** Since we used some new functions like gometh and combn in our package, we need these two packages added in our import list. You may use command: `source("https://bioconductor.org/biocLite.R");biocLite("missMethyl","combinat")` to install them.
 
-4: **Provide Whole New function champ.import() to read IDAT file to R:**, which is similar to minfi's read.meth.exp() function, but will NOT return rgSet or Mset object. Also remember that "ChAMP" method's result can not be run in SWAN and FunctionalNormliazation method. If you want to use them, please set "metehod" parameter in champ.load() as "minfi" and use minfi method.
+5: **DMP.GUI() is modified:** Now DMP.GUI() function would automatically detect your pheno parameter's type, if it's "numeric", scatter plot would plotted on CpG plot, while for "character" or "factor" type, boxplot would be plotted.
 
-5: **Conflict Checking in champ.runCombat():** Added more strict checking in champ.runCombat(), now champ.runCombat() would check if your variable and batches conflict with each other. When it comes to "conflict", it means one group of your variable (default is Sample_Name), is totally belongs to only one batches. Combat() function from SVA can not do batch correction on this situation.
+6: **SVD plot added legend:** We now added legend of color in SVD plot.
 
-6: **Added Demo on github**: In respond to our reviewer's question and to make users have better understanding on our package, we processed ChAMP fully on some data sets and saved all messages shown during processing. We upload these information to [github](https://github.com/JoshuaTian/ChAMPDemos).
+7: **"minfi" loading method fixed:** Previously "minfi" function was not working because of beadcount() function from wateRmelon failed to get beads information from rgSet object, which might be caused by upgrading conflict between minfi and wateRmelon. Now we fixed this issue and old "minfi" loading method works now. You may set parameter method in champ.load() function to use your prefered way to load data.
 
-7: **Added Hydroxymethylation in Vignette:** ChAMP can also be used to analysis hydroxymethylation data, we provided a small demo part in vignette to show user how to use it.
+8: **vignette of ChAMP and github Demo pages updated:** We spend lots of work to upgrade ChAMP vignette here. Also added more latest Demo result on our [github Demo page](https://github.com/JoshuaTian/ChAMPDemos).
 
+9: **Added some figures from GSE40279 in vignette.** Since your 450K demo data does not contain any numeric variable, we use GSE40279 here to show performance of champ.SVD() and DMP.GUI() in this vignette.
 
 # Introduction
 
-The ChAMP package is a pipeline that integrates currently available 450k and EPIC analysis methods and also offers its own novel functionality. It utilises the data import from .idat file and normal beta matrix, Quality Control Plots; SWAN [@Maksimovic12] and Functional Normalization [@Fortin2014] functions offered by the minfi [@minfi] [@Fortin065490] package.
+The ChAMP package is designed for the analysis of Illumina Methylation beadarray data (EPIC and 450k) and provides a pipeline that integrates currently available 450k and EPIC analysis methods. This includes a variety of different data import methods (e.g. from .idat files or a beta-valued matrix) and Quality Control plots. Type-2 probe correction methods include SWAN [@Maksimovic12], Peak Based Correction (PBC) [@Dedeurwaerder11] and BMIQ [@Teschendorff13] (the default choice). The popular Functional Normalization [@Fortin2014] function offered by the minfi [@minfi] [@Fortin065490] package is also available. The singular value decomposition (SVD) method [@Teschendorff09] allows an in-depth look at batch effects, and for correction of multiple batch effects the ComBat method [@Johnson07] has been implemented. Adjusting for cell-type heterogeneity can be done via RefbaseEWAS [@Houseman2012]. ChAMP also includes a function for infering copy-number alterations from either 450k or EPIC data [@Feber14]. For the identification of Differentially Methylated Regions (DMR), ChAMP offers the new Probe Lasso method [@Butcher201521], in addition to previous DMR detection functions Bumphunter [@Jaffe12] and DMRcate [@Peters2015]. For users who need to find Differentially Methylated Blocks [@Hansen2011], the new version of ChAMP includes a function to detect these. Gene Set Enrichment Analysis (GSEA) is also possible and the new version of ChAMP incorporates methods that correct for the bias caused by unequal representation of probes among genes [@Young2010]. Also, the new version of ChAMP incorporates the FEM package [@Jiao15082014], which can infer gene modules in user-specified gene-networks that exhibit differential methylation between phenotypes.
 
-In addition, the ChAMP package includes the Peak Based Correction (PBC) method [@Dedeurwaerder11] and the BMIQ Normalization [@Teschendorff13] is set as the default method.
+While a number of other pipelines and packages for 450k or EPIC array analysis are available (including IMA [@Wang12IMA], minfi [@minfi], methylumi [@methylumi], RnBeads [@rnbeads] and wateRmelon [@watermelon] ), ChAMP provides a more comprehensive and complete analysis pipeline from reading original data files to final tertiary analysis results, such as GSEA, which streamlines methylation array analysis for researchers. The new version ChAMP also provides a series of [Shiny](http://shiny.rstudio.com/) and [Plotly](https://plot.ly/)-based WebBrower Interactive analysis functions (GUI functions), to help scientists view ChAMP results. This requires an interactive WebBrower-based framework, for calling Graph System locally or remotely. For example, X11 for most Linux Systems.
 
-A number of other pipelines and packages are available for 450k or EPIC array analysis including IMA [@Wang12IMA], minfi [@minfi], methylumi [@methylumi], RnBeads [@rnbeads] and watermelon [@watermelon]. However, ChAMP provides a comprehensive and compelete analysis pipeline from reading origin data file to final GSEA result, which would make researchers' work much easier. Also, the new version ChAMP provides a series of Shiny-based WebBrower Interactive analysis function (GUI functions), which should benifit even more scientists' work. 
+> **If you have any bugs to report, or any suggestions for ChAMP, please email champ450k@gmail.com.**
 
-There are also some other advantages for ChAMP. First of all ChAMP is both available for 450k or EPIC array. Also this package contains multiple novel functions. The singular value decomposition (SVD) method [@Teschendorff09] allows an in-depth look at batch effects and for correction of multiple batch effect the ComBat method [@Johnson07] has been implemented. For the identification of Differentially methylated regions (DMR), ChAMP offers the new Probe Lasso method [@Butcher201521]. Also another two effective DMR detection function Bumphunter [@Jaffe12] and DMRcate [@Peters2015] are also integrated. Users have more freedom to select their prefered methods.
-
-For the purpose of dealing with cell heterogeneity problem, we included two functions: RefFreeEWAS [@Houseman15052014] and RefbaseEWAS [@Houseman2012] into ChAMP. Finally, ChAMP has an additional function to analyse 450k or EPIC for copy number alterations [@Feber14].
-
-Except new functions, all functions and scripts exist already in old version ChAMP, which all have been enhanced and checked carefully. Also, some new functions are included as well:
-
-For users who need to find Differentially Methylated Blocks [@Hansen2011]. New version ChAMP includes a function to detect methylation Blocks. Another important function is champ.GSEA(), which would take singnificant genes related with DMPs and DMRs and do GSEA analysis on them, to see what pathways are enriched by significant CpGs or DMRs. To correct biased might be caused by ininequality between genes and CpG probes, we used goseq pacakge to correct the bias [@Young2010]. Also, new version ChAMP incoporates FEM package [@Jiao15082014], which would calculate modules in pathways that show differential methylation changes between two phenotypes.
-
-Apart from that, new version ChAMP provides a [Shiny](http://shiny.rstudio.com/) and [Plotly](https://plot.ly/) based GUI framework, to help scientists to view ChAMP result. This is an interactive WebBrower-based framework, calling for Graph System locally or remotely. **For example X11 for most Linux System.**
-
-> **If you have any bug to report, or any suggestions for ChAMP, please email champ450k@gmail.com, or tianyuan1991hit@gmail.com. I will respond you as fast as I can.**
 
 # Installation
 
-It is essential that you have `R 3.3` or above version already installed on your computer or server. ChAMP is a pipeline that utilises many other Bioconductor packages that are currently available from CRAN and Bioconductor. For all of the steps of the pipeline to work, make sure that you have ungraded Bioconductor to newest version (3.3).
+It is essential that you have `R 3.3` or above already installed on your computer or server. ChAMP is a pipeline that utilises many other Bioconductor packages that are currently available from CRAN and Bioconductor. For all of the steps of the pipeline to work, make sure that you have upgraded Bioconductor to newest version (3.5).
 
-After you have R and Bioconductor installed properly, you can start to install ChAMP. The most easy way to install it is typing following code into **R session**:
+After you have R and Bioconductor installed properly, you can start to install ChAMP. The easiest way to install it is by typing following code into your **R session**:
 
 ```{bash eval=FALSE}
 source("https://bioconductor.org/biocLite.R")
 biocLite("ChAMP")
 ```
 
-If you have any problem with traffic with Bioconductor, another option is install **ALL** dependence packages, then install ChAMP. There are a lot if packaged relied by ChAMP. You can use following command in R to install most of them:
+If you have any problems with Bioconductor, another option is to install **ALL** dependent packages, then install ChAMP. There are a lot if packages relied on by ChAMP. You can use the following command in R to install most of them:
 
 ```{r eval=FALSE}
 source("http://bioconductor.org/biocLite.R")
-biocLite(c("minfi","ChAMPdata","Illumina450ProbeVariants.db","sva","IlluminaHumanMethylation450kmanifest","limma","RPMM","DNAcopy","preprocessCore","impute","marray","wateRmelon","goseq","plyr","GenomicRanges","RefFreeEWAS","qvalue","isva","doParallel","bumphunter","quadprog","shiny","shinythemes","plotly","RColorBrewer","DMRcate","dendextend","IlluminaHumanMethylationEPICmanifest","FEM","matrixStats"))
+biocLite(c("minfi","ChAMPdata","Illumina450ProbeVariants.db","sva","IlluminaHumanMethylation450kmanifest","limma","RPMM","DNAcopy","preprocessCore","impute","marray","wateRmelon","goseq","plyr","GenomicRanges","RefFreeEWAS","qvalue","isva","doParallel","bumphunter","quadprog","shiny","shinythemes","plotly","RColorBrewer","DMRcate","dendextend","IlluminaHumanMethylationEPICmanifest","FEM","matrixStats","missMethyl","combinat"))
 ```
 
-When you are installing ChAMP, You may encounter some error saying some package are not installed. This errors are caused by recursively depending on R pacakges, for example, ChAMP used minfi, minfi used lumi, and lumi used other packages, so if lumi was not installed on your computer, ChAMP would fail. To solve these errors, you simply need to check those error messages, find out which pacakges required are missing, then install it with command 'biocLite("ChAMP")` directly. Then retry installing ChAMP, it may takes 3-4 times, but eventually it should work.
+When you are installing ChAMP, you may encounter some errors saying that some packages are not installed. These errors are caused by recursively depending on R packages, for example, ChAMP uses minfi, minfi uses lumi, and lumi uses other packages, so if lumi was not installed on your computer, ChAMP would fail. To solve these errors, you simply need to check those error messages, find out which packages required are missing, then install it with command `biocLite("YourErrorPackage")` directly. Then retry installing ChAMP, it may take 3-4 times, but eventually it should work.
 
->**Note:** ChAMP used plotly to generate interactive plots, at the time ChAMP was firstly developed, plotly was on [3.6.1 version](https://github.com/ropensci/plotly/releases/tag/v3.6.1), which caused some error report in user's GUI function if you are still using old version ChAMP. Now we have made ChAMP fully support [version 4.5.6](https://cran.r-project.org/web/packages/plotly/index.html), user may download then use following code **in Bash** to install it, so that the plotly in your system will be upgraded:
+After installation, you should be able to load the ChAMP package in your R session:
 
-```{bash eval=FALSE}
-R CMD INSTALL plotly-4.5.6.tar.gz
-```
-
-After you did all above work, you may use code below to install ChAMP:
-```{bash eval=FALSE}
-R CMD INSTALL ChAMP_2.6.4.tar.gz
-```
-After installation, you may easily load ChAMP package:
 ```{r eval=TRUE,message=FALSE, warning=FALSE}
 library("ChAMP")
 ```
 
 # Test Data
-The package contains two test dataset, one is HumanMethylation450 data (.idat) and the other is **Simulated** EPIC data, which can be used to test functions available in ChAMP. This can be loaded by pointing the directory to the testDataSet like below:
+
+The package contains two test datasets, one is HumanMethylation450 data (.idat) and the other is **simulated** EPIC data, which can be used to test functions available in ChAMP. This can be loaded by pointing the directory to the testDataSet like below:
+
 
 ```{r eval=FALSE}
 testDir=system.file("extdata",package="ChAMPdata")
 myLoad <- champ.load(testDir,arraytype="450K")
 ```
-This dataset contains only 8 Samples, we will use it to show ChAMP functions' usage blow.
+
+The 450k lung tumor data set contains only 8 samples, 4 lung tumor samples (T) and 4 control samples (C). We use this data set to show the functionality of ChAMP.
 
 For the EPIC Simulation Data Set, user may use following code to load it:
 
 ```{r eval=FALSE}
 data(EPICSimData)
 ```
-This Simulation Data Set contains 16 samples, all of them are actually originally from one sample but midified into DMP and DMR, also alone with some errors variance.
+
+This Simulation Data Set contains 16 samples, all of them are actually originally from one sample but modified into DMP and DMR, also alone with some errors variance. In this 16 sample dataset, we simulated 8 samples are control and 8 sample as case, samples are marked in pd of EPICSimData object. In this data, we randomly choose 5000 regions from clusterMaker() function of bumphunter package. In each region, we randomly selected some continually CpGs as DMR, then increased or decreased beta value of this DMR. So there should have less than 5000 DMRs (4700+) in this data set, because some simulated DMRs contains only 1-2 CpGs, they will not be regarded as DMR in champ.DMR() function. Users may use this data to test the functionality of ChAMP on EPIC data.
+
 
 # ChAMP Pipeline
 
@@ -116,13 +102,16 @@ This Simulation Data Set contains 16 samples, all of them are actually originall
 knitr::include_graphics("Figure/ChAMP_Pipeline.png")
 ```
 
-ChAMP Pipeline Figure above outlines the steps in the ChAMP pipeline. Each step can be run individually as a separate function. This allows integration between ChAMP's result and other analysis pipelines. In above pipeline plot, all functions of ChAMP are included, which are merely divided into three colors:
 
-* **Blue** functions represent functions for Methylation Data Preparation, like Loading, Normalization, QC check.e.g.
-* **Red** functions represent functions for generating analysis results, like DMP(Differential Methylated Probes), DMR(Differential Methylated Regions), Blocks, EpiMod, Pathway Enrichment Result.e.g.
-* **Yellow** functions represent GUI interface for Dataset or analysis result.
+ChAMP Pipeline Figure above outlines the steps in the ChAMP pipeline. Each step can be run individually as a separate function. This allows integration between ChAMP's result and other analysis pipelines. In above pipeline plot, all functions of ChAMP are included, which are categorized using three colors:
 
-In above plot, there are some functions and connections(lines) are marked green gleam, which indicate a **Main Analysis Pipeline**. ChAMP combined many functions, but not all of them may be used for a successful analysis. The green gleam represents a main analysis pipeline most likely to be used for various data sets. The black dot in the middle of the plot represents **fully prepared methylation datasets**, which is the milestone between data preparation and data analysis. Thus we suggest you save the fully prepared data since your other analysis would be started from it directly.
+* **Blue** functions represent functions for Methylation Data Preparation, like Loading, Normalization, Quality Control checks etc.
+* **Red** functions represent functions for generating analysis results, like Differentially Methylated Positions (DMPs), Differentially Methylated Regions (DMRs), Differentially methylated Blocks, EpiMod (a method for detecting differentially methylated gene modules derived from FEM package), Pathway Enrichment Results etc.
+* **Yellow** functions represent GUI interface for dataset and analysis results.
+
+Solid gray line in above plot represent stream of pipeline, while dash gray line represent functions may not necessarily be used, which depends on your data and projects.
+
+In the above plot, there are some functions and connections (lines) marked with green gleam, which indicate the **Main Analysis Pipeline**. ChAMP combines many functions, but not all of them may be used for a successful analysis. The green gleam represents a main analysis pipeline **most likely** to be used for various data sets. We also marked steps for these main pipeline steps, which should be helpful for new users. The black dot in the middle of the plot represents **fully prepared methylation datasets**, which is the milestone between data preparation and data analysis. Thus, we suggest you save the fully prepared data since your other analyses may be started from it directly.
 
 ## Full Pipeline
 
@@ -132,11 +121,11 @@ The full pipeline can be run at once with one command:
 champ.process(directory = testDir)
 ```
 
-When running the full pipeline through the champ.process() function a number of parameters can be adjusted. These parameters are related to all functions involved in ChAMP package, but not all parameters are covered, otherwise champ.process() function would be be too large, please check the Manual of ChAMP for parameter settings.
+When running the full pipeline through the champ.process() function a number of parameters can be adjusted. These parameters are related to all functions involved in the ChAMP package, but not all parameters are covered, otherwise champ.process() function would be too large; please check the manual of ChAMP for parameter settings.
 
 ## Separated Steps
 
-Note that champ.process() may not always successfully run, because any small problem on data set in it may result to Error (For example, for some data set I get, the most important covariates in pd file is not "Sample_Group" but "Diagnose", but in all ChAMP function, "Sample_Group" was defaultly setted as user's most focused variable). So if you get any problem in champ.process() you may try separated steps below:
+We note that champ.process() may not always run successfully, which is likely due to particularities of specific data sets . For example, the covariate of interest in the pd file may not be denoted "Sample_Group" but another category, for example, "Disease", but in the ChAMP function, "Sample_Group" is set as default as the variable of interest. If you encounter any problems when using champ.process(), we recommend you apply it in a step-by-step fashion:
 
 ```{r eval=FALSE}
 myLoad <- cham.load(testDir)
@@ -155,15 +144,20 @@ Block.GUI()
 myGSEA <- champ.GSEA()
 myEpiMod <- champ.EpiMod()
 myCNA <- champ.CNA()
-myRefFree <- champ.reffree()
+
 # If DataSet is Blood samples, run champ.refbase() here.
+myRefbase <- champ.refbase()
 ```
-Above are main functions run separately, which contains more parameters to be adjusted and may be integrated with users' other unique analysis tools and method.
+
+We note that the above implementation of the ChAMP functions uses default parameter specifications, and that therefore parameters can be adjusted and integrated with users' other unique analysis tools and methods. For details of parameter options, please check the relevant sections of this vignette, or the ChAMP manual.
+
+
 
 ## EPIC pipeline
-ChAMP provide a friendly user interface for EPIC array analysis, most functions are the same between 450K array and EPIC array, the only difference lies on a parameter `arraytype`, for some functions call for annotation files, you simply need to set parameter arraytype as "EPIC".
 
-In ChAMP package, we created a simulation EPIC data (beta value only, because we can not simulate Red Gree Color intensity information). The pipeline to analysis EPIC array is below:
+ChAMP provides a friendly user interface for EPIC array analysis. Most functions are the same for both 450K array and EPIC array, the only difference lies in a parameter 'arraytype', used for some functions which require annotation files: you simply need to set this parameter to "EPIC".
+In the ChAMP package, we created a simulation EPIC dataset (beta value only). The pipeline to analyse EPIC array is below:
+
 
 ```{r eval=FALSE}
 # myLoad <- champ.load(directory = testDir,arraytype="EPIC")
@@ -187,90 +181,105 @@ myBlock <- champ.Block(arraytype="EPIC")
 Block.GUI(arraytype="EPIC") # For this simulation data, not Differential Methylation Block is detected.
 myGSEA <- champ.GSEA(arraytype="EPIC")
 myEpiMod <- champ.EpiMod(arraytype="EPIC")
-myRefFree <- champ.reffree()
 
 # champ.CNA(arraytype="EPIC")
 # champ.CNA() function call for intensity data, which is not included in our Simulation data.
 ```
 
-Not that ChAMP incoporates many other functions, not all of them are successfully supporting EPIC array yet. For example, at the time I am writing the vignette, Functional Normalization from minfi package is not supporting EPIC array.
 
 ## Computational Requirements
+
 The ability to run the pipeline on a large number of samples depends somewhat on the memory available. The ChAMP pipeline runs 200 samples successfully on a computer with 8GB of memory. Beyond this it may be necessary to find a server/cluster to run the analysis on.
 
-The champ.load() function uses the most memory. If you plan to run the analysis more than once it is recommended to to run `myLoad <- champ.load()` and save this list for future analyses.
+The champ.load() function uses the most memory. If you plan to run the analysis more than once it is recommended to run `myLoad <- champ.load()` and save this list for future analyses.
 
-In champ.DMR(), champ.norm() and champ.Block() functions, some methods may use parallel method to accelerate the speed. If your server or computer has more cores, you may specify more cores at the same time to make function faster, but which may cost more memory. You can use following code in R to detect number of your CpG Cores.
+In champ.DMR(), champ.norm() and champ.Block() functions, some methods may use parallel method to accelerate the process. If your server or computer has more cores, you may specify more cores at the same time to make the function run faster, though this may cost more memory. You can use the following code in R to detect number of cores.
+
 
 ```{r eval=FALSE}
 library("doParallel")
 detectCores()
 ```
 
-GUI functions requires more things. A basic framework for a GUI environment is required. If you run ChAMP on your own computer, it should be fine. But if you run ChAMP on a remote server, a local display system is essential to use these WebBrower-based GUI functions. X11 is a very common used tool for this. For Windows users, Xmanager or MobaxTerm are excellent choices.
+GUI functions requires more things. **A basic framework for a GUI environment is required**. If you run ChAMP on your own computer, it should be fine. But if you run ChAMP on a remote server, a local display system is essential to use these WebBrower-based GUI functions. X11 is a very common used tool for this. For Windows users, [Xmanager](https://www.netsarang.com/products/xmg_overview.html) or [MobaxTerm](http://mobaxterm.mobatek.net/) are excellent choices.
 
-> A significant improvement for new version ChAMP is that: User can also conduct full analysis even if they are not started from .idat file. As long as you have a methylation beta matrix and corresponding Phenotypes pd file, you can conduct nearly all ChAMP analysis. It should be much more easier for user get data from TCGA or GEO, but without original .idat file.
 
+> A significant improvement for ChAMP is that users can also conduct full analysis even if they are not starting from raw .idat files. As long as you have a methylation beta matrix and the corresponding phenotypes (pd) file, you can conduct nearly all of the ChAMP analysis. This makes analysis easier for users who have beta-values only but not original idat files, for example if users obtain data from TCGA or GEO.
 
 # Description of ChAMP Pipelines
 
-As previously mentioned, users has the option to run each of the ChAMP functions individually to allow integration with other pipelines or to save the results of each step. Here each function is described in detail.
+As previously mentioned, users have the option to run each of the ChAMP functions individually to allow integration with other pipelines or to save the results at each step. Below we describe each function in further detail.
 
 ## Loading Data
 
-Loading Data is the first step for all analysis. ChAMP provides a loading function to get data from .idat file (with pd file (Sample_Sheet.csv) in it). The old champ.load() function utilises minfi to load data from .idat files, but now we provided a neww method "ChAMP" to read data. They would return merely the same result except minfi would also return rgSet and mset, which might be used in SWAN and FunctionNormliazation method in champ.norm(). By default this loads data from the current working directory, in this directory you should have all .idat files and a sample sheet. The sample sheet currently needs to be a .csv file as came with your results following hybridization. You can choose whether you want M-values or beta-values. For small datasets M-values are recommended [@Zhuang12]. The champ.load() function used to load the data from the idat files would automatically filters out the SNPs that might influent the analyais result. The SNP list are generated from [Zhou's Nucleic Acids Research paper in 2016](http://zwdzwd.github.io/InfiniumAnnotation) [@Zhou2016], which is designed specifically for 450K and EPIC, also with population differences considered. As such, for 450k bead array data, before filtering for low quality probes, the dataset will include 485,512 probes. And for EPIC bead array data, before filtering probes the dataset, will include 867,531 probes.
 
-Currently the default method for loading is "ChAMP". You may set "method" in champ.load() to use classical minfi way. **Note that "ChAMP" method in champ.load() is merely a combination of champ.import() and champ.filter()**. If you are not satisfied with result returned by champ.load(), say you want to get beadcount,detect P matrix, or Meth UnMeth matrix, you may use champ.import() to generate them.
+Loading data is always the first step. ChAMP provides a loading function to get data from .idat files (with pd file (Sample_Sheet.csv) in it). The old champ.load() function utilises minfi to load data from .idat files, but now we provide a new method "ChAMP" to read data. The two loading methods effectively return the same objects, except that the old version would also return rgSet and mset mset objects, which might be used as input to SWAN and FunctionalNormliazation method in champ.norm(). By default this loads data from the current working directory, in this directory you should have all .idat files and a sample sheet. The sample sheet currently needs to be a .csv file as came with your results following hybridization. The champ.load() function used to load the data from the idat files automatically filters out the SNPs that might influence the analysis result. The SNP list was generated from [Zhou's Nucleic Acids Research paper in 2016](http://zwdzwd.github.io/InfiniumAnnotation) [@Zhou2016], which is designed specifically for 450K and EPIC, also with population differences considered. As such, for 450k bead array data, before filtering for low quality probes, the dataset will include 485,512 probes. And for EPIC bead array data, before filtering probes the dataset, will include 867,531 probes.
 
-User may use following code to load data set:
+Currently the default method for loading is "ChAMP". You may set "method" in champ.load() to use classical minfi way. **Note that "ChAMP" method in champ.load() is merely a combination of champ.import() and champ.filter()**. If you are not satisfied with result returned by champ.load(), say you want to get beadcount, detection P matrix, or Meth UnMeth matrix, you may use champ.import() to generate them.
+
+User may invoke following code to load data set:
+
+
 ```{r eval=FALSE}
 myLoad <- champ.load(testDir)
-## We are not running this code here because it cost about 1 minute.
 ```
-To save user's time to open this vignette, we already saved loaded dataset into `testDataSet` in ChAMPdata package, you can use following code to load it:
+
+Alternatively, the user can load the data from the dataset object testDataSet in ChAMPdata package, using:
+
 
 ```{r eval=TRUE}
 data(testDataSet)
 ```
 
-Now we can check the pd file (Sample_Sheet.csv), because it's very important. Most pd files are similar but not all of them are exactly the same. So user **MUST** understand their pd file perfectly to achieve a successfully analysis.
+It is important to check the pd file (Sample_Sheet.csv). Most pd files are similar in format, but their most valuable information are not always stored in same column, for example, for most pd files, Sample_Group means groups of phenotype wants to be researched, but in some pd files, similar information may be stored in columns named as "Diagnose" or "CancerType", so the user **MUST** understand their pd file well to achieve a successful analysis.
+
 ```{r eval=TRUE}
 myLoad$pd
 ```
-As we can see here, the Sample_Group contains two phenotypes: C and T, which is what we want to compare.
+
+As we can see here, the Sample_Group contains two phenotypes: C and T, which is what we want to compare. In this data set, C means "Control", while T means "Tumor".
 
 ## Filtering Data
-ChAMP provided a comprehensive filtering function called `champ.filter()` which could take any data matrix (beta, M, Meth, UnMeth, intensity) and do all filtering on them, including imputation, which is done by champ.impute() function. champ.filter() does not call for any specific object or class result, nor need IDAT file, as long as you have a single beta matrix, the filtering can be done. 
 
-Of course for some filtering method, some accesory data need to be provided, say if you want to do filtering on detect P value, at least you need to provide detect P matrix. Als if you want to do filtering on beadcount, at least you need to provide beadcount. 
+ChAMP provides a comprehensive filtering function called `champ.filter()` which can take any data matrix as input (beta, M, Meth, UnMeth, intensity) and do filtering on it. champ.filter() does not call for any specific object or class result, nor does it need an IDAT file, as long as you have a single beta matrix, the filtering can be done. In champ.filter(), since some probes and samples might be removed for reason of low quality, NA might be still exist in filtered data. So, we provided a parameter `autoimpute` in the function to conduct imputation on remain probes, if NAs are still existing. Actually, imputation work is done by champ.impute() function, reader may check that function for more information.
 
-champ.filter() would check your inpute strictly beforehead, basically there are some rules:
+For some filtering methods, additional data must be provided, for example if you want to perform filtering using detection P-values, you need to provide a detection P-value matrix. Also, if you want to perform filtering based on beadcounts, you need to provide the beadcount information. If you read IDAT file with champ.load() function's default method "ChAMP", beadcount information should be included in returned result. Also champ.filter() is designed to do filtering on multiple types of data frames from same data set, say you have beta matrix, M matrix, intensity matrix from same .idat file, you may use champ.filter() to do filtering on them at the same time, which would keep their compliance in future analysis.
 
-* First, you must input at least on data matrix.
-* Second, if you inputted multiple matrix, they must have EXACTLY the same rownames and colnames. For example, if you want to do filtering on intensity data and M value at the same time, you MUST make sure they have the same name, otherwise, ChAMP would suspect they are data comes from different source.
-* Third, if you want to filter pd too. (filterDetP process might remove some low quality samples.) Please make sure Sample_Name in your pd file is exactly the same as colnames of your data matrix.
-* Fourth, if you want to do imputation, you must provide detect P matrix, beta or M matrix, and parameter ProbeCutoff can not be 0. If any of these three condition fails, champ.filter() would reset autoimpute parameter as FALSE.
-* Five, if you want to filter beadcount, you must provie beadcount as well.
 
-Merely champ.filter() is the after process of champ.import() which is a noval loading function coded by ChAMP team. You may use them like below:
+* First, you must input at least one data matrix.
+* Second, if you provide as input multiple matrices, they must have **EXACTLY** the same rownames and colnames. For example, if you want to do filtering on intensity data and M value at the same time, you MUST make sure they have the same name, otherwise, ChAMP will assume they are data frames from different sources. Then, champ.filter() would stop filtering process.
+* Since low quality samples (e.g. those with many undetected probes) may be removed during the process of filtering, it is important to ensure that the Sample_Name identifiers in your pd file are exactly the same as colnames of your data matrix
+* Fourth, if you want to do imputation, you must provide the detection P matrix, beta or M matrix, and the parameter ProbeCutoff can not be 0, this parameter controls threshold of NA ratio that a probe should be removed or not. If any of these three conditions fail, champ.filter() would reset autoimpute parameter as FALSE, then imputation process would not be done.
+* Fifth, if you want to filter by beadcount, you must provide the beadcount, champ.import() would return beads information. Or, you can use beadcount function from wateRmelon package to extract is from rgSet object from "minfi" method..
+
+
+The champ.filter() function is the after process of champ.import() which is a novel loading function coded by ChAMP team. You may use them like below:
+
 ```{r eval=FALSE}
 myImport <- champ.import(testDir)
 myLoad <- champ.filter()
 ```
+
 Then the result of champ.filter() (myLoad in above code), should be the same result as old minfi method.
 
-Actually During the loading process, champ.load() function would also do some filtering. Below are filtering would be done by both champ.load() and champ.filter().
+Actually During the loading process, champ.load() function would also do some filtering. Below are filtering steps which would be performed during both champ.load() and champ.filter().
 
-* First filter is for probes with detection p-value (< 0.01). This utilises minfi method for calculating the detection p-value which differs from the method used in Genome Studio. A failedSamples result will be printed to the screen, showing the fraction of failed probes per sample. If any of these values is high (>0.05) you may want to consider removing that sample from the analysis and rerun it. Previously we found that in many cases, only one or two samples in a big data set are not qualited for analysis, and they may have 70% or even 80% of failed probes. If we only do filtering on probes, about 80% of probes will be masked, so we developed new filtering system on both sample and probe. If certain sample's failed probes' ratio if above certain threshold (default = 0.1), then this sample will be discarded, then filtering to probes will be carried on rest samples. The threshold of sample and probe can be controled by parameter detSamplecut and detPcut separately.
-* Second, ChAMP will filter out probes with <3 beads in at least 5% of samples per probe. This default can changed with the filterBeads parameter or the frequency can be adjusted with the beadCutoff parameter.
-* Third, ChAMP will filter out all None-CpG probes contained in your dataset.
-* Fourth, ChAMP will filter all SNP-related probes. The SNP list comes from [Zhou's Nucleic Acids Research paper in 2016](http://zwdzwd.github.io/InfiniumAnnotation). Note that if you know which population your data is, you can choose certian population to do filtering. Otherwise ChAMP would use General Recommended Probes provided by Zhou to do filtering.
-* Fifth, ChAMP will filter all multi-hit probes. The multi-hit probe list comes from [Nordlund's Genome Biology Paper in 2013](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2013-14-9-r105)[@Nordlund2013].
-* And the Sixth, ChAMP will filter out all probes located in chromosome X and Y.
+* **First filter is for probes with detection p-value (< 0.01).** This utilises detection p-value stored in .idat file. champ.import() would read these information and form them into data frame. For each probe, if it's p value is less then 0.01, it would be considered as failed probe. A failedSamples result will be printed to the screen, showing the fraction of failed probes per sample. If any of these values is high (>0.1) you may want to consider removing that sample from the analysis and rerun it. Previously we found that in many cases, only one or two samples in a big data set are not qualifed for analysis, and they may have 70% or even 80% of failed probes. So if we only do filtering on probes, about 80% of probes will be masked, so we developed a new filtering system on both sample and probe quality. If a certain sample's failed probes' ratio is above a particular threshold (default = 0.1), then this sample will be discarded, and filtering of probes will be carried on the remaining samples. The threshold of sample and probe can be controlled by the parameter SampleCutoff and ProbeCutoff separately.
 
-All above filterings are controled by parameters in champ.load() function, user may adjust them as you wish. Note that, though most ChAMP functions are supporting isolated beta matrix analysis, which means not relying on .idat file from beginning, **but champ.load() can not do filtering on beta matrix alone. For users have no .IDAT data but beta matrix and Sample_Sheet.csv, you may want do filtering with champ.filter() function and then use following functions to do analysis.**
+* **Second, ChAMP will filter out probes with <3 beads in at least 5% of samples per probe.** This default can be changed with the filterBeads parameter or the frequency can be adjusted with the beadCutoff parameter.
 
-Beside this, we provide a small function CpG.GUI() for user to check their distribution of CpGs. This function can be used for any CpGs list, for example, during your analysis, whenever you get a significant CpG list from DMR, you can user following function to check the distribution of your CpG vector:
+* **Third, ChAMP will by default filter out all non-CpG probes contained in your dataset.**
+
+* **Fourth, by default ChAMP will filter all SNP-related probes.** The SNP list comes from [Zhou's Nucleic Acids Research paper in 2016](http://zwdzwd.github.io/InfiniumAnnotation). Note that if you know which population your data is from, you can choose certain populations to do the filtering. Otherwise ChAMP would use General Recommended Probes provided by Zhou to do filtering. You just need to assign "population" parameter to achieve this.
+
+* **Fifth, by default setting, ChAMP will filter all multi-hit probes.** The multi-hit probe list comes from [Nordlund's Genome Biology Paper in 2013](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2013-14-9-r105)[@Nordlund2013].
+
+* **Sixth, ChAMP will filter out all probes located in chromosome X and Y.** This is also a default setting, but user can change it with filterXY parameter.
+
+
+All above filterings are controlled by parameters in the champ.load() and champ.filter() function, and users may adjust them as they wish. Note that, though most ChAMP functions are supporting isolated beta matrix analysis, which means not relying on .idat files from the beginning, **champ.load() can not perform filtering on beta matrix alone. For users have no .IDAT data but beta matrix and Sample_Sheet.csv, you may want perform filtering using the champ.filter() function and then use following functions to do analysis.**
+
+In addition to the filtering capability, we also provide a function CpG.GUI() for the user to check their distribution of CpGs on chromosome, CpG island, TSS reagions. e.g.  This function can be used for any CpGs list, for example, during your analysis, whenever you get a significant CpG list from DMR, you can use the following function to check the distribution of your CpG vector:
 
 ```{r eval=FALSE}
 CpG.GUI(CpG=rownames(myLoad$beta),arraytype="450K")
@@ -279,175 +288,222 @@ CpG.GUI(CpG=rownames(myLoad$beta),arraytype="450K")
 knitr::include_graphics("Figure/CpGGUI.png")
 ```
 
-This is a very easy function to demonstrate the distribution of your CpG list.
+This is a useful function to demonstrate the distribution of your CpG list. If you get a DMP list, you may use this function to check your DMP's distribution on chromosome.
 
-## Quality Check
-Quality Checking is an important process to make sure dataset is suitable to analysis. champ.QC() function and QC.GUI() function would draw some plots for user to easily check their data's quality. Merely there are three plot would be generated:
+## Further quality control and exploratory analysis
+
+Quality Control is an important process to make sure dataset is suitable for downstream analysis. champ.QC() function and QC.GUI() function would draw some plots for user to easily check their data's quality. Usually, there are three plots that would be generated:
 
 ```{r eval=TRUE,dpi=100,fig.width=7,fig.height=4,message=FALSE}
 champ.QC()
 ```
 
 * mdsPlot (Multidimensional Scaling Plot): This plot allows a visualization of the similarity of samples based on the top 1000 most variable probes amongst all samples. Samples are colored by Sample Groups in this plot.
-* densityPlot: The beta distribution lines for each sample, users may use this figure to find samples not very good (maybe with too many probes deleted during loading process.)
-* dendrogram: The clustering plot for all samples, you may select different method to generat this plot. There is a parameter `Feature.sel="None"` in champ.QC() function. While "None" means the distance between samples would be calculated directly by all probe ( your server may clush if you directly do this on large data sets), "SVD" means champ.QC() function would use SVD method to do deconvolute on beta matrix, then select significant components based only EstDimRMT() method from "isva" package. Then the distance between samples would be calculated based on these components.
+* densityPlot: The beta distributions for each sample; users may use this figure to find samples which deviate significantly from others and which may not be of good quality (e.g. incomplete bisulfite conversion). NB: It also serves to identify and confirm methylated or unmethylated control samples, if these were included in the study).
+* dendrogram: The clustering plot for all samples, you may select different method to generate this plot. There is a parameter `Feature.sel="None"` in champ.QC() function. While "None" means the distance between samples would be calculated directly by all probes (your server may crash if you directly do this on a large data set), "SVD" means champ.QC() function would use SVD method to do deconvolute on beta matrix, then select significant components based only EstDimRMT() method from "isva" package. Then the distance between samples would be calculated based on these components.
 
-Or you may use QC.GUI() function as below, which may cost more memory, thus make sure you have a good server or computer when you run this all GUI function in ChAMP.
+Or you may use QC.GUI() function as below, which however may be memory intensive, so make sure you have a good server or computer when you run this GUI function in ChAMP.
+
+
 ```{r eval=FALSE}
-QC.GUI(CpG=rownames(myLoad$beta),arraytype="450K")
+QC.GUI(beta=myLoad$beta,arraytype="450K")
 ```
 ```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
 knitr::include_graphics("Figure/QCGUI.jpg")
 ```
-Differently from champ.QC(), QC.GUI() will provide five interactive plot. mdsPlot, type-I&II densityPlot, Sample beta distribution plot, dendrogram plot and top 1000 variable CpG's heatmap. Users may easily interactive with these plots to see if your sample are qualited for further analysis, and check clustering result and top CpGs.
 
-* Pobe-Type-I&II plot: the beta distributions of Type-I and Type-II probes in your dataset, which could help you to check your data set's normalization status.
-* Top variable CpGs' heatmap: This heatmap would select most variable CpGs, and do heatmap on them.
+In contrast to champ.QC(), QC.GUI() will provide five interactive plot. These plots are as follows; mdsPlot, type-I&II densityPlot, sample beta distribution plot, dendrogram plot and top 1000 most variable CpG's heatmap. Users may easily interact with these plots to see if your samples are qualified for further analysis, and check clustering result and top CpGs.
+
+* Probe-Type-I&II plot: the beta distributions of Type-I and Type-II probes in your dataset, which could help you to check your data set's normalization status.
+* Top variable CpGs' heatmap: This heatmap would select most variable CpGs, and create a heatmap based on the methylation values at these sites.
+
 
 ## Normalization
 
-Normalization is an essential step for data preparation. The type-I and type-II probes in one data set share different beta distributions, thus they may cause problem in DMP or DMR detection. Here you can use champ.norm() function to eliminate effect of two Type probes.
+On Illumina beadarrays, probes come in two different designs (called type-I and type-II), with different hybridization chemistries, which means that probes from these two different designs will exhibit different distributions. This is a technical effect and is independent of variations caused by differences in the biological characteristics (e.g. CpG density) of type-I and type-II probes. The most marked difference between the type-I and type-II methylation distributions is that the type-II distribution exhibit a reduced dynamic range. In supervised analyses, this could cause a bias in the selection of type-I over type-II probes. For DMR detection, where type-I and type-II probes may fall in the same regions, it is clear that adjustment is paramount.  In general, adjustment for the type-II probe bias is recommended, and you can use the champ.norm() function to perform this normalization.
 
-In champ.norm(), we provides **four methods** to do normalization. BMIQ [@Teschendorff13], SWAN [@Maksimovic12], PBC [@Dedeurwaerder11] and FunctionalNormliazation [@Fortin2014]. There are some different between each method, user may read related paper to select one.
+In champ.norm(), we provide **four methods** to do this type-II probe normalization: BMIQ [@Teschendorff13], SWAN [@Maksimovic12], PBC [@Dedeurwaerder11] and FunctionalNormliazation [@Fortin2014]. There are some key differences between each method, and users may read related papers to select the most appropriate one for their analysis.
 
-Until the time I am writing this vignette. **FunctionalNormliazation can only support 450K**, SWAN call for mset data and rgSet, FunctionalNormliazation call for rgSet, which means, FunctionalNormliazation and SWAN merely only works for .idat file users. 
+Currently, FunctionalNormalization requires rgSet, SWAN requires mset and rgSet objects generated from IDAT files (as described in the minfi package description) while FunctionalNormliazation requires an rgSet object. Consequently, FunctionalNormliazation and SWAN normalization methods only works for analyses for "minfi" loading method.
 
-Note that BMIQ function has been updated to version 1.6, which would provide better normalization result for EPIC array. Some scientists may encounter error when using BMIQ on certain samples, merely because some samples' quality are really bad that they are not even beta distribution any more. Also BMIQ function now can be run in parallel, if your computer has more than one core, you may set parameter "cores" in function to accelerate the function. If you set parameter `PDFplot=TRUE`, the plot for BMIQ function would be saved in `resultsDir`.
+Note that the BMIQ function has been updated to version 1.6, which should provide better normalization for EPIC array data. We note that BMIQ may not converge and provide output for certain samples, and this may happen if the methylation distribution of the sample deviates markedly from a 3-state beta-mixture distribution (as it may happen for methylated/unmethylated controls), or because of poor sample quality. A new feature is that the BMIQ function can now be run in parallel, so if your computer has more than one core, you may set parameter "cores" in function to accelerate the function. If you set parameter `PDFplot=TRUE`, the plot for BMIQ function would be saved in resultsDir.
 
 The code to do Normalization is below:
 ```{r eval=FALSE}
 myNorm <- champ.norm(beta=myLoad$beta,arraytype="450K",cores=5)
 ```
-Below is the one result of BMIQ function:
-```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
-knitr::include_graphics("Figure/BMIQ.jpg")
-```
-After Normalization, you may use QC.GUI() function to check the result again, remember to set beta parameter in QC.GUI() function as myNorm.
+
+After Normalization, you may use the QC.GUI() function to check the result again; remember to set the beta parameter in QC.GUI() function as "myNorm".
 
 ## SVD Plot
-The singular value decomposition method (SVD) implemented by Teschendorff [@Teschendorff09] for methylation data is used to identify the most significant components of variation. These components of variation would ideally be biological factors of interest, but it may be technical variation (batch effects) as well. To get the most from this analysis it is useful to include as much information as possible.
 
-If samples have been loaded from .idat files then the 18 internal controls on the bead chip (including bisulphite conversion efficiency) will be included if you set parameter `RGEffect=TRUE` in champ.SVD() function. Also compared with old version of package, current version of champ.SVD() would detect all valid factors to analysis, which means plot contain two following conditions:
+The singular value decomposition method (SVD) implemented by Teschendorff [@Teschendorff09] for methylation data is a powerful tool for assessing the number and nature of the significant components of variation in a dataset. These components of variation would ideally correlate with biological factors of interest, but generally also correlate with technical sources of variation (e.g. batch effects). We strongly advise users to collect as much information as possible of the samples being analysed (e.g. dates of hybridization, season in which samples were collected, epidemiological information, etc etc) and to include all of these factors when correlating to SVD components. If samples have been loaded from .idat files then the 18 internal probe controls on the beadchip (including bisulphite conversion efficiency) will be included if you set parameter RGEffect=TRUE in the champ.SVD() function. Also compared with the old version of the ChAMP package, the current version of champ.SVD() would detect all valid factors to perform analysis, which means the plot contains the two following conditions:
 
-* Covariates are not related with name, Sample_Name, file_Name .e.g.
-* Covariates are contain at least two different values.
+* Covariates are not associated with name, Sample_Name or File_Name
+* Covariates contain at least two values(for example, for 'BeadChip ID' to be tested as a covariate, samples from at least two different BeadChips must be included in the study)
 
-champ.SVD() function would detect all valid covariates in your pd file. Thus you have some unique covariates want to be analyed, you may combine them into your pd file, champ.SVD() would analysis together. Note that champ.SVD() will only take pd parameter as pd file. So if you have your own covariates and want them to be analysed with current pd file, please cbind() your covariates along with myLoad$pd together, then input it as pd parameter into champ.SVD().
+champ.SVD() function detects all valid covariates in your pd file. Thus if you have some unique covariates you want to be analysed, you may combine them into your pd file, allowing champ.SVD() to test for association with the most significant components of variation in the dataset. Note that champ.SVD() will only uses phenotype data in the form of a pd file. So, if you have your own covariates which you want to be analysed with your current pd file, please cbind() your covariates along with myLoad$pd, then use this object as input for the pd parameter of the champ.SVD() function.
 
-Note that, for different type of covariates (categorical and numeric) covariates, champ.SVD() would used different ways (Krustal.Test and Linear Regression) to calculate the significance between covariates and components. Thus please make sure your pd is an data frame and numeric covariates are transfered into "numeric" type, while categorical covariates are transfered into "factor" or "character" type. **If your Age covariate was assigned as "character", it's really hard to our function to detect it's actual should be analysed as numeric. Thus we suggest user have very clear understanding on their data set and pd file.**
+Note that, for different type of covariates (categorical and numeric), champ.SVD()uses different methods to calculate the significance between covariates and components (Krustal.Test and Linear Regression) . Thus, please make sure your pd object is a data frame and numeric covariates are transferred into "numeric" type, while categorical covariates are transferred into "factor" or "character" type. **If your Age covariate was assigned as "character", the champ.SVDfunction will not detect that it should be analysed as numeric. Thus, we suggest users have very clear understanding of their dataset and pd files.**
 
-During champ.SVD() running, all detected covariates will be printed on screen, so that user may check if covariates you want to analysis are correct.
+While champ.SVD() is running, all detected covariates will be printed on the screen, so that the user may check if the covariates you want to analyse are correct. The result is a heatmap (saved as SVDsummary.pdf) of the top  principal components correlated to the covariates information provided. In champ.SVD() we used Random Matrix Theory from isva package to detect numbers of latent variables. If our method detected more than 20 components, we would select only top 20. In the heatmap, the darker colours represent a more significant p-value, indicating a stronger correlation of the SVD component with a factor of interest. If the SVD analysis shows that technical factors account for a substantial fraction of variation, then it will be necessary to implement other normalization methods (e.g ComBat) that may help remove this technical variation. ComBat is included in the ChAMP pipeline to remove variation related to the beadchip, position and/or plate, but it may be used to remove other batch effects revealed in the SVD analysis.
 
-The result is a heatmap (saved as SVDsummary.pdf) of the top 6 principle components correlated to the covariates information provided. The darker colours represent a lower p-value, indicating a larger component of variation. If it becomes clear from this SVD analysis that the largest components of variation are technical factors (batch effects) then it is worth considering the experimental design and implementing other normalization methods that may help remove technical variation. ComBat is included in this pipeline to remove variation related to chip number but it or other methods may be implemented independently to remove other sources of technical variation revealed in the SVD analysis.
+You may use the following code to generate the SVD plot:
 
-You may use following code to generate SVD plot:
-```{r eval=TRUE,dpi=100,fig.width=8,fig.height=8,message=FALSE,warning=FALSE}
+```{r eval=FALSE}
 champ.SVD(beta=myNorm,pd=myLoad$pd)
 ```
+
+```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
+knitr::include_graphics("Figure/Demo450KSVD.png")
+```
+
+
+Above plot is generated on our Demo 450K array data set. Since there are only 8 samples in that data set, so the final headmap plot looks not complicated. Below we used another plot from [GSE40279](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE40279), this data contains 656 sample, and a complicated pd file, with covariates like Age and Race included. Below we are showing the result of SVD plot we generated by using champ.SVD() function.
+
+```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
+knitr::include_graphics("Figure/HannumSVD.png")
+```
+
+In above plot, Age is a numeric variable, while other factors are categorical factors. The darker block means stronger correlation between deconvoluted components and covariates.
 
 ## Batch Effect Correction
 
 This function implements the ComBat normalization method [@Johnson07] that was developed for microarrays. The sva R package is used to implement this function. ComBat is specifically defined in the ChAMP package to correct for batch effects. More advanced users can implement ComBat using sva documentation to adjust for other batch effects. You need to set parameter `batchname=c("Slide")` in the function to correct them.
 
-> Note that champ.runCombat() would extract batch from your batchname, so please make sure you understand you dataset perfectly. **Another important thing is, previously champ.runCombat() would automatically assume "Sample_Group" is the covariates need to be analysed, but now, we added a parameter called variablename so that users may assign their own covariates to analysis**, thus for some data set whose disease phenotype is NOT Sample_Group, please remember to assign variablename parameter. 
+> Note that champ.runCombat() would extract batch from your batchname, so please make sure you understand you dataset perfectly. Another important thing is, previously champ.runCombat() would automatically assume `Sample_Group` is the covariates need to be analysed, but now, we added a parameter called `variablename` so that users may assign their own covariates to analysis, thus **for some data set whose disease phenotype is NOT Sample_Group, please remember to assign variablename parameter.**
 
-ComBat algorithsm uses an empirical Bayes method to correct for technical variation. If ComBat were applied directly to beta values zeros could be introduced as beta values have a range between 0 and 1. For this reason ChAMP logit transforms beta values before ComBat adjustment and then computes the reverse logit transformation following the ComBat adjustment. If the user has chosen to use M-values, please assign `logitTrans=FALSE`. 
+ComBat algorithm uses an empirical Bayes method to correct for technical variation. If ComBat were applied directly to beta values, the output may not be bounded between 0 and 1. For this reason ChAMP logit transforms beta values before ComBat adjustment and then computes the reverse logit transformation following the ComBat adjustment. **If the user has chosen to use M-values, please assign `logitTrans=FALSE`.**
 
 During the function champ.runCombat(), the program would automatically detect all valid factors might be corrected and list on screen, so that user may check if there are the batches you want to correct. Then if the batchname assigned by user are correct, the function would started to do batch correction.
 
-In the latest version, champ.runCombat() would also check if user's Batch and Variable conflict with each other. Conflict likes all samples from one phenotype of your Sample_Name are comes from certain one Batch, which means, if you correct batches, your Sample_Name-contained information are also gone, which is not allowed in Combat function of SVA package, that's why we made check beforehead.
+In the latest version, champ.runCombat() would also check if user's Batch and Variable counfounded with each other. Confounding means all samples from one phenotype of your variable are comes from certain one phenotype of your batch, which means, if you correct batches, your variable-contained information are also gone, which is not allowed in Combat function of SVA package, that's why we made check beforehead.
 
 You can use following code to do batch correction:
+
 ```{r eval=FALSE}
 myCombat <- champ.runCombat(beta=myNorm,pd=myLoad$pd,batchname=c("Slide"))
 ```
-> **The ComBat function could be a very time consuming step in the pipeline if you have a large number of samples.** After the correction, you may use champ.SVD() function to check the corrected result.
+
+> **The ComBat function could be a very time consuming step in the pipeline if you have a large number of samples.** After correction, you may use champ.SVD() function to check the corrected result.
 
 ## Differential Methylation Probes
 
-Differential Methylation Probes (DMP) is the most commonly analysed result for methylation research. Here users may use champ.DMP() function to calculate differential methylation probes. And use DMP.GUI() to check the result.
+Differentially Methylated Probes (DMPs) is the most common desired output. Here users may use champ.DMP() function to calculate differential methylation, and can use DMP.GUI() to check the result.
 
-champ.DMP() function implements the limma package to calculate the p-value for differential methylation using a linear model. At present, the function can only compute differential methylation between two groups. By default, the two groups are determined by the Sample Group column in the sample sheet. If more than two groups are present the function will calculate the differential methylation between the first two unique groups in the file. As the function is running it will print which two groups the contrast is being computed for and will then print out how many DMPs were found for the given p-value.
+champ.DMP() function implements the limma package to calculate the p-value for differential methylation using a linear model. Our latest champ.DMP() function would support numeric variable like age, and categorical variables which contain more than two phenotypes, like "tumor", "metastasis", "control". If our function detected numeric variables like age, linear regression would be conducted on each CpG sites, to find your covariate-related CpGs, say age-related CpGs. While categorical variables detected, champ.DMP() would do contrast comparison between each two phenotypes in your covariate. Say you have covariate as "tumor", "metastasis", "control", then champ.DMP() would compare "tumor--metastatic", "tumor-control", and "metastatis-control". Each comparison would return one data frame containing significantly differential methylated probes.
 
-The result of champ.DMP() included the p value, t value logFC between two groups, also includes the annotation for each probe, the average beta (for the sample group) and the delta beta value for the two groups used in the comparison. It is planned that a future version of ChAMP will include the ability to compare multiple groups. However, more advanced users can run limma with other settings and use the output (including all probes and their p-values) for the DMR hunter.
+The output of champ.DMP() includes **some data frames** of P-value, t-statistic and difference in mean methylation (this is labeled as logFC since it is analogous to the log fold-change in gene expression analysis) between two groups (for categorical covariate only). It also includes the annotation for each probe, the average beta value for the sample group, and the delta beta value for the two groups used in the comparison (delta value is same as logFC, we kept is here because very old version ChAMP used it).
 
-Users may use following code to get DMPs:
+> In our latest version champ.DMP(), numeric variables are fully support not, if you have covariate like ages or time series data. However, more advanced users can run limma with other settings and use the output (including all probes and their p-values) for the DMR hunter.
+
+Users may use following code to get DMPs (still we are using Demo 450K test data here):
 ```{r eval=TRUE,warning=FALSE,message=FALSE}
 myDMP <- champ.DMP(beta = myNorm,pheno=myLoad$pd$Sample_Group)
 ```
 
-We can check the result of champ.DMP() as below:
-```{r eval=TRUE}
-head(myDMP)
-```
-
-In new version of ChAMP, we includs a nice GUI interface for user to check the result of `myDMP` generated from above code. You just need to provide the "unmodified" result of champ.DMP (myDMP), orginal beta matrix you used to generat DMP (beta) and covariates you want to analysis. You can used following code to open DMP.GUI() function. 
-
-> Note that your myDMP reuslt may only be calcuated from two phenotypes, but your covariates may contain 3 or even more phenotypes.
+We can check the result of champ.DMP() as below. Remember that in champ.DMP(), **each returned result would be stored in an element in a list.** Each element in the list is one result of DMPs detected between two phenotypes. If your covariate is numeric variable, the returned data frame name is "NumericVariable". If your covariate is categorical variable, the returned name would be "PhenoA_to_PhenoB", where "PhenoA" and "PhenoB" are two name of your phenotypes.
 
 ```{r eval=FALSE}
-DMP.GUI(DMP=myDMP,beta=myNorm,pheno=myLoad$pd$Sample_Group)
+head(myDMP[[1]])
 ```
+
+In new version of ChAMP, we include a GUI interface for user to check the result of myDMP generated from above code. You just need to provide the **"unmodified"** result of champ.DMP (myDMP), orginal beta matrix you used to generat DMP (beta) and covariates you want to analyse. DMP.GUI() function would automatically detect if your covariate is numeric or categorical. If your covariate is numeric, DMP.GUI() would plot scatter plot for each CpGs, showing trend of beta value along with your covariate. If your covariate is categorical variable like cancer/normal, DMP.GUI() would plot boxplot for significantly differential methylated CpGs. You can use following code to open DMP.GUI() function.
+
+```{r eval=FALSE}
+DMP.GUI(DMP=myDMP[[1]],beta=myNorm,pheno=myLoad$pd$Sample_Group)
+# myDMP is a list now, each data frame is stored as myDMP[[1]], myDMP[[2]], myDMP[[3]]...
+```
+
 ```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
 knitr::include_graphics("Figure/DMP-1.png")
 ```
-The left panel indicates the cut off parameters for significant CpGs. Currently only two parameters are supported here: p value and abs(logFC). Users may set these two values then press "Submit" to generate significant CpGs table on the right. On the right is the table of significant CpGs, all information are included, the table can be ranked by each column.
 
+The left panel indicates the cut off parameters for significant CpGs. Currently only two parameters are supported here: P-value and abs(logFC). Users may set these two values then press "Submit" to generate significant CpGs table on the right. On the right is the table of significant CpGs, all information are included, the table can be ranked by each column.
 
 ```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
 knitr::include_graphics("Figure/DMP-2.png")
 ```
-The second tab provides the heatmap of ALL significant CpGs you generate by left panel cutoffs.
 
+The second tab provides the heatmap of ALL significant CpGs you generate by left panel cutoffs. **Note that rows and columns of this heatmap has been Hierarchical Clustered.**
 
 ```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
 knitr::include_graphics("Figure/DMP-3.png")
 ```
-The third panel provides the barplot of **proportion** of each CpG feature and cgi summary information for hyper and hypo CpGs. **You may press the marker in the legend to close or open certain bars.**
+
+The third panel provides the barplot of proportion of each CpG feature(e.g. TSS200, TSS1500, body, opensea, shore) and cgi summary information for hyper and hypo CpGs. **You may press the marker in the legend to close or open certain bars.**
+
+The fourth tab is controled by the `Gene` parameter on the left panel. You may select a gene name (the example default is NFIX here) and press "submit". Then the plot for this gene will be plot above. Note that the x axis here is not the actual MAPINFO of each CpG. The distance between each CpG are the same. There are two kinds of lines plotted for each phenotype, the solid lines represent Mean Value plot, and the dash line represent the Loess line, user may close or open they by clicking the marker on the legend. Below is the feature and cgi information of each CpG. At the bottom of this tab, is the gene information extracted from wikigene, which is also controlled by the gene parameter on the left.
+
 
 ```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
 knitr::include_graphics("Figure/DMP-4.png")
 ```
-The fourth tab is controled by the Gene parameter on the left panel. You may select an gene name (the example default is NFIX here) and press "submit". Then the plot for this gene will be plot above. Note that the x axis here is not the actual MAPINFO of each CpG. The distance between each CpG are the same. There are two kinds of lines plotted for each phenotype, the solid lines represent Mean Value plot, and the dash line represent the Loess line, **user may close or open they by clicking the marker on the legend**. Below is the feature and cgi information of each CpG. At the bottom of this tab, is the gene information extracted from wikigene, which is also controled by the gene parameter on the left.
 
-
-```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
-knitr::include_graphics("Figure/DMP-5.png")
-```
 The fifth tab includes two plots. At the top is the enrichment plot for top 70 genes involved in significant CpGs you select by left cutoff parameters. The number in each bar indicates how many hyper or hypo differential methylated CpGs are included in this gene. Users may use this plot to find intereted genes then use tab 4 to plot these genes. At the bottom of this tab, is the boxplot of certain CpGs, which is controled by parameter on the left panel.
 
-> **Note that all plots here can be Zoomed in or out. And can be downloaded directly. You may even change the shape of the brower to change the resize of plot then download it with different resolution.**
+> Note that all plots here can be Zoomed in or out. And can be downloaded directly. You may even change the shape of the brower to resize of plot then download it with different resolution.
+
+### DMP.GUI performance on numeric variable
+
+Above DMP.GUI plots are generated on our Demo 450K array. Since that's a categorical covariate data set, below we are showing part result from a numeric covariate data set: GSE40279. Here we are doing whole analysis, but showing the DMP.GUI() webpage for Age-related CpGs detected from champ.DMP() on GSE40279 data set. **Note that we get below  result after steps like loading, filtering, normalization.e.g. then run champ.DMP() and DMP.GUI().**
+
+> For numeric variable, to showing the trend of beta value change along with variable, DMP.GUI() would automatically cut the numeric variable into couple groups increasingly (default is 4), then plot lines and dot based on each group. **Say if your variable is age, DMP.GUI() would automatically cut your age variable into couple groups, like 30-, 30-50, 50-70, 70+, then four lines and groups of dots would be plotted. Thus you may see the line for old sample group is significantly different from line from the youngest group.**
+
+Firstly we show the third tab (gene related tab) of DMP.GUI() webpage:
+
+```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
+knitr::include_graphics("Figure/HannumDMPGUIplot.png")
+```
+
+In above plot, we can see that DMP.GUI() automatically cut age covariate into 4 groups. Then for each group, dots ant lines are plotted. We can see that in gene ELOVL2, there are 8 CpGs in total shows age-related trend. And lines show that older group (80.5 ~ 101), tend to be hypermethylated than younger groups.
+
+Then we show the fourth tab (CpG related tab) of DMP.GUI() webpage:
+
+```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
+knitr::include_graphics("Figure/HannumDMPGUIplot-2.png")
+```
+
+In above plot, CpGs are plotted in to scatter plot, so that we can see trend of CpG along with age.
+
 
 ### Hydroxymethylation Analysis
-Some users might want to analysis hydroxymethylation data, which can be done with champ.DMP() function, here we provided some demo code below for user to check.
+
+Some users might want to analyse hydroxymethylation data, which can be done with champ.DMP() function, here we provided some demo code below for user to check.
 
 ```{r eval=FALSE}
 myDMP <- champ.DMP(beta=myNorm, pheno=myLoad$pd$Sample_Group, compare.group=c("oxBS", "BS"))
 # In above code, you can set compare.group() as "oxBS" and "BS" to do DMP detection between hydroxymethylatio and normal methylation.
 
-hmc <- dmps[dmps$deltaBeta>0,]
+hmc <- myDMP[[1]][myDMP[[1]]$deltaBeta>0,]
 # Then you can use above code to extract hydroxymethylation CpGs.
 ```
 
 ## Differential Methylation Regions
 
-Differentially Methylated Eegions (DMRs) are extended and discreet segments of the genome that show a quantitative alteration in DNA methylation levels between two groups. champ.DMR() is the function ChAMP provides to computes and returns a data frame of probes binned into discreet differentially methylated regions (DMRs), with accompanying p-value.
+Differentially Methylated Regions (DMRs) are extended segments of the genome that show a quantitative alteration in DNA methylation levels between two groups. champ.DMR() is the function ChAMP provides to compute and return a data frame of probes binned into discreet differentially methylated regions (DMRs), with accompanying P-value.
 
-There are three algotithms integrated to do this job, Bumphunter, ProbeLasso and DMRcate. For Bumphunter algotithms, it would firstly cluster all probes into small clusters (or regions), then apply random permulation method to estimate candidate DMRs. This method is very user friendly and is not relying on any output of previous functions. The permulation steps in Bumphunter algotithms may be a little bit slow, but user may assign more core to accelerate it by parallel more threads. The result of bumphunter algotithm is a dataframe contain all detected DMRs, with their length, clusters, number of CpGs.e.g annotated.
+There are three DMR algorithms implemented within ChAMP: Bumphunter, ProbeLasso and DMRcate. The Bumphunter algorithm first groups all probes into small clusters (or regions), then applies random permutation method to estimate candidate DMRs. This method is very user friendly and is not relying on any output of previous functions. The permutation step in Bumphunter may be computer-intensive, but user may assign more cores to accelerate it. The result of bumphunter algorithm is a dataframe containing all detected DMRs, with their length, clusters, number of CpGs annotated.
 
 For ProbeLasso method, the final data frame is distilled from a limma output of probes and their association statistics. Previously, the result from champ.DMP() must be inputted into champ.DMR() function to do run ProbeLasso, but now we have upgraded the function and ProbeLasso needs no result from champ.DMP() anymore. For the principle and mechanism of ProbeLasso function, user may find it in original paper [@Butcher201521].
 
-The new method here incoporated in new version ChAMP is DMRcate. This is a data-driven approach that is agnostic to all annotations except for spatial ones, specifically chromosomal coordinates. Critical to DMRcate are robust estimates of differential methylation (DM) at individual CpG sites derived from limma, arguably the most widely used tool for microarray analysis. DMRcate pass the square of the moderated t statistic calculated on each 450K probe to DMR-finding function. Then DMRcate would apply a Gaussian kernel to smooth this metric within a given window, and also derive an expected value of the smoothed estimate (in other words, one with no experimental effect) from the varying density of CpGs sites incurred by reduced representation and irregular spacing. For more detail about DMRcate function, user may read the original paper [$Peters2015] and DMRcate R pacakge.
+A new method recently incoporated into ChAMP is DMRcate. This is a data-driven approach that is agnostic to all annotations except for spatial ones, specifically chromosomal coordinates. Critical to DMRcate are robust estimates of differential methylation (DM) at individual CpG sites derived from limma. DMRcate pass the square of the moderated t statistic calculated on each 450K probe to DMR-finding function. Then DMRcate would apply a Gaussian kernel to smooth this metric within a given window, and also derive an expected value of the smoothed estimate (in other words, one with no experimental effect) from the varying density of CpGs incu by reduced representation and irregular spacing. For more detail about DMRcate function, user may read the original paper [@Peters2015] and DMRcate R pacakge.
+
+> **Note that in this version ChAMP, we made some strict checking process in champ.DMR(), now champ.DMR() only takes categorical covariates with EXACTLY only two phenotypes. If your covariates contains multiple phenotype, say "tumor"/"metastasis"/"control", please manually select any two of them, and input corresponding beta matrix and pheno information.**
 
 Users may use following code to generate DMR:
 ```{r eval=FALSE,message=FALSE,warning=TRUE}
 myDMR <- champ.DMR(beta=myNorm,pheno=myLoad$pd$Sample_Group,method="Bumphunter")
 ```
-The result of Bumphunter, DMRcate and ProbeLasso functions are all dataframe, but main contain different columns. Here we can have a check on DMRcate result.
+
+The output of Bumphunter, DMRcate and ProbeLasso functions are all dataframe, but may contain different columns. Here we can have a check on DMRcate result.
+
 ```{r eval=TRUE}
 head(myDMR$DMRcateDMR)
 ```
-Just like DMP result, we provide `DMR.GUI()` as interface for DMR result. All result from three different method of champ.DMR() are accepted in the GUI function. The DMR.GUI() function would automatically detected what kind of input the DMR result is. **Thus it's not recommended to modify the structure of `myDMR` result.**
+
+Just like DMP result, we provide `DMR.GUI()` as interface for DMR result. All result from three different method of champ.DMR() are accepted in the GUI function. The DMR.GUI() function would automatically detected what kind of input the DMR result is. **Thus it's not recommended to modify the structure of myDMR result.**
+
 ```{r eval=FALSE}
 DMR.GUI(DMR=myDMR)
 # It might be a little bit slow to open DMR.GUI() because function need to extract annotation for CpGs from DMR. Might take 30 seconds.
@@ -456,24 +512,32 @@ DMR.GUI(DMR=myDMR)
 ```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
 knitr::include_graphics("Figure/DMR-1.png")
 ```
-Just like the DMP.GUI above, there is a panel for parameters on the left, user may set the parameters to select significant DMRs. We currently only provide two parameters: p value and min number probes. The above title will indicate the method you have used to get DMR result (here is DMRcate). **Note that for different method the p value may indicate different columns. Bumphunter is `pvaluearea`, while ProbeLasso is `dmrP`, and there is no cutoff for DMRcate result, which has been done during calculation.** After your selection and press "Submit", you will get table of significant DMRs on the right. For different method, the table content might be different. Thus user should research what method you want to use to find DMRs.
+
+Just like the DMP.GUI above, there is a panel for parameters on the left, user may set the parameters to select significant DMRs. We currently only provide two parameters: P-value and min number probes. The above title will indicate the method you have used to get DMR result (here is DMRcate). **Note that for different method the P-value may indicate different columns. Bumphunter is pvaluearea, while ProbeLasso is dmrP, and there is no cutoff for DMRcate result, which has been done during calculation.** After your selection and press "Submit", you will get table of significant DMRs on the right. For different method, the table content might be different. Thus user should research what method you want to use to find DMRs.
 
 ```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
 knitr::include_graphics("Figure/DMR-2.png")
 ```
+
 The second tab provides a table for all CpGs involvded in these DMRs, which can be regarded as a mapping list between CpGs and DMRs. Also if you can not get gene information in first tab, you can get them here. In this table, for each CpGs, their corresponding genes and DMRs are marked.
 
 ```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
 knitr::include_graphics("Figure/DMR-3.png")
 ```
+
 The third plot is the plot of each DMR, just like the gene plot in DMP.GUI() function. Here the x axis are not real MAPINFO of each CpG, the distance between each CpGs are equal. Also I have feature and CpGs marked under the plot. At the top of this tab, are the table of all CpGs in this DMR. You can use the DMR index parameter on the left panel to select DMR you want to check.
 
 ```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
 knitr::include_graphics("Figure/DMR-4.png")
 ```
+
 The fourth tab provide the enrichment information of genes and heatmap. Note that there might be many genes and CpGs in this plot. So if you have too many DMRs selected, the plot might be too big to be open. But you don't need to worry can not see it clearly, because you may zoom in as much as you can to check details.
 
+> Currently, champ.DMR() does not support multiple phenotypes in one covariates, in theory we can do pairewise comparision, but it would takes very long time. Also, we are not supporing numeric variables, say looking for **"Age-related Methylated Regions"**, it calls for many heavy coding working and we may support that in future version.
+
 ## Differential Methylation Blocks
+
+There may also be potential interest to identify Differentially Methylated Blocks (DMBs) 19. Here we provide a function to infer DMBs. In our Block-finder function, champ.Block() would firstly calculate small clusters (regions) on whole genome based on their locations on genome. Then for each cluster (region), its mean value and mean position would be calculated, thus you can assume that each region would be collapsed into a single unit. When we finding DMB, only single unit from open sea would be used to do clustering. Here Bumphunter algorithm will be used to find "DMRs" over these regions (single units after collapse). In our previous paper [@Yuan2015], and other scientists' work [@Timp2014] we demonstrated that Differential Methylated Blocks may show universal feature across various cancers
 
 In recent years, there are more researchs about Differential Methylated Blocks [@Hansen2011]. Here we provide a function to calculate methylation blocks. In our Block-finder function, champ.Block() would firstly calculate small clusters (regions) on whole genome based on their locations on genome. Then for each cluster (region), its mean value and mean position would be calcuated, thus you can assume that each region would be collapsed into a dot. Then Bumphunter algorithsm will be used to find "DMRs" over these regions (dots after collapse). **Note that only open sea regions will be used to calculate Blocks**. In our previous paper [@Yuan2015] we demonstrated that Differential Methylated Blocks may show universal feature across various cancers.
 
@@ -481,49 +545,58 @@ User may use following code to generate methylation blocks:
 ```{r eval=FALSE}
 myBlock <- champ.Block(beta=myNorm,pheno=myLoad$pd$Sample_Group,arraytype="450K")
 ```
-A lot of things would be returned by champ.Block() function, but the most important is the first list: Block. You may check it like below:
+
+champ.Block() function returns numerous objects, but the most important one is the first list: Block. You may check it like below:
+
 ```{r eval=TRUE}
 head(myBlock$Block)
 ```
-And we provide a GUI function for users to check the result of `myBlock` above.
+And we provide a GUI function for users to check the result of myBlock above.
+
 ```{r eval=FALSE}
 Block.GUI(Block=myBlock,beta=myNorm,pheno=myLoad$pd$Sample_Group,runDMP=TRUE,compare.group=NULL,arraytype="450K")
 ```
-Note that there are two special parameters here: `runDMP` means if Block.GUI() function should calculate DMP for each CpGs, if not, the GUI() function would only return the annotation of all involvded CpGs. And just like champ.DMP() function, compare.group need to be assigned if you want to calculate DMP while running Block.GUI().
+
+Note that there are two special parameters here: `runDMP` means if Block.GUI() function should calculate DMP for each CpGs, if not, the GUI() function would only return the annotation of all involvded CpG. `compare.group` could to be assigned if you want to calculate DMP while running Block.GUI(), it works if you have multiple phenotypes in our covariates.
 
 
 ```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
 knitr::include_graphics("Figure/Block-1.png")
 ```
-Just like DMP.GUI() and DMR.GUI(), the p value cutoff and min cluster (similar to min probes in DMR.GUI()) controls the number of significant Blocks you selected. Then the information of significant blocks will be listed on the right.
+
+Just like DMP.GUI() and DMR.GUI(), the P-value cutoff and min cluster (similar to min probes in DMR.GUI()) controls the number of significant Blocks you selected. Then the information of significant blocks will be listed on the right.
 
 ```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
 knitr::include_graphics("Figure/Block-2.png")
 ```
-The second tab provides information of all CpGs involved in all Blocks. For methylation blocks, there are actually three unit integrated together: Block, Cluster (regions) and CpG. Blocks are formed by some clusters, and clusters are formed by some CpGs. Thus the second tab actually provides a mapping solution from CpGs to Blocks. User may use this tab to find their interested genes and CpGs. Then use DMP.GUI() to combind research between Blocks and DMPs.
+
+The second tab provides information of all CpGs involved in all Blocks. For methylation blocks, there are actually three unit integrated together: Block, Cluster (regions) and CpG. Blocks are formed by some clusters, and clusters are formed by some CpGs. Thus the second tab actually provides a mapping solution from CpGs to Blocks. User may use this tab to find interesting genes and CpGs. Then use DMP.GUI() to combind research between Blocks and DMPs.
 
 ```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
 knitr::include_graphics("Figure/Block-3.png")
 ```
-The third tab provides the plot for each Blocks. **Be caution that each Block may contain many many clusters. Thus it would be slow to calculate and plot. And please make sure you have a good computer or server to run this function.** Note that plot is slightly different from DMR.GUI() and DMP.GUI() that the x axis is actually the **REAL** MAPINFO of each cluster, because I also need to map CpG islands position above the lines (Those dark red dots).
+The third tab provides the plot for each Blocks. **Be caution that each Block may contain many many clusters. Thus it would be slow to calculate and plot. And please make sure you have a good computer or server to run this function.** Note that plot is slightly different from DMR.GUI() and DMP.GUI() that the x axis is actually the `REAL MAPINFO` of each cluster, because I also need to map CpG islands position above the lines (Those dark red dots).
 
 ## Gene Set Enrichment Analysis
-Gene Set Enrichment Analysis is a very important step for most bioinformatics work. After previous steps, you may already get some significant DMPs or DMRs, thus you may want to know if genes involvded in these significant DMPs or DMRs are actually corresponding to some pathways. To achieve this analysis, you can use champ.GSEA() to do GSEA analysis. 
+Gene Set Enrichment Analysis is a very important step for most bioinformatics work. After previous steps, you may already get some significant DMPs or DMRs, thus you may want to know if genes involved in these significant DMPs or DMRs are enriched for specific biological terms or pathways. To achieve this analysis, you can use champ.GSEA() to do GSEA analysis.
 
-champ.GSEA() would automatically extract genes in `myDMP` and `myDMR` (No matter what method you have used to generate DMRs). Also if you have your own significant CpG list or gene list calculated from **THE SAME** methylation arrays (450K or EPIC) by other method not included in ChAMP. You may also format them into **list** and input the function to do GSEA (Please assign each element in your own CpG list or gene list a name, otherwise error might be triggered). champ.GSEA() would automatically extract gene information, transfer CpG information into gene information then conduct GSEA on each list. During the mapping process between CpGs to genes, if there are multiple CpGs mapped to one gene, that gene would only be counted once in case of over counting.
+champ.GSEA() would automatically extract genes in `myDMP` and `myDMR` (No matter what method you have used to generate DMRs). Also if you have your own significant CpG list or gene list calculated from `THE SAME` methylation arrays (450K or EPIC) by other method not included in ChAMP. You may also format them into `list` and input the function to do GSEA (Please assign each element in your own CpG list or gene list a name, otherwise error might be triggered). champ.GSEA() would automatically extract gene information, transfer CpG information into gene information then conduct GSEA on each list. During the mapping process between CpGs to genes, if there are multiple CpGs mapped to one gene, that gene would only be counted once in case of over counting.
 
-There are two ways to do GSEA. In previous version, ChAMP used pathway information downloaded from [MSigDB](http://software.broadinstitute.org/gsea/msigdb/index.jsp). Then **Fisher Exact Test ** will be used to calculate the enrichment status of each pathway. After gene enrichment analysis, champ.GSEA() function would automatically return pathways with p value smaller then adjPval cutoff.
+There are two ways to do GSEA. In previous version, ChAMP used pathway information downloaded from [MSigDB](http://software.broadinstitute.org/gsea/msigdb/index.jsp). Then **Fisher Exact Test** will be used to calculate the enrichment status of each pathway. After gene enrichment analysis, champ.GSEA() function would automatically return pathways with P-value smaller then adjPval cutoff.
 
-For most situation, above fisher exact test method should works fine. However, as the [Geeleher's Paper](http://bioinformatics.oxfordjournals.org/content/early/2013/06/24/bioinformatics.btt311.full) addressed. Since different genes has different numbers of CpGs contained inside, the two situation that one genes with 50 CpGs inside but only one of them show significant methylation, and one gene with 2 CpGs inside but two are significant methylated should not be eaqualy treated. The solution is use number of CpGs contained by genes to correct significant genes. Here we used [goseq](http://bioconductor.org/packages/release/bioc/html/goseq.html) package [@Young2010] to solve this problem. This package was originally designed to correct bias caused by gene's length during GSEA procedure. Here we used number of CpGs contained by each gene replace length as biased data, to correct this issue.
+However, as pointed out by Geeleher [citation], since different genes has different numbers of CpGs contained inside, the two situation that one genes with 50 CpGs inside but only one of them show significant methylation, and one gene with 2 CpGs inside but two are significant methylated should not be eaqualy treated. The solution is use number of CpGs contained by genes to correct significant genes. as implemented in the gometh function from missMethyl package [@Phipson2016]. In gometh function, it used number of CpGs contained by each gene replace length as biased data, to correct this issue. The idea of gometh is fitting a curve for numbers of CpGs across genes related with GSEA, then using the probability weighting function to correct GO's p value.
 
 > Note: If user want to correct the biased caused between genes' number and CpGs' number, they may set **method** parameter in champ.GSEA() function as "goseq" to use goseq method to do GSEA, or user may set it as "fisher" to do normal Gene Set Enrichment Analysis.
 
 User may use following command to do GSEA:
+
 ```{r eval=FALSE}
-myGSEA <- champ.GSEA(beta=myNorm,DMP=myDMP,DMR=myDMR,arraytype="450K",adjPval=0.05)
+myGSEA <- champ.GSEA(beta=myNorm,DMP=myDMP[[1]], DMR=myDMR, arraytype="450K",adjPval=0.05, method="fisher")
 # myDMP and myDMR could (not must) be used directly.
 ```
-After the calculation, for each list (DMP,DMR or other list), one GSEA result would be returned. User may check the result like below:
+> If you don't want to do GSEA on DMP or DMR, you may set them as NULL.
+
+In above code, we also used the demo 450K array incorporated in our package to demonstrate the effect of champ.GSEA(). After the calculation, for each list (DMP,DMR or other list), one GSEA result would be returned. User may check the result like below:
 
 ```{r eval=TRUE}
 head(myGSEA$DMP)
@@ -534,20 +607,22 @@ head(myGSEA$DMR)
 ```
 ##Differential Methylated Interaction Hotspots
 
-Another function included in ChAMP is champ.EpiMod(). This function uses [FEM package](https://www.bioconductor.org/packages/devel/bioc/html/FEM.html) to calcuate the Interaction Hotspots in modules for certain data set. By "interactome hotspot" we mean a connected subnetwork of the protein interaction network (PIN) with an exceptionally large average edge-weight density in relation to the rest of the network. The weight edges are constructed from the statistics of association of DNA methylation. Thus, the champ.EpiMod() function can be viewed as a functional supervised algorithm, which uses a network of relations between genes (in our case a PPI network), to identify subnetworks where a significant number of genes are associated with a phenotype of interest (POI).
+Another function included in ChAMP is champ.EpiMod(). This function uses [FEM](https://www.bioconductor.org/packages/devel/bioc/html/FEM.html)  package to infer differentially methylated gene modules within a user-specific functional gene-network. This network could be e.g. a protein-protein interaction network. Thus, the champ.EpiMod() function can be viewed as a functional supervised algorithm, which uses a network of relations between genes (usually a PPI network), to identify subnetworks where a significant number of genes are associated with a phenotype of interest (POI). The EpiMod algorithm can be run in two different modes: at the probe level, in which case the most differentially methylated probe is assigned to each gene, or at the gene-level in which case a DNAm value is assigned to each gene using an optimized procedure described in detail in Jiao Y, Widschwendter M, Teschendorff AE Bioinformatics 2014. Originally, the FEM package was developed to infer differentially methylated gene modules which are also deregulated at the gene expression level, however here we only provide the EpiMod version, which only infers differentially methylated modules. More advanced user may refer to FEM package for more information.
 
-Thus compared with GSEA and other pathway detection method, champ.EpiMod() (or FEM package) used more strict way to estimate small modules located in big pathways. Each edge and genes' status would be calculated based on the data set you inputted. Orginally, FEM package was developed to do interaction analysis between methylation data and RNA expression data, which could get modules show both Differential Methylation and Differential Expression status. **However here we only provide usage to calcuated module show differential methylation.** More advanced user may refer to FEM package for more information.
 
 User may use following code to do champ.EpiMod()
+
 ```{r eval=FALSE}
 myEpiMod <- champ.EpiMod(beta=myNorm,pheno=myLoad$pd$Sample_Group)
 ```
+
 The all significant modules would be returned. And PDF version plots would returned in resultsDir in function parameter. Like below:
 
 ```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
 knitr::include_graphics("Figure/EpiMod.jpg")
 ```
-Above we demonstrated four modules detect by champ.EpiMod() based on our small 450K test data. But in practic, each modules would be saved in to a pdf file individually in resultsDir directory.
+
+Above we demonstrated four modules detect by champ.EpiMod() based on our small 450K test data. But in practice, each modules would be saved in to a pdf file individually in resultsDir directory.
 
 ##Copy Number Variation
 
@@ -556,6 +631,7 @@ For Copy Number Variation analysis, we provide champ.CNA() to achieve this work.
 Basically there are two methods you may choose to do CNA analysis: you may compare the copy number various between case samples and control samples; or you can compare copy number of each sample to the average copy number status of all samples. For the first method, you may specify which groups of samples in your pheno parameter, or ChAMP already included some blood control samples itself, you may use them as control then calculate the copy number variance, all you need to do is assign parameter `control=TRUE` and `controlGroup="champCtls"`. For the other method, you may assign `control=FALSE` to apply.
 
 There are two kinds of plots would be generated, analysis for each sample (`sampleCNA=TRUE` parameter) and analysis for each group (`groupFreqPlots=TRUE` parameter). Like champ.QC() function before, there are two parameter could be assigned for plots. The Rplot parameter would control if champ.CNA() would plot with R session, and PDFplot parameter would control if champ.CNA() would save PDF file to resultsDir. By default, only PDFplot is TRUE.
+
 
 > Note that different from old version of ChAMP. **No batch correction would be run automatically on intensity data**, if you want to correct batch effect on intensity data, please use champ.runCombat(), the usage for intensity data is exactly the same for beta or M matrix, the only difference is you need to replace the beta value with `myLoad$intensity` and set `logitTrans=FALSE`.
 
@@ -574,104 +650,102 @@ knitr::include_graphics("Figure/CNAGroupPlot.jpg")
 
 ## Cell Type Heterogeneity
 
-While many methylation sample are collected from whole blood, their methylation status actually are combination of various cell types. These cell-type specified methylation may cover ture epigenome signals as well as true relationships between CpGs sites and phenotypes, or themsleves are the reason of some diseases. Thus many methods have be invented to deal with cell heterogeneity problem, like RefbaseEWAS and RefFreeEWAS incoporated.
+DNA methylation profiles are usually generated in samples that constitute mixtures over many cell-types. Given that DNAm is highly cell-type specific, thus there is often the need to infer DMPs/DMRs which are not driven by underlying changes in cell-type composition. Many methods have been proposed to deal with the cell-type heterogeneity problem, like RefbaseEWAS.
 
-RefbaseEWAS method is a method similar to regression calibration, for inferring changes in the distribution of white blood cells between different subpopulations (e.g. cases and controls) using DNA methylation signatures, in combination with a previously obtained external validation set consisting of signatures from purified leukocyte samples.
+RefbaseEWAS method uses a reference-database of DNAm profiles of the major cell-types thought to be present in the tissue of interest, and uses this reference to infer sample-specific cell-type proportions using a form of constrained multivariate regression, known as constrained projection or quadratic programming. These cell-type proportions can subsequently be used as covariates to infer phenotype-associated changes which are not driven by changes in cell-type composition. We included this refbase method into our ChAMP for users who want to detect cell proportion and remove cell type influence on their **WHOLE BLOOD** data.
 
-We integrates another cell type heterogeneity correction method RefFreeEWAS in ChAMP. The new RefFreeEWAS method is similar to non-negative matrix factorization, with additional constraints and additional utilities. This function is specifically suitable for tissue datasets such as placenta, saliva, adipose or tumor tissue. This method closely related to surrogate variable analysis, relies on a simple projection based on singular value decomposition (SVD), as does SVA. In SVA, the residuals of a linear model are decomposed into a factor-analytic structure and the factors are used subsequently in a regression model, with iteration resulting in a final set of surrogate variables.
-
-Here we prepared two cell-type purified methylation reference, one for 27K and the other for 450K, user may use any of them to do cell heterogeneity to correct heterogeneity based on cell propotions of each sample. However, though RefbaseEWAS method would return fairly accurate cell propotion, this method can ONLY be applied for whole blood samples, which contain cells in the reference. After champ.refbase() function, cell type heterogeneity corrected beta matrix, and cell-type specific propotions in each sample will be returned.
-
-On the other hand, RefFreeEWAS method requires two parameters in champ.reffree() function, one is the covariates matrix for inputted dataset, which could be a matrix or a vector. containing various phenotypes of each sample. The other important parameter is number of latent variable K, which represent numbers of latent cell type mixed in the dataset. If users don't know the correct number of latent variable (cell types), they could ignore this parameter, and champ.reffree() will apply Random Matrix Theory from isva package to estimate number of latent variables.
-
-User may use following code to do cell heterogeneity analysis:
-```{r eval=FALSE}
-myRefFree <- champ.reffree(beta=myNorm,pheno=myLoad$pd$Sample_Group)
-```
-Then we can see the q value calculated for each CpGs, user may relying on the q value below to select significant CpGs after cell heterogeneity correction:
-```{r eval=TRUE}
-head(myRefFree$qvBeta)
-```
-For RefbaseEWAS method, user could get cell propotion of each sample by champ.refbase(). But do remember **champ.refbase() can only works on Blood Sample Data Set.**
+In ChAMP, we include a reference databases for whole blood, one for 27K and the other for 450K. After champ.refbase() function, cell type heterogeneity corrected beta matrix, and cell-type specific proportions in each sample will be returned. Do remember champ.refbase() can only works on Blood Sample Data Set.
 
 ```{r eval=FALSE}
 myRefBase <- champ.refbase(beta=myNorm,arraytype="450K")
-# Our test data set is not blood.
+# Our test data set is not whole blood. So it should not be run here.
 ```
+
+> Note that our demo 450K array is not whole blood data, so champ.refbase() can not works on this data set. Above code is only demo here. In the future, we will add more reference for champ.refbase function.
 
 # Summary
 
-Above are all pipelines and functions included in new ChAMP. It's a totally new version that different from old one, we hope to provide you most convenient and fast methylation analysis pipeline for 450K and EPIC array. It's a very comprehensive package with thousands of lines of code, we already made our best to make sure it's correct and fast.
-
-In the future we may make it better, along with more functions and usages. If you have question,bug report, suggestion for ChAMP, please email to champ450k@gmail.com or my personal email tianyuan1991hit@gmail.com.
+We have briefly described the various pipelines and functions included in the new ChAMP package. In the future we hope to improve it further, along with more functionality. If you have any question, bug report, or suggestion for improving ChAMP, please email it to champ450k@gmail.com. Feeback is key for improving a package which tries to seamlessly incorporate functionality and flexibility from many other tools.
 
 
 # Citing ChAMP
 
-ChAMP is implemented by incoporated many other very talented scientists' work. Some functions are achieved by adopting other packages, while some functions are coded by ChAMP's author but with ideas and theories provided by other works. So when you are using functions provided by ChAMP, please citate other scientists's work correctly, so that people who invented these theory and method would get corresponding credits and honor.
+ChAMP is a wrapper incorporating algorithms and functions from many other sources. The majority of functions used in ChAMP are incorporated directly from other packages or are drawn from specific published algorithms. Hence, below we provide guidance on which papers should be cited alongside ChAMP when using these functions:
 
-If you want to citate ChAMP package itself, please add following papers in your article. This article is about ChAMP, an integrated analysis pipeline for DNA methylation analysis:
+If you use the ChAMP package, please cite:
 
 > Morris, T. J., Butcher, L. M., Feber, A., Teschendorff, A. E., Chakravarthy, A. R., Wojdacz, T. K., and Beck, S. (2014). Champ: 450k chip analysis methylation pipeline pg - 428-30. Bioinformatics, 30(3), 428-30.
 
-The loading part of ChAMP (champ.load) used minfi package, so does FunctionalNormliazation, SWAN normalization methods. If you want used above two normalization methods, you may want to citate below minfi paper:
+The loading part of ChAMP (champ.load) uses minfi package, so please cite:
 
 > Aryee MJ, Jaffe AE, Corrada-Bravo H, Ladd-Acosta C, Feinberg AP, Hansen KD and Irizarry RA (2014). Minfi: A flexible and comprehensive Bioconductor package for the analysis of Infinium DNA Methylation microarrays. Bioinformatics, 30(10), pp. 1363-1369. doi: 10.1093/bioinformatics/btu049.
 
 > Jean-Philippe Fortin, Timothy Triche, Kasper Hansen. Preprocessing, normalization and integration of the Illumina HumanMethylationEPIC array. bioRxiv 065490; doi: https://doi.org/10.1101/065490
 
-Note that during filtering step, we used below paper's SNP list, which included SNP located 5 bp close to CpG sites, with global MAF >1%, and other characters. For more information about SNP being filtered, you may check below paper:
+Filtering out probes with SNPs was based following recommendations presented in this paper:
 
 > Zhou W, Laird PW and Shen H: Comprehensive characterization, annotation and innovative use of Infinium DNA Methylation BeadChip probes. Nucleic Acids Research 2016
 
-The default normalization method in ChAMP is BMIQ, which is invented by Andrew Teschendorff. This is a very popular and well-designed normalization function, you may citate below paper:
+FunctionalNormliazation and SWAN normalization methods are based on:
+
+> Jean-Philippe Fortin, Timothy Triche, Kasper Hansen. Preprocessing, normalization and integration of the Illumina HumanMethylationEPIC array. bioRxiv 065490; doi: https://doi.org/10.1101/065490
+
+> Maksimovic J et a. SWAN: Subset-quantile within array normalization for illumina infinium humanmethylation450 beadchips. Genome Biol. 2012;13(6):R44.
+
+The default type-2 probe correction method in ChAMP is BMIQ, based on:
 
 > Teschendorff AE et al . A beta-mixture quantile normalization method for correcting probe design bias in illumina infinium 450 k dna methylation data. Bioinformatics. 2013;29(2):189-196.
 
-Another included normalization method is PBC, the related paper is below:
+Another type-2 probe correction method is PBC, which was presented in:
 
 > Dedeurwaerder S et a. Evaluation of the infinium methylation 450K technology. Epigenomics. 2011;3(6):771-784.
 
-champ.SVD() function is a very good option to detect effect of factors on dataset. The paper related with this function is below:
+champ.SVD() function is based on:
 
 > Teschendorff AE et a. An epigenetic signature in peripheral blood predicts active ovarian cancer. PLoS One. 2009;4(12):e8274.
 
-ChAMP used famous batch correction method Combat from `SVA` package for batch correction. You may citate Combat-related paper below:
+ChAMP uses the batch correction method Combat as implanted in the `SVA` package. Please cite:
 
 > Johnson WE et a. Adjusting batch effects in microarray expression data using empirical bayes methods. Biostatistics. 2007;8(1):118-127.
 
-Above are all functions related to **Data Preparation**. Below are functions and methods related to statistic result estimation.
+> Leek JT, Johnson WE, Parker HS, Fertig EJ, Jaffe AE, Storey JD, Zhang Y and Torres LC (2017). sva: Surrogate Variable Analysis. R package version 3.24.4.
 
-In ChAMP we used [limma](https://bioconductor.org/packages/release/bioc/html/limma.html) to find DMP. According to [user guild of limma](http://159.226.251.230/videoplayer/usersguide.pdf?ich_u_r_i=8289d05ee30461a0bfa23671c3ba865d&ich_s_t_a_r_t=0&ich_e_n_d=0&ich_k_e_y=1645128926750463352442&ich_t_y_p_e=1&ich_d_i_s_k_i_d=6&ich_u_n_i_t=1), researches related to differential analysis should citate some specific paper. Below are two papers user may want to use:
+Above are all functions related to `Data Normalization`. Below are functions and methods for downstream analyses.
 
-> Ritchie, ME, Phipson, B, Wu, D, Hu, Y, Law, CW, Shi, W, and Smyth, GK (2015).
-limma powers differential expression analyses for RNA-sequencing and microarray studies. Nucleic Acids Research 43(7), e47
+If using [limma](https://bioconductor.org/packages/release/bioc/html/limma.html) to find DMPs, please cite:
 
-> Phipson, B, Lee, S, Majewski, IJ, Alexander, WS, and Smyth, GK (2016). Robust hyperparameter estimation protects against hypervariable genes and improves power to detect differential expression. Annals of Applied Statistics 10(2), 946-963.
+>  Smyth GK. Linear models and empirical bayes methods for assessing differential expression in microarray experiments. Stat Appl Genet Mol Biol. 2004;3:Article3. Epub 2004 Feb 12. PubMed PMID: 16646809.
 
-When it comes to DMR detection, here there are three method incoporated: If you used Bumphunter method, you may use this one:
+> Wettenhall JM, Smyth GK. limmaGUI: a graphical user interface for linear
+modeling of microarray data. Bioinformatics. 2004 Dec 12;20(18):3705-6. Epub 2004 Aug 5. PubMed PMID: 15297296.
+
+For DMR detection, if you used Bumphunter method, please cite:
 
 > Jaffe AE et a. Bump hunting to identify differentially methylated regions in epigenetic epidemiology studies. Int J Epidemiol. 2012;41(1):200-209.
 
-If you used ProbeLasso function, you may use this one:
+If you used ProbeLasso function, please cite:
 
 > Butcher LM, Beck S. Probe lasso: A novel method to rope in differentially methylated regions with 450K dna methylation data. Methods. 2015;72:21-28.
 
-Or if you used [DMRcate](https://bioconductor.org/packages/release/bioc/html/DMRcate.html) function invented by Tim Peters, you may use paper below:
+Or if you used [DMRcate](https://bioconductor.org/packages/release/bioc/html/DMRcate.html) function, please cite:
 
 > Peters TJ, Buckley MJ, Statham AL, et al. De novo identification of differentially methylated regions in the human genome. Epigenetics & Chromatin. 2015;8(1):1-16.
 
-In this version of ChAMP, we provided a function to find Differential Methylation Blocks (DMB), this function is totally implemented by author of ChAMP, but the theory is based on below papers:
+In this version of ChAMP, we provided a function to find Differential Methylation Blocks (DMB). The reference should be:
 
-> Hansen, KD, Timp, W, Bravo, HC, Sabunciyan, S, Langmead, B, McDonald, OG, Wen, B, Wu, H, Liu, Y, Diep, D, Briem, E, Zhang, K, Irizarry, RA, Feinberg, AP (2011). Increased methylation variation in epigenetic domains across cancer types. Nat. Genet., 43, 8:768-75.
+> Hansen KD, Timp W, Bravo HC, et al. Increased methylation variation in epigenetic domains across cancer types. Nat Genet. 2011;43(8):768-775.
 
-For GSEA method, if you used "goseq" method, please cite below paper:
+> Timp W, Bravo HC, McDonald OG, et al. Large hypomethylated blocks as a universal defining epigenetic alteration in human solid tumors. Genome Med. 2014;6(8):61.
+
+For GSEA method, if you used 'gometh' method, please cite below paper:
 
 > Paul Geeleher, Lori Hartnett, Laurance J. Egan, Aaron Golden, Raja Affendi Raja Ali, and Cathal Seoighe Gene-set analysis is severely biased when applied to genome-wide methylation data Bioinformatics 2013 : btt311v2-btt311.
 
 > Young MD, Wakefield MJ, Smyth GK and Oshlack A (2010). "Gene ontology analysis for RNA-seq: accounting for selection bias." Genome Biology, 11, pp. R14.
 
-We incoporated [FEM](http://bioconductor.org/packages/release/bioc/html/FEM.html) package to find Differential Methylated Module among huge network. Below is the citation paper for FEM package:
+> Phipson, B, Maksimovic, J, Oshlack, A (2016). missMethyl: an R package for analyzing data from Illumina's HumanMethylation450 platform. Bioinformatics, 32, 2:286-8.
+
+If you used the [FEM](http://bioconductor.org/packages/release/bioc/html/FEM.html) package to find Differential Methylated Modules in gene networks, please cite:
 
 > Jiao Y, Widschwendter M, Teschendorff AE. A systems-level integrative framework for genome-wide dna methylation and gene expression data identifies differential gene expression modules under epigenetic control. Bioinformatics. 2014;30(16):2360-2366.
 
@@ -679,17 +753,9 @@ The CNA detection function was provided by Andy Feber of UCL, you may citate rel
 
 > Feber A, Guilhamon P, Lechner M, et al. Using high-density dna methylation arrays to profile copy number alterations. Genome Biol. 2014;15(2):R30.
 
-Just as above context says, we included two method for cell proportion correction, both are from Professor Houseman and his [RefFreeEWAS](https://cran.r-project.org/web/packages/RefFreeEWAS/index.html) package. If you used Refbase method in ChAMP, please citate following paper:
+We included two methods for cell proportion correction.  If you used the Refbase method in ChAMP, please cite:
 
 > Houseman EA, Accomando WP, Koestler DC, et al. DNA methylation arrays as surrogate measures of cell mixture distribution. BMC Bioinformatics. 2012;13(1):1-16.
-
-Or if you used RefFree method, you may want to citate below paper:
-
-> Houseman EA, Molitor J, Marsit CJ. Reference-free cell mixture adjustments in analysis of dna methylation data. Bioinformatics. 2014;30(10):1431-1439.
-
-Above are all citation paper involvded by ChAMP, please remember to add them into your paper so that other scientists's hard word would get proper evaluation and credits.
-
-Finally, all GUI function, and function not mentioned above, like filtering, imputation, preparation between functions, API are all coded by author of ChAMP. We are now prepared a paper for that now, hopefully you can citate a paper for that too soon.
 
 
 # References

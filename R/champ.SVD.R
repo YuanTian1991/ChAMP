@@ -1,7 +1,7 @@
 if(getRversion() >= "3.1.0") utils::globalVariables(c("myNorm","myLoad","ControlProbes"))
 
 champ.SVD <- function(beta=myNorm,
-                      rgSet=myLoad$rgSet,
+                      rgSet=NULL,
                       pd=myLoad$pd,
                       RGEffect=FALSE,
                       PDFplot=TRUE,
@@ -120,7 +120,7 @@ champ.SVD <- function(beta=myNorm,
     tmp.m <- beta-rowMeans(beta)
 	rmt.o <- EstDimRMTv2(tmp.m);
 	svd.o <- svd(tmp.m);
-    if(rmt.o$dim > 6) topPCA <- 6  else topPCA <- rmt.o$dim
+    if(rmt.o$dim > 20) topPCA <- 20  else topPCA <- rmt.o$dim
         
     svdPV.m <- matrix(nrow=topPCA,ncol=ncol(PhenoTypes.lv));
     colnames(svdPV.m) <- colnames(PhenoTypes.lv);
@@ -144,7 +144,7 @@ champ.SVD <- function(beta=myNorm,
         image(x=1:nrow(svdPV.m), y=1:ncol(svdPV.m), z=log10(svdPV.m), col=myPalette, breaks=breaks.v, xlab="", ylab="", axes=FALSE, main= "Singular Value Decomposition Analysis (SVD)");
         axis(1,at=1:nrow(svdPV.m),labels=paste("PC-",1:nrow(svdPV.m),sep=""),las=2);
         suppressWarnings(axis(2,at=1:ncol(svdPV.m),labels=colnames(svdPV.m),las=2));
-        legend(x=-3,y=5,legend=c(expression("p < 1x"~10^{-10}),expression("p < 1x"~10^{-5}),"p < 0.01", "p < 0.05", "p > 0.05"), fill=c("darkred","red","orange","pink","white"));    
+        legend(x=-(topPCA/2.5),y=3,legend=c(expression("p < 1x"~10^{-10}),expression("p < 1x"~10^{-5}),"p < 0.01", "p < 0.05", "p > 0.05"), fill=c("darkred","red","orange","pink","white"),par('usr')[2], par('usr')[4], xpd=NA);    
     }
     if(PDFplot)
     {
@@ -153,7 +153,7 @@ champ.SVD <- function(beta=myNorm,
         image(x=1:nrow(svdPV.m), y=1:ncol(svdPV.m), z=log10(svdPV.m), col=myPalette, breaks=breaks.v, xlab="", ylab="", axes=FALSE, main= "Singular Value Decomposition Analysis (SVD)");
         axis(1,at=1:nrow(svdPV.m),labels=paste("PC-",1:nrow(svdPV.m),sep=""),las=2);
         suppressWarnings(axis(2,at=1:ncol(svdPV.m),labels=colnames(svdPV.m),las=2));
-        legend(x=-3,y=5,legend=c(expression("p < 1x"~10^{-10}),expression("p < 1x"~10^{-5}),"p < 0.01", "p < 0.05", "p > 0.05"), fill=c("darkred","red","orange","pink","white"));    
+        legend(x=-(topPCA/2.5),y=3,legend=c(expression("p < 1x"~10^{-10}),expression("p < 1x"~10^{-5}),"p < 0.01", "p < 0.05", "p > 0.05"), fill=c("darkred","red","orange","pink","white"),par('usr')[2], par('usr')[4], xpd=NA,);    
         dev.off();
     }
 

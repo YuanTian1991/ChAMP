@@ -10,7 +10,6 @@ import(Illumina450ProbeVariants.db)
 import(wateRmelon)
 import(plyr)
 import(GenomicRanges)
-import(RefFreeEWAS)
 import(isva)
 import(qvalue)
 import(bumphunter)
@@ -27,9 +26,11 @@ import(IlluminaHumanMethylationEPICmanifest)
 import(FEM)
 import(impute)
 import(goseq)
+import(combinat)
 import(illuminaio)
 import(IlluminaHumanMethylationEPICanno.ilm10b2.hg19)
 import(rmarkdown)
+import(missMethyl)
 
 importFrom("utils", "read.csv")
 importFrom(RPMM, blc)
@@ -66,7 +67,6 @@ export(
 	champ.GSEA, 
 	champ.EpiMod,
     champ.CNA,
-    champ.reffree,
     champ.refbase,
     DMP.GUI,
     DMR.GUI,

@@ -42,8 +42,6 @@ This function allows the user to run the entire pipeline in one function. Argume
                   runCNA=TRUE,
                   control=TRUE,
                   controlGroup="champCtls",
-                  #---champ.reffree parameters below---#
-                  runRefFree=TRUE,
                   #---champ.refbase parameters below---#
                   runRefBase=FALSE,
                   #---universal settings---#
@@ -81,7 +79,6 @@ This function allows the user to run the entire pipeline in one function. Argume
     \item{runCNA}{If champ.CNA() should be run? (default = TRUE)}
     \item{control}{If champ.CNA() should be calculate copy number variance between case and control? (The other option for champ.CNA() is calculate copy number variance for each sample to the averaged value). (default = TRUE)}
     \item{controlGroup}{Which pheno should be treated as control group while running champ.CNA().(default = "champCtls")}
-    \item{runRefFree}{If champ.reffree() should be run? (default = TRUE)}
     \item{runRefBase}{If champ.refbase() should be run? (default = TRUE)}
     \item{compare.group}{Which two phenos should be compared in champ.DMP()?}
     \item{adjPVal}{The adjusted p value for each function's significant cutoff.}

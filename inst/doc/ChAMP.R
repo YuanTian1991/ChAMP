@@ -1,6 +1,6 @@
 ## ----eval=FALSE----------------------------------------------------------
 #  source("http://bioconductor.org/biocLite.R")
-#  biocLite(c("minfi","ChAMPdata","Illumina450ProbeVariants.db","sva","IlluminaHumanMethylation450kmanifest","limma","RPMM","DNAcopy","preprocessCore","impute","marray","wateRmelon","goseq","plyr","GenomicRanges","RefFreeEWAS","qvalue","isva","doParallel","bumphunter","quadprog","shiny","shinythemes","plotly","RColorBrewer","DMRcate","dendextend","IlluminaHumanMethylationEPICmanifest","FEM","matrixStats"))
+#  biocLite(c("minfi","ChAMPdata","Illumina450ProbeVariants.db","sva","IlluminaHumanMethylation450kmanifest","limma","RPMM","DNAcopy","preprocessCore","impute","marray","wateRmelon","goseq","plyr","GenomicRanges","RefFreeEWAS","qvalue","isva","doParallel","bumphunter","quadprog","shiny","shinythemes","plotly","RColorBrewer","DMRcate","dendextend","IlluminaHumanMethylationEPICmanifest","FEM","matrixStats","missMethyl","combinat"))
 
 ## ----eval=TRUE,message=FALSE, warning=FALSE------------------------------
 library("ChAMP")
@@ -35,8 +35,9 @@ knitr::include_graphics("Figure/ChAMP_Pipeline.png")
 #  myGSEA <- champ.GSEA()
 #  myEpiMod <- champ.EpiMod()
 #  myCNA <- champ.CNA()
-#  myRefFree <- champ.reffree()
+#  
 #  # If DataSet is Blood samples, run champ.refbase() here.
+#  myRefbase <- champ.refbase()
 
 ## ----eval=FALSE----------------------------------------------------------
 #  # myLoad <- champ.load(directory = testDir,arraytype="EPIC")
@@ -60,7 +61,6 @@ knitr::include_graphics("Figure/ChAMP_Pipeline.png")
 #  Block.GUI(arraytype="EPIC") # For this simulation data, not Differential Methylation Block is detected.
 #  myGSEA <- champ.GSEA(arraytype="EPIC")
 #  myEpiMod <- champ.EpiMod(arraytype="EPIC")
-#  myRefFree <- champ.reffree()
 #  
 #  # champ.CNA(arraytype="EPIC")
 #  # champ.CNA() function call for intensity data, which is not included in our Simulation data.
@@ -71,7 +71,6 @@ knitr::include_graphics("Figure/ChAMP_Pipeline.png")
 
 ## ----eval=FALSE----------------------------------------------------------
 #  myLoad <- champ.load(testDir)
-#  ## We are not running this code here because it cost about 1 minute.
 
 ## ----eval=TRUE-----------------------------------------------------------
 data(testDataSet)
@@ -93,7 +92,7 @@ knitr::include_graphics("Figure/CpGGUI.png")
 champ.QC()
 
 ## ----eval=FALSE----------------------------------------------------------
-#  QC.GUI(CpG=rownames(myLoad$beta),arraytype="450K")
+#  QC.GUI(beta=myLoad$beta,arraytype="450K")
 
 ## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
 knitr::include_graphics("Figure/QCGUI.jpg")
@@ -101,11 +100,14 @@ knitr::include_graphics("Figure/QCGUI.jpg")
 ## ----eval=FALSE----------------------------------------------------------
 #  myNorm <- champ.norm(beta=myLoad$beta,arraytype="450K",cores=5)
 
-## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
-knitr::include_graphics("Figure/BMIQ.jpg")
+## ----eval=FALSE----------------------------------------------------------
+#  champ.SVD(beta=myNorm,pd=myLoad$pd)
 
-## ----eval=TRUE,dpi=100,fig.width=8,fig.height=8,message=FALSE,warning=FALSE----
-champ.SVD(beta=myNorm,pd=myLoad$pd)
+## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
+knitr::include_graphics("Figure/Demo450KSVD.png")
+
+## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
+knitr::include_graphics("Figure/HannumSVD.png")
 
 ## ----eval=FALSE----------------------------------------------------------
 #  myCombat <- champ.runCombat(beta=myNorm,pd=myLoad$pd,batchname=c("Slide"))
@@ -113,11 +115,12 @@ champ.SVD(beta=myNorm,pd=myLoad$pd)
 ## ----eval=TRUE,warning=FALSE,message=FALSE-------------------------------
 myDMP <- champ.DMP(beta = myNorm,pheno=myLoad$pd$Sample_Group)
 
-## ----eval=TRUE-----------------------------------------------------------
-head(myDMP)
+## ----eval=FALSE----------------------------------------------------------
+#  head(myDMP[[1]])
 
 ## ----eval=FALSE----------------------------------------------------------
-#  DMP.GUI(DMP=myDMP,beta=myNorm,pheno=myLoad$pd$Sample_Group)
+#  DMP.GUI(DMP=myDMP[[1]],beta=myNorm,pheno=myLoad$pd$Sample_Group)
+#  # myDMP is a list now, each data frame is stored as myDMP[[1]], myDMP[[2]], myDMP[[3]]...
 
 ## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
 knitr::include_graphics("Figure/DMP-1.png")
@@ -132,13 +135,16 @@ knitr::include_graphics("Figure/DMP-3.png")
 knitr::include_graphics("Figure/DMP-4.png")
 
 ## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
-knitr::include_graphics("Figure/DMP-5.png")
+knitr::include_graphics("Figure/HannumDMPGUIplot.png")
+
+## ---- out.width = 800, fig.retina = NULL,echo=FALSE----------------------
+knitr::include_graphics("Figure/HannumDMPGUIplot-2.png")
 
 ## ----eval=FALSE----------------------------------------------------------
 #  myDMP <- champ.DMP(beta=myNorm, pheno=myLoad$pd$Sample_Group, compare.group=c("oxBS", "BS"))
 #  # In above code, you can set compare.group() as "oxBS" and "BS" to do DMP detection between hydroxymethylatio and normal methylation.
 #  
-#  hmc <- dmps[dmps$deltaBeta>0,]
+#  hmc <- myDMP[[1]][myDMP[[1]]$deltaBeta>0,]
 #  # Then you can use above code to extract hydroxymethylation CpGs.
 
 ## ----eval=FALSE,message=FALSE,warning=TRUE-------------------------------
@@ -182,7 +188,7 @@ knitr::include_graphics("Figure/Block-2.png")
 knitr::include_graphics("Figure/Block-3.png")
 
 ## ----eval=FALSE----------------------------------------------------------
-#  myGSEA <- champ.GSEA(beta=myNorm,DMP=myDMP,DMR=myDMR,arraytype="450K",adjPval=0.05)
+#  myGSEA <- champ.GSEA(beta=myNorm,DMP=myDMP[[1]], DMR=myDMR, arraytype="450K",adjPval=0.05, method="fisher")
 #  # myDMP and myDMR could (not must) be used directly.
 
 ## ----eval=TRUE-----------------------------------------------------------
@@ -205,12 +211,6 @@ knitr::include_graphics("Figure/EpiMod.jpg")
 knitr::include_graphics("Figure/CNAGroupPlot.jpg")
 
 ## ----eval=FALSE----------------------------------------------------------
-#  myRefFree <- champ.reffree(beta=myNorm,pheno=myLoad$pd$Sample_Group)
-
-## ----eval=TRUE-----------------------------------------------------------
-head(myRefFree$qvBeta)
-
-## ----eval=FALSE----------------------------------------------------------
 #  myRefBase <- champ.refbase(beta=myNorm,arraytype="450K")
-#  # Our test data set is not blood.
+#  # Our test data set is not whole blood. So it should not be run here.
 
