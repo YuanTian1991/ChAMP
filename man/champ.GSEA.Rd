@@ -14,7 +14,7 @@
                DMR=myDMR,
                CpGlist=NULL,
                Genelist=NULL,
-               method="gometh",
+               method="fisher",
                arraytype="450K",
                Rplot=TRUE,
                adjPval=0.05)
