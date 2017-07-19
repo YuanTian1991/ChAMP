@@ -12,8 +12,8 @@ A pipeline that enables pre-processing of 450K or EPIC data, a selection of norm
 \tabular{ll}{
 Package: \tab ChAMP\cr
 Type: \tab Package\cr
-Version: \tab 1.10.2\cr
-Date: \tab 2016-08-24\cr
+Version: \tab 2.9.6\cr
+Date: \tab 2017-07-19\cr
 License: \tab GPL-3\cr
 }
 The full analysis pipeline can be run with all defaults using champ.process()
@@ -49,7 +49,6 @@ Yuan Tian, Tiffany Morris, Lee Stirling, Andy Feber, Andrew Teschendorff, Ankur 
     myGSEA <- champ.GSEA()
     myEpiMod <- champ.EpiMod()
     myCNA <- champ.CNA()
-    myRefFree <- champ.reffree()
     myRefbase <- champ.refbase() ### for blood sample only
 
     CpG.GUI()
