@@ -25,7 +25,11 @@ champ.import <- function(directory = getwd(),
 
      message("  Reading CSV File")
 
-     suppressWarnings(pd <- read.csv(csvfile,skip=which(substr(readLines(csvfile),1,6) == "[Data]"),stringsAsFactor=FALSE,header=TRUE))
+     skipline <- which(substr(readLines(csvfile),1,6) == "[Data]")
+     if(length(skipline)==0)
+         suppressWarnings(pd <- read.csv(csvfile,stringsAsFactor=FALSE,header=TRUE))
+     else
+         suppressWarnings(pd <- read.csv(csvfile,skip=skipline,stringsAsFactor=FALSE,header=TRUE))
      
      if("Sentrix_Position" %in% colnames(pd))
      {

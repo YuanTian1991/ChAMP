@@ -2,6 +2,12 @@
 \title{ChAMP News}
 \encoding{UTF-8}
 
+\section{Version 2.8.7}{
+  \itemize{
+    \item Make champ.import() more robust for modifed csv file.
+  }
+}
+
 \section{Version 2.8.5}{
   \itemize{
     \item champ.DMP() works on numeric variable now
