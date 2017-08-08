@@ -62,7 +62,7 @@ champ.norm <- function(beta=myLoad$beta,
 	}else if(method=="FunctionalNormalization")
     {
         if(is.null(rgSet)) stop("rgSet not found, it is required for FunctionalNormalization")
-        if(arraytype=="EPIC") rgSet@annotation[2] <- "ilm10b2.hg19"
+        if(arraytype=="EPIC") rgSet@annotation[2] <- "ilm10b3.hg19"
         beta.p <- getBeta(preprocessFunnorm(rgSet))[rownames(beta),]
     }else
     {

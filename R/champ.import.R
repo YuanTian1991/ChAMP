@@ -76,7 +76,7 @@ champ.import <- function(directory = getwd(),
      {
          message("\n  !!! Important !!! ")
          message("  Seems your IDAT file not from one Array, because they have different numbers of probe.")
-         stop("  ChAMP can not deal with mix Array, please reorganize your data.\n")
+         message("  ChAMP can not deal with mix Array, please reorganize your data.\n")
      }
 
      CombineIDAT <- append(G.idats, R.idats)
@@ -87,8 +87,8 @@ champ.import <- function(directory = getwd(),
      RedMean <- do.call(cbind, lapply(R.idats, function(xx) xx$Quants[commonAddresses, "Mean"]))
      message("    Your Red Green Channel contains ",nrow(GreenMean)," probes.")
 
-     G.Load <- do.call(cbind,lapply(G.idats,function(x) x$Quants[,"Mean"]))
-     R.Load <- do.call(cbind,lapply(R.idats,function(x) x$Quants[,"Mean"]))
+     G.Load <- do.call(cbind,lapply(G.idats,function(x) x$Quants[commonAddresses,"Mean"]))
+     R.Load <- do.call(cbind,lapply(R.idats,function(x) x$Quants[commonAddresses,"Mean"]))
 
      message("[ Section 2: Read IDAT Files Done ]")
 
