@@ -19,25 +19,28 @@ vignette: >
 
 # New Updates
 
-> **If you are using version above 2.8.3, note that you MUST install [latest ChAMPdata package(version 2.8.1)](https://bioconductor.org/packages/release/data/experiment/html/ChAMPdata.html) to make new ChAMP works.**
 
-1: **champ.DMP() works on numeric variable now:** Now champ.DMP() would works on numeric variable like age, you can set "pheno" parameter in champ.DMP() function to make it detect numeric variable related CpGs.
+> **If you are using ChAMP version above 2.8.3, note that you MUST install [latest ChAMPdata package(version 2.8.1)](https://bioconductor.org/packages/release/data/experiment/html/ChAMPdata.html) to make new ChAMP works.**
 
-2: **champ.DMP() do pairewise comparison between each two categorical phenotypes:** Previously champ.DMP() can only works on two phenotypes, if you have multiple phenotypes in your covariate, you need to set parameters "compare.group" to do comparison between any two of them. Now champ.DMP() would works on each pair of them return a list containing all results.
+1: **Added parameter "force" in champ.load().** "force" is a parameter in minfi's read.meth.exp() function, when your dataset comes from various batches, force parameter would allow read.meth.exp() function to extract common probes across all batches and do analysis.
 
-3: **goseq was replaced by gometh:** Previously we use goseq to do CpG number corrected GSEA, now we used another implementation of goseq algotithm. gometh is published in missMethyl package and also use numbers of CpGs to do correction when doing GSEA.
+2: **champ.DMP() works on numeric variable now:** Now champ.DMP() would works on numeric variable like age, you can set "pheno" parameter in champ.DMP() function to make it detect numeric variable related CpGs.
 
-4: **[missMethyl](https://bioconductor.org/packages/release/bioc/html/missMethyl.html) and [combinat](https://cran.r-project.org/web/packages/combinat/index.html) pacakges are needed now:** Since we used some new functions like gometh and combn in our package, we need these two packages added in our import list. You may use command: `source("https://bioconductor.org/biocLite.R");biocLite("missMethyl","combinat")` to install them.
+3: **champ.DMP() do pairewise comparison between each two categorical phenotypes:** Previously champ.DMP() can only works on two phenotypes, if you have multiple phenotypes in your covariate, you need to set parameters "compare.group" to do comparison between any two of them. Now champ.DMP() would works on each pair of them return a list containing all results.
 
-5: **DMP.GUI() is modified:** Now DMP.GUI() function would automatically detect your pheno parameter's type, if it's "numeric", scatter plot would plotted on CpG plot, while for "character" or "factor" type, boxplot would be plotted.
+4: **goseq was replaced by gometh:** Previously we use goseq to do CpG number corrected GSEA, now we used another implementation of goseq algotithm. gometh is published in missMethyl package and also use numbers of CpGs to do correction when doing GSEA.
 
-6: **SVD plot added legend:** We now added legend of color in SVD plot.
+5: **[missMethyl](https://bioconductor.org/packages/release/bioc/html/missMethyl.html) and [combinat](https://cran.r-project.org/web/packages/combinat/index.html) pacakges are needed now:** Since we used some new functions like gometh and combn in our package, we need these two packages added in our import list. You may use command: `source("https://bioconductor.org/biocLite.R");biocLite("missMethyl","combinat")` to install them.
 
-7: **"minfi" loading method fixed:** Previously "minfi" function was not working because of beadcount() function from wateRmelon failed to get beads information from rgSet object, which might be caused by upgrading conflict between minfi and wateRmelon. Now we fixed this issue and old "minfi" loading method works now. You may set parameter method in champ.load() function to use your prefered way to load data.
+6: **DMP.GUI() is modified:** Now DMP.GUI() function would automatically detect your pheno parameter's type, if it's "numeric", scatter plot would plotted on CpG plot, while for "character" or "factor" type, boxplot would be plotted.
 
-8: **vignette of ChAMP and github Demo pages updated:** We spend lots of work to upgrade ChAMP vignette here. Also added more latest Demo result on our [github Demo page](https://github.com/JoshuaTian/ChAMPDemos).
+7: **SVD plot added legend:** We now added legend of color in SVD plot.
 
-9: **Added some figures from GSE40279 in vignette.** Since your 450K demo data does not contain any numeric variable, we use GSE40279 here to show performance of champ.SVD() and DMP.GUI() in this vignette.
+8: **"minfi" loading method fixed:** Previously "minfi" function was not working because of beadcount() function from wateRmelon failed to get beads information from rgSet object, which might be caused by upgrading conflict between minfi and wateRmelon. Now we fixed this issue and old "minfi" loading method works now. You may set parameter method in champ.load() function to use your prefered way to load data.
+
+9: **vignette of ChAMP and github Demo pages updated:** We spend lots of work to upgrade ChAMP vignette here. Also added more latest Demo result on our [github Demo page](https://github.com/JoshuaTian/ChAMPDemos).
+
+10: **Added some figures from GSE40279 in vignette.** Since your 450K demo data does not contain any numeric variable, we use GSE40279 here to show performance of champ.SVD() and DMP.GUI() in this vignette.
 
 # Introduction
 

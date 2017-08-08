@@ -23,6 +23,7 @@ champ.load(directory = getwd(),
            population=NULL,
            filterMultiHit=TRUE,
            filterXY=TRUE,
+           force=FALSE,
            arraytype="450K")
 }
 
@@ -43,6 +44,7 @@ champ.load(directory = getwd(),
     \item{population}{If you want to do filtering on specifical populations you may assign this parameter as one of "AFR","EAS"... The full list of population is in http://www.internationalgenome.org/category/population/. (default = TRUE)}
   	\item{filterMultiHit}{If filterMultiHit=TRUE, probes in which the probe aligns to multiple locations with bwa as defined in Nordlund et al are removed.(default = TRUE)}
 	\item{filterXY}{If filterXY=TRUE, probes from X and Y chromosomes are removed.(default = TRUE)}
+	\item{force}{A parameter in minfi's read.metharray.exp function, if your arrays are not coming from same batch, force parameter would allow you to select their common probes and do analysis on them.(default = FALSE)}
 	\item{arraytype}{Choose microarray type is "450K" or "EPIC".(default = "450K")}
 }
 

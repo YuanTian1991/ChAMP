@@ -76,7 +76,7 @@ champ.import <- function(directory = getwd(),
      {
          message("\n  !!! Important !!! ")
          message("  Seems your IDAT file not from one Array, because they have different numbers of probe.")
-         message("  champ.import would continue to load COMMON Probe exists across all samples.\n")
+         stop("  ChAMP can not deal with mix Array, please reorganize your data.\n")
      }
 
      CombineIDAT <- append(G.idats, R.idats)

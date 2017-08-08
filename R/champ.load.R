@@ -15,6 +15,7 @@ champ.load <- function(directory = getwd(),
                        population=NULL,
                        filterMultiHit=TRUE,
                        filterXY=TRUE,
+                       force=FALSE,
                        arraytype="450K")
 {
     message("[===========================]")
@@ -71,7 +72,7 @@ champ.load <- function(directory = getwd(),
 	
     myDir <- directory
     suppressWarnings(targets <- read.metharray.sheet(myDir))
-    rgSet <- read.metharray.exp(targets = targets,extended=TRUE)
+    rgSet <- read.metharray.exp(targets = targets,extended=TRUE,force=force)
     if(arraytype=="EPIC") rgSet@annotation <- c(array="IlluminaHumanMethylationEPIC",annotation="ilmn10.hg19")
 
 	sampleNames(rgSet)=rgSet[[1]]

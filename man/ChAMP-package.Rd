@@ -12,7 +12,7 @@ A pipeline that enables pre-processing of 450K or EPIC data, a selection of norm
 \tabular{ll}{
 Package: \tab ChAMP\cr
 Type: \tab Package\cr
-Version: \tab 2.9.6\cr
+Version: \tab 2.8.6\cr
 Date: \tab 2017-07-19\cr
 License: \tab GPL-3\cr
 }

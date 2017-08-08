@@ -2,6 +2,12 @@
 \title{ChAMP News}
 \encoding{UTF-8}
 
+\section{Version 2.8.8}{
+  \itemize{
+    \item Added "force" parameter in champ.load(), which can be used for "minfi" loading method, if your data comes from different arrays, force parameter would allow minfi's read.meth.exp function to extract their commmon probes and continue analysis.
+  }
+}
+
 \section{Version 2.8.7}{
   \itemize{
     \item Make champ.import() more robust for modifed csv file.
