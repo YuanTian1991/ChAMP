@@ -1,5 +1,25 @@
 c(bibentry(bibtype = "Article",
            key = "champ",
+           title = "{ChAMP: updated methylation analysis pipeline for Illumina BeadChips}",
+           author = c(
+           person(c("Yuan","Tian"),
+           person(c("Tiffany", "J."), "Morris"),
+           person(c("Amy", "P"), "Webster"),
+           person("Zhen", "Yang"),
+           person("Stephan", "Beck")
+           person("Feber", "Andrew"),
+           person(c("Andrew", "E."), "Teschendorff"),
+           ),
+           year = 2017,
+           journal = "Bioinformatics",
+           volume = "",
+           number = "3",
+           pages = "btx513",
+           doi = "10.1093/bioinformatics/btx513",
+           pubmed = "24336642"),
+
+  bibentry(bibtype = "Article",
+           key = "champ",
            title = "{ChAMP: 450k Chip Analysis Methylation Pipeline}",
            author = c(
            person(c("Tiffany", "J."), "Morris"),

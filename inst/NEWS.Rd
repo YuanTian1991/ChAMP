@@ -2,6 +2,14 @@
 \title{ChAMP News}
 \encoding{UTF-8}
 
+\section{Version 2.8.10}{
+  \itemize{
+    \item ChAMP paper get published on Bioinformatics.
+    \item Fixed CSS problem in vignette, it's actually not a bug!.
+  }
+}
+
+
 \section{Version 2.8.8}{
   \itemize{
     \item Added "force" parameter in champ.load(), which can be used for "minfi" loading method, if your data comes from different arrays, force parameter would allow minfi's read.meth.exp function to extract their commmon probes and continue analysis.
