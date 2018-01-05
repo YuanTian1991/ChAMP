@@ -76,11 +76,6 @@ champ.SVD <- function(beta=myNorm,
 
     PhenoTypes.lv_tmp <- pd[,!colnames(pd) %in% c("Sample_Name","Project","filenames","Basename") & apply(pd,2,function(x) length(unique(x)))!=1]
     PhenoTypes.lv <- PhenoTypes.lv_tmp
-    for(i in ncol(PhenoTypes.lv_tmp))
-    {
-        if(class(PhenoTypes.lv_tmp[,i])!="numeric")
-            PhenoTypes.lv[,i] <- as.factor(as.numeric(as.factor(PhenoTypes.lv_tmp[,i])))
-    }
 
     if(!is.null(rownames(pd))) rownames(PhenoTypes.lv) <- rownames(pd)
 
