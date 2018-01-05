@@ -2,7 +2,7 @@
 \title{ChAMP News}
 \encoding{UTF-8}
 
-\section{Version 2.9.11}{
+\section{Version 2.9.10}{
     \itemize{
         \item ChAMP paper get published on Bioinformatics.
         \item Fixed CSS problem in vignette, it's actually not a bug!.
