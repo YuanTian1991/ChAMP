@@ -33,12 +33,12 @@
 }
 \value{
     For fisher Method:
-    \item{Block}{A data.frame contains all detected Blocks, with colnames as chr, start, end, value, area, cluster, indexStart, indexEnd, L, clusterL, p.value, fwer, p.valueArea, fwerArea. The result format is actually the same as Bumphunter, you may refer to Bumphunter packages to get more explaination about the result.}
-    \item{clusterInfo}{When champ.Block() detection significant Blocks, a group of candidate Blocks would be detected out at first, this is the data frame of all candidate Blocks. The "TRUE" Blocks in above value are located in these candidate Blocks.} 
-    \item{allCLID.v}{The first step of detectiong methylation Blocks is to get each probes into a cluster(region). This value is the clustering result of each probes.}
-    \item{avbetaCL.m}{The beta matrix for each cluster. The value is calculated by taking mean value of all probes located in each cluster.}
-    \item{posCL.m}{Position of each cluster, which is calculated by average all probes' position in each cluster.}
-    \item{adjPval}{P value cutoff for calculated GSEA results. (default = 0.05)}
+    \item{Genelist}{List of pathway we get by enriching genes onto annotation database.}
+    \item{nOVLAP}{Number of genes overlapped in your significant gene list and annotated pathways.}
+    \item{OR}{Odds Ratio calculated for each enrichment.}
+    \item{P-value}{Significance calculated from fisher exact test.}
+    \item{adjPval}{Adjusted P value from "BH" method.}
+    \item{Genes}{Name of genes enriched in each pathway.}
 
     For gometh method, the returned value are:
     \item{category}{GO pathway's index.}
