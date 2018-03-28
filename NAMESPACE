@@ -31,6 +31,8 @@ import(illuminaio)
 import(IlluminaHumanMethylationEPICanno.ilm10b2.hg19)
 import(rmarkdown)
 import(missMethyl)
+import(Hmisc)
+import(globaltest)
 
 importFrom("utils", "read.csv")
 importFrom(RPMM, blc)
@@ -65,6 +67,7 @@ export(
 	champ.DMR, 
 	champ.Block, 
 	champ.GSEA, 
+    champ.ebayGSEA,
 	champ.EpiMod,
     champ.CNA,
     champ.refbase,

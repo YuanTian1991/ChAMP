@@ -566,11 +566,13 @@ Gene Set Enrichment Analysis is a very important step for most bioinformatics wo
 
 champ.GSEA() would automatically extract genes in `myDMP` and `myDMR` (No matter what method you have used to generate DMRs). Also if you have your own significant CpG list or gene list calculated from `THE SAME` methylation arrays (450K or EPIC) by other method not included in ChAMP. You may also format them into `list` and input the function to do GSEA (Please assign each element in your own CpG list or gene list a name, otherwise error might be triggered). champ.GSEA() would automatically extract gene information, transfer CpG information into gene information then conduct GSEA on each list. During the mapping process between CpGs to genes, if there are multiple CpGs mapped to one gene, that gene would only be counted once in case of over counting.
 
-There are two ways to do GSEA. In previous version, ChAMP used pathway information downloaded from [MSigDB](http://software.broadinstitute.org/gsea/msigdb/index.jsp). Then **Fisher Exact Test** will be used to calculate the enrichment status of each pathway. After gene enrichment analysis, champ.GSEA() function would automatically return pathways with P-value smaller then adjPval cutoff.
+There are three ways to do GSEA. In previous version, ChAMP used pathway information downloaded from [MSigDB](http://software.broadinstitute.org/gsea/msigdb/index.jsp). Then **Fisher Exact Test** will be used to calculate the enrichment status of each pathway. After gene enrichment analysis, champ.GSEA() function would automatically return pathways with P-value smaller then adjPval cutoff.
 
 However, as pointed out by Geeleher [citation], since different genes has different numbers of CpGs contained inside, the two situation that one genes with 50 CpGs inside but only one of them show significant methylation, and one gene with 2 CpGs inside but two are significant methylated should not be eaqualy treated. The solution is use number of CpGs contained by genes to correct significant genes. as implemented in the gometh function from missMethyl package [@Phipson2016]. In gometh function, it used number of CpGs contained by each gene replace length as biased data, to correct this issue. The idea of gometh is fitting a curve for numbers of CpGs across genes related with GSEA, then using the probability weighting function to correct GO's p value.
 
-> Note: If user want to correct the biased caused between genes' number and CpGs' number, they may set **method** parameter in champ.GSEA() function as "goseq" to use goseq method to do GSEA, or user may set it as "fisher" to do normal Gene Set Enrichment Analysis.
+In latest version, we incoporated a new empirical bayes GSEA method into champ.GSEA() function, which is short for "ebayes" in "method" parameter. This method would not relying on DMP or DMR result to do GSEA, but instead would use global test to directly find significant genes, with the bias of inequality of CpG number corrected for each genes. Also this method considered the significant degree of of each CpG, thus user may use this method to detect some marginal significant genes for GSEA process.
+
+> Note: If you want to fix bias from inequality of CpG number of genes, and take significant level of CpGs into consideration, you could set "method" parameter as "ebayes" to use empirical bayes method. Otherwise, you may use "gometh" method or "fisher" method to do GSEA as well.
 
 User may use following command to do GSEA:
 
@@ -589,6 +591,16 @@ head(myGSEA$DMR)
 # Above is the GSEA result for differential methylation regions.
 # Too many information may be printed, so we are not going to show the result here.
 ```
+
+### Empirical Bayes GSEA method
+
+As we introduced before, ChAMP now incorporated a new method called "ebayes" in champ.GSEA(), this method is different from most other GSEA method because it does not need DMP or DMR information. Thus actually users could run this method separately from champ.GSEA(). We provided champ.ebayGSEA() function in ChAMP, for users who want to directly do GSEA from normalized beta matrix and phenotype. Like below:
+
+```{r eval=FALSE}
+myebayGSEA <- champ.ebayGSEA(beta=myNorm,pheno=myLoad$pd$Sample_Group,arraytype="450K")
+```
+This is a promising GSEA method, without bias from number of CpGs enriched in genes, or significant level of CpGs.
+
 ##Differential Methylated Interaction Hotspots
 
 Another function included in ChAMP is champ.EpiMod(). This function uses [FEM](https://www.bioconductor.org/packages/devel/bioc/html/FEM.html)  package to infer differentially methylated gene modules within a user-specific functional gene-network. This network could be e.g. a protein-protein interaction network. Thus, the champ.EpiMod() function can be viewed as a functional supervised algorithm, which uses a network of relations between genes (usually a PPI network), to identify subnetworks where a significant number of genes are associated with a phenotype of interest (POI). The EpiMod algorithm can be run in two different modes: at the probe level, in which case the most differentially methylated probe is assigned to each gene, or at the gene-level in which case a DNAm value is assigned to each gene using an optimized procedure described in detail in Jiao Y, Widschwendter M, Teschendorff AE Bioinformatics 2014. Originally, the FEM package was developed to infer differentially methylated gene modules which are also deregulated at the gene expression level, however here we only provide the EpiMod version, which only infers differentially methylated modules. More advanced user may refer to FEM package for more information.

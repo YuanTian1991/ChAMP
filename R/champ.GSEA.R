@@ -5,6 +5,7 @@ champ.GSEA <- function(beta=myNorm,
                        DMR=myDMR,
                        CpGlist=NULL,
                        Genelist=NULL,
+                       pheno=myLoad$pd$Sample_Group,
                        method="fisher",
                        arraytype="450K",
                        Rplot=TRUE,
@@ -207,8 +208,20 @@ champ.GSEA <- function(beta=myNorm,
             A <- tmp[tmp$FDR <= adjPval,]
             listsummary.lm[[i]] <- A[order(A$FDR),]
         }
+    } else if (method=="ebayes") {
+        message("<< ebayes GSEA method  >>")
+        message("ebayes GSEA method would do GSEA based on global test on all CpG sites, thus you don't need to provide any DMP or DMR here, but instead, please assign pheno parameter.")
+        if(is.null(pheno)) stop("Pheno parameter is required for ebayes GSEA method.")
+
+        if(class(pheno)=="numeric") {
+            message("  pheno parameter is continues variable, linear method would be used when calculating ebayes GSEA.")
+        } else if (class(pheno) %in% c("character","factor")) {
+            if(length(table(pheno) == 2)) message("  pheno parameter is category variable, logistic method would be ued when calculating ebayes GSEA.")
+            else stop("If your pheno parameter is category variable, only two phenotypes are allowed, say Cancer vs Normal, please modify your data set.")
+        }
+        listsummary.lm <- champ.ebayGSEA(beta=beta,pheno=pheno,adjPval=adjPval,arraytype=arraytype)
     } else {
-        stop(" You must assign method parameter as fisher or gometh.")
+        stop(" You must assign method parameter as fisher, gometh or ebayes.")
     }
 
     message("[<<<<< ChAMP.GSEA END >>>>>>]")
