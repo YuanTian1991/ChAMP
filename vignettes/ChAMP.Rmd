@@ -601,7 +601,8 @@ myebayGSEA <- champ.ebayGSEA(beta=myNorm,pheno=myLoad$pd$Sample_Group,arraytype=
 ```
 This is a promising GSEA method, without bias from number of CpGs enriched in genes, or significant level of CpGs.
 
-##Differential Methylated Interaction Hotspots
+
+## Differential Methylated Interaction Hotspots
 
 Another function included in ChAMP is champ.EpiMod(). This function uses [FEM](https://www.bioconductor.org/packages/devel/bioc/html/FEM.html)  package to infer differentially methylated gene modules within a user-specific functional gene-network. This network could be e.g. a protein-protein interaction network. Thus, the champ.EpiMod() function can be viewed as a functional supervised algorithm, which uses a network of relations between genes (usually a PPI network), to identify subnetworks where a significant number of genes are associated with a phenotype of interest (POI). The EpiMod algorithm can be run in two different modes: at the probe level, in which case the most differentially methylated probe is assigned to each gene, or at the gene-level in which case a DNAm value is assigned to each gene using an optimized procedure described in detail in Jiao Y, Widschwendter M, Teschendorff AE Bioinformatics 2014. Originally, the FEM package was developed to infer differentially methylated gene modules which are also deregulated at the gene expression level, however here we only provide the EpiMod version, which only infers differentially methylated modules. More advanced user may refer to FEM package for more information.
 
@@ -620,7 +621,7 @@ knitr::include_graphics("Figure/EpiMod.jpg")
 
 Above we demonstrated four modules detect by champ.EpiMod() based on our small 450K test data. But in practice, each modules would be saved in to a pdf file individually in resultsDir directory.
 
-##Copy Number Variation
+## Copy Number Variation
 
 For Copy Number Variation analysis, we provide champ.CNA() to achieve this work. This function uses the HumanMethylation450 or HumanMethylationEPIC data to identify copy number alterations [@Feber14]. The function utilises the intensity values for each probe to count copy number and determine if copy number alterations are present. Copy number is determined using the CopyNumber package.
 
