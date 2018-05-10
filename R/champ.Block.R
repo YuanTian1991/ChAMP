@@ -16,7 +16,7 @@ champ.Block <- function(beta=myNorm,
 
     #############  ConstResgion.R  ################
     if(arraytype=="EPIC"){
-        RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylationEPIC",annotation = "ilm10b2.hg19"))
+        RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylationEPIC",annotation = "ilm10b4.hg19"))
     }else{
         RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylation450k",annotation = "ilmn12.hg19"))
     }

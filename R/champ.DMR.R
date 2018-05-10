@@ -80,7 +80,7 @@ champ.DMR <- function(beta=myNorm,
     message("\n[ Section 2:  Run DMR Algorithm Start ]\n")
 
     if(arraytype=="EPIC"){
-        RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylationEPIC",annotation = "ilm10b2.hg19"))
+        RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylationEPIC",annotation = "ilm10b4.hg19"))
     }else{
         RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylation450k",annotation = "ilmn12.hg19"))
     }
@@ -327,7 +327,7 @@ champ.DMR <- function(beta=myNorm,
         if(arraytype == "450K"){
             myannotation <- cpg.annotate(datatype="array",fdr=fdr, myMs,design=design,coef=ncol(design), analysis.type="differential",annotation=c(array = "IlluminaHumanMethylation450k", annotation = "ilmn12.hg19"),what="M")
         } else{
-            myannotation <- cpg.annotate(datatype="array",fdr=fdr, myMs,design=design,coef=ncol(design), analysis.type="differential",annotation=c(array = "IlluminaHumanMethylationEPIC", annotation = "ilm10b2.hg19"),what="M")
+            myannotation <- cpg.annotate(datatype="array",fdr=fdr, myMs,design=design,coef=ncol(design), analysis.type="differential",annotation=c(array = "IlluminaHumanMethylationEPIC", annotation = "ilm10b4.hg19"),what="M")
         }
         M <- do.call("cbind", lapply(myannotation, as.data.frame))
         colnames(M) <- names(myannotation)

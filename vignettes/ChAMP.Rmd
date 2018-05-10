@@ -1,6 +1,6 @@
 ---
 title: "The Chip Analysis Methylation Pipeline"
-author: Yuan Tian, Morris TJ, Butcher L, Feber A, Teschendorff A, Chakravarthy A, Beck S <br>
+author: Yuan Tian, Tiffany J Morris, Amy P Webster, Zhen Yang, Stephan Beck, Andrew Feber, and Andrew E Teschendorff <br>
 date: "`r Sys.Date()`"
 csl: academic-medicine.csl
 bibliography: ChAMP.bib

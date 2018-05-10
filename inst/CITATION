@@ -2,7 +2,7 @@ c(bibentry(bibtype = "Article",
            key = "champ",
            title = "{ChAMP: updated methylation analysis pipeline for Illumina BeadChips}",
            author = c(
-           person(c("Yuan","Tian"),
+           person("Yuan", "Tian"),
            person(c("Tiffany", "J."), "Morris"),
            person(c("Amy", "P"), "Webster"),
            person("Zhen", "Yang"),

@@ -104,14 +104,15 @@ champ.CNA <- function(intensity=myLoad$intensity,
 	{
         message("<< Processing Groups >>")
         if(control) groups <- setdiff(unique(pheno),controlGroup) else groups <- unique(pheno)	
+        tmp_pheno <- pheno[pheno %in% groups]
 		for(g in 1:length(groups))
 		{
 		
-			data_group=intsqnlogratio[,which(pheno == groups[g])]
-			ints_group=ints[,which(pheno == groups[g])]
+			data_group=intsqnlogratio[,which(tmp_pheno == groups[g])]
+			ints_group=ints[,which(tmp_pheno == groups[g])]
 			row.names(ints_group)=row.names(ints)
 	
-			group.CNA.object <- CNA(data_group, CHR, MAPINFO,data.type = "logratio", sampleid = paste(paste(colnames(data_group),pheno[which(pheno == groups[g])]),"qn"))
+			group.CNA.object <- CNA(data_group, CHR, MAPINFO,data.type = "logratio", sampleid = paste(paste(colnames(data_group),tmp_pheno[which(tmp_pheno == groups[g])]),"qn"))
 			group.smoothed.CNA.object <- smooth.CNA(group.CNA.object)
 			group.segment.smoothed.CNA.object <- segment(group.smoothed.CNA.object, verbose = 1,alpha=0.001, undo.splits="sdundo", undo.SD=2)
             seg <- group.segment.smoothed.CNA.object$output
