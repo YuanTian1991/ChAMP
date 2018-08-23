@@ -65,7 +65,7 @@ champ.GSEA <- function(beta=myNorm,
             }else if(class(CpGlist)=="list")
             {
                 if(names(CpGlist) %in% c("DMP","DMR","CpG","Gene")) stop("Your CpG list can not contain names as follows: \"DMP\",\"DMR\",\"CpG\",\"Gene\".")
-                if(names(CpGlist)==NULL | length(is.na(names(CpGlist)))!=0) stop("Please specify your CpG list names.")
+                if(names(CpGlist)==NULL | sum(is.na(names(CpGlist)))!=0) stop("Please specify your CpG list names.")
                 cpg.tmp <- lapply(CpGlist,function(x) unique(unlist(sapply(RSanno[x,"UCSC_RefGene_Name"],function(x) strsplit(x,split=";")[[1]]))))
                 loi.lv <- c(loi.lv,cpg.tmp)
             }else
@@ -81,7 +81,7 @@ champ.GSEA <- function(beta=myNorm,
             }else if(class(Genelist)=="list")
             {
                 if(names(Genelist) %in% c("DMP","DMR","CpG","Gene")) stop("Your Gene list can not contain names as follows: \"DMP\",\"DMR\",\"CpG\",\"Gene\".")
-                if(names(Genelist)==NULL | length(is.na(names(Genelist)))!=0) stop("Please specify your Gene list names.")
+                if(names(Genelist)==NULL | sum(is.na(names(Genelist)))!=0) stop("Please specify your Gene list names.")
                 loi.lv <- c(loi.lv,Genelist)
             }else
             {
