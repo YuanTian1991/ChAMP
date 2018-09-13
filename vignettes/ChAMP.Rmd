@@ -37,18 +37,20 @@ It is essential that you have `R 3.3` or above already installed on your compute
 After you have R and Bioconductor installed properly, you can start to install ChAMP. The easiest way to install it is by typing following code into your **R session**:
 
 ```{bash eval=FALSE}
-source("https://bioconductor.org/biocLite.R")
-biocLite("ChAMP")
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install("ChAMP")
 ```
 
 If you have any problems with Bioconductor, another option is to install **ALL** dependent packages, then install ChAMP. There are a lot if packages relied on by ChAMP. You can use the following command in R to install most of them:
 
 ```{r eval=FALSE}
-source("http://bioconductor.org/biocLite.R")
-biocLite(c("minfi","ChAMPdata","Illumina450ProbeVariants.db","sva","IlluminaHumanMethylation450kmanifest","limma","RPMM","DNAcopy","preprocessCore","impute","marray","wateRmelon","goseq","plyr","GenomicRanges","RefFreeEWAS","qvalue","isva","doParallel","bumphunter","quadprog","shiny","shinythemes","plotly","RColorBrewer","DMRcate","dendextend","IlluminaHumanMethylationEPICmanifest","FEM","matrixStats","missMethyl","combinat"))
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install(c("minfi","ChAMPdata","Illumina450ProbeVariants.db","sva","IlluminaHumanMethylation450kmanifest","limma","RPMM","DNAcopy","preprocessCore","impute","marray","wateRmelon","goseq","plyr","GenomicRanges","RefFreeEWAS","qvalue","isva","doParallel","bumphunter","quadprog","shiny","shinythemes","plotly","RColorBrewer","DMRcate","dendextend","IlluminaHumanMethylationEPICmanifest","FEM","matrixStats","missMethyl","combinat"))
 ```
 
-When you are installing ChAMP, you may encounter some errors saying that some packages are not installed. These errors are caused by recursively depending on R packages, for example, ChAMP uses minfi, minfi uses lumi, and lumi uses other packages, so if lumi was not installed on your computer, ChAMP would fail. To solve these errors, you simply need to check those error messages, find out which packages required are missing, then install it with command `biocLite("YourErrorPackage")` directly. Then retry installing ChAMP, it may take 3-4 times, but eventually it should work.
+When you are installing ChAMP, you may encounter some errors saying that some packages are not installed. These errors are caused by recursively depending on R packages, for example, ChAMP uses minfi, minfi uses lumi, and lumi uses other packages, so if lumi was not installed on your computer, ChAMP would fail. To solve these errors, you simply need to check those error messages, find out which packages required are missing, then install it with command `BiocManager::install("YourErrorPackage")` directly. Then retry installing ChAMP, it may take 3-4 times, but eventually it should work.
 
 > **If you are using ChAMP version above 2.8.3, note that you MUST install [latest ChAMPdata package(version 2.8.1)](https://bioconductor.org/packages/release/data/experiment/html/ChAMPdata.html) to make new ChAMP works.**
 
