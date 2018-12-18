@@ -572,7 +572,7 @@ There are three ways to do GSEA. In previous version, ChAMP used pathway informa
 
 However, as pointed out by Geeleher [citation], since different genes has different numbers of CpGs contained inside, the two situation that one genes with 50 CpGs inside but only one of them show significant methylation, and one gene with 2 CpGs inside but two are significant methylated should not be eaqualy treated. The solution is use number of CpGs contained by genes to correct significant genes. as implemented in the gometh function from missMethyl package [@Phipson2016]. In gometh function, it used number of CpGs contained by each gene replace length as biased data, to correct this issue. The idea of gometh is fitting a curve for numbers of CpGs across genes related with GSEA, then using the probability weighting function to correct GO's p value.
 
-In latest version, we incoporated a new empirical bayes GSEA method into champ.GSEA() function, which is short for "ebayes" in "method" parameter. This method would not relying on DMP or DMR result to do GSEA, but instead would use global test to directly find significant genes, with the bias of inequality of CpG number corrected for each genes. Also this method considered the significant degree of of each CpG, thus user may use this method to detect some marginal significant genes for GSEA process.
+**In recent version, we incoporated a new empirical bayes GSEA method into champ.GSEA() function, which is short for "ebayes" in "method" parameter**. This method would not relying on DMP or DMR result to do GSEA, but instead would use global test to directly find significant genes, with the bias of inequality of CpG number corrected for each genes. Also this method considered the significant degree of of each CpG, thus user may use this method to detect some marginal significant genes for GSEA process.
 
 > Note: If you want to fix bias from inequality of CpG number of genes, and take significant level of CpGs into consideration, you could set "method" parameter as "ebayes" to use empirical bayes method. Otherwise, you may use "gometh" method or "fisher" method to do GSEA as well.
 
@@ -596,10 +596,10 @@ head(myGSEA$DMR)
 
 ### Empirical Bayes GSEA method
 
-As we introduced before, ChAMP now incorporated a new method called "ebayes" in champ.GSEA(), this method is different from most other GSEA method because it does not need DMP or DMR information. Thus actually users could run this method separately from champ.GSEA(). We provided champ.ebayGSEA() function in ChAMP, for users who want to directly do GSEA from normalized beta matrix and phenotype. Like below:
+As we introduced before, ChAMP now incorporated a new method called "ebayes" in champ.GSEA(), this method is different from most other GSEA method because it does not need DMP or DMR information. Thus actually users could run this method separately from champ.GSEA(). We provided champ.ebay() function in ChAMP, for users who want to directly do GSEA from normalized beta matrix and phenotype. Like below:
 
 ```{r eval=FALSE}
-myebayGSEA <- champ.ebayGSEA(beta=myNorm,pheno=myLoad$pd$Sample_Group,arraytype="450K")
+myebayGSEA <- champ.ebGSEA(beta=myNorm,pheno=myLoad$pd$Sample_Group,arraytype="450K")
 ```
 This is a promising GSEA method, without bias from number of CpGs enriched in genes, or significant level of CpGs.
 

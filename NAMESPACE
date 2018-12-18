@@ -33,6 +33,7 @@ import(rmarkdown)
 import(missMethyl)
 import(Hmisc)
 import(globaltest)
+import(kpmt,"kpmt")
 
 importFrom("utils", "read.csv")
 importFrom(RPMM, blc)
@@ -67,7 +68,7 @@ export(
 	champ.DMR, 
 	champ.Block, 
 	champ.GSEA, 
-    champ.ebayGSEA,
+    champ.ebGSEA,
 	champ.EpiMod,
     champ.CNA,
     champ.refbase,

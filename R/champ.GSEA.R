@@ -219,7 +219,7 @@ champ.GSEA <- function(beta=myNorm,
             if(length(table(pheno) == 2)) message("  pheno parameter is category variable, logistic method would be ued when calculating ebayes GSEA.")
             else stop("If your pheno parameter is category variable, only two phenotypes are allowed, say Cancer vs Normal, please modify your data set.")
         }
-        listsummary.lm <- champ.ebayGSEA(beta=beta,pheno=pheno,adjPval=adjPval,arraytype=arraytype)
+        listsummary.lm <- champ.ebGSEA(beta=beta,pheno=pheno,adjPval=adjPval,minN=5,arraytype=arraytype)
     } else {
         stop(" You must assign method parameter as fisher, gometh or ebayes.")
     }

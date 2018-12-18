@@ -2,6 +2,12 @@
 \title{ChAMP News}
 \encoding{UTF-8}
 
+\section{Version 2.12.1}{
+  \itemize{
+    \item Modified champ.ebGSEA() function.
+  }
+}
+
 \section{Version 2.8.10}{
   \itemize{
     \item ChAMP paper get published on Bioinformatics.
