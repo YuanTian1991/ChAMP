@@ -2,6 +2,12 @@
 \title{ChAMP News}
 \encoding{UTF-8}
 
+\section{Version 2.13.2}{
+  \itemize{
+    \item Changed ebayesGSEA function with a new name as ebGSEA, and added KPMT function in it.
+  }
+}
+
 \section{Version 2.8.10}{
   \itemize{
     \item ChAMP paper get published on Bioinformatics.
