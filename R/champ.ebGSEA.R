@@ -99,7 +99,7 @@ champ.ebGSEA <- function(beta=myNorm, pheno=myLoad$pd$Sample_Group, minN=5, adjP
     message("  Loading MsigDB PathwayList information.")
     data(PathwayList)
 
-    message("  Doing wilcox test, it could be slow here.")
+    message("  Doing Wilcox Test and Known Population Median Test, it could be slow here.")
     gseaWT.m <- do.call(rbind,lapply(PathwayList,function(x) gseaWTfn(termEID.v=x, rankEID.v=rownames(sresGT.m),minN=minN)))
     colnames(gseaWT.m) <- c("nREP","AUC","P","P(KPMT)")
     rownames(gseaWT.m) <- names(PathwayList);
