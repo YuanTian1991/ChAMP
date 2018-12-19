@@ -125,9 +125,12 @@ champ.ebGSEA <- function(beta=myNorm, pheno=myLoad$pd$Sample_Group, minN=5, adjP
         topGSEAwt.v <- as.vector(c(sgseaWT.m[sel.idx,],padj.v[sel.idx]));
         names(topGSEAwt.v) <- c("nREP","AUC","P(WT)","P(KPMT)","adjP");
         topGSEAwt.lm <- list("Rank(P)"=topGSEAwt.v,"Rank(AUC)"=topGSEAwt.v,"POI"=rownames(sgseaWT.m)[sel.idx]);
+    } else {
+        message("No significant pathway enriched. You may try relax the threshold like adjPva.")
+        topGSEAwt.lm <- list();
     }
 
     message("\n[ Section 3:  GSEA on Pathway Done ]\n")
 
-    return(topGSEAwt.lm[[1]])
+    return(topGSEAwt.lm)
 } 
