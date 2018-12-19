@@ -27,7 +27,7 @@
     \item{CpGlist}{Apart from previous parameters, if you have any other CpGs list want to do GSEA, you can input them here as a list. (default = NULL)}
     \item{Genelist}{Apart from previous parameters, if you have any other Gene list want to do GSEA. you can inpute them here as a list. (default = NULL)}
     \item{pheno}{If use ebayes method, user needs to provide phenotype information to conduct global test. (default = myLoad$pd$Sample_Group)}
-    \item{method}{Which method would be used to do GSEA?"gometh","fisher", or"ebayes". "ebayes" is our new unbias GSEA method, you could refer to champ.ebayes() function to know more. (default = "fisher")}
+    \item{method}{Which method would be used to do GSEA?"gometh","fisher", or"ebayes". "ebayes" is our new unbias GSEA method, you could refer to champ.ebGSEA() function to know more. (default = "fisher")}
     \item{arraytype}{Which kind of array your data set is? (default = "450K")}
     \item{Rplot}{If gometh method was chosen, should Probability Weight plot will be plotted. More information please check gometh package. (default = TRUE)}
     \item{adjPval}{Adjusted p value cutoff for all calculated GSEA result. (default = 0.05)}
@@ -53,7 +53,7 @@
     For ebayes method:
     \item{nREP}{Number of genes enriched in this pathway.}
     \item{AUC}{Area under curve from wilcox test.}
-    \item{P(WT)}{P value detected for each pathway.}
+    \item{P(WT)}{P value detected for each pathway from Wilcox Test.}
     \item{P(KPMT)}{P value from Known Population Median Test}
     \item{adjP}{Adjusted P value for each pathway, using BH method.}
 }
