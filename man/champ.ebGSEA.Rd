@@ -21,7 +21,7 @@ champ.ebGSEA(beta=myNorm, pheno=myLoad$pd$Sample_Group, minN=5, adjPval=0.05, ar
 \value{
     \item{nREP}{Number of genes enriched in this pathway.}
     \item{AUC}{Area under curve from wilcox test.}
-    \item{P(WT)}{P value detected for each pathway.}
+    \item{P(WT)}{P value detected for each pathway from Wilcox Test.}
     \item{P(KPMT)}{P value from Known Population Median Test}
     \item{adjP}{Adjusted P value for each pathway, using BH method.}
 }

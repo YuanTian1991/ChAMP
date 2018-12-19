@@ -4,6 +4,7 @@ champ.ebGSEA <- function(beta=myNorm, pheno=myLoad$pd$Sample_Group, minN=5, adjP
 {
     #library(Hmisc);
     #library(globaltest);
+  message("ebGSEA requires no NA in your beta and pheno parameter.")
 
     mapEIDtoCpG <- function(beta,arraytype) {
         if(arraytype=="EPIC"){
