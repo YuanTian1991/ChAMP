@@ -30,7 +30,7 @@ champ.ebGSEA(beta=myNorm, pheno=myLoad$pd$Sample_Group, minN=5, adjPval=0.05, ar
     \dontrun{
         myLoad <- champ.load(directory=system.file("extdata",package="ChAMPdata"))
         myNorm <- champ.norm()
-        myGSEA.ebGSEA <- champ.ebay(beta=myNorm,pheno=myLoad$pd$Sample_Group,arraytype="450K")
+        myGSEA.ebGSEA <- champ.ebGSEA(beta=myNorm,pheno=myLoad$pd$Sample_Group,arraytype="450K")
         }
 }
 
