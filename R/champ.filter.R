@@ -1,4 +1,4 @@
-if(getRversion() >= "3.1.0") utils::globalVariables(c("sampleNames<-","EPIC.manifest.hg38","EPIC.manifest.pop.hg38","hm450.manifest.hg38","hm450.manifest.pop.hg38","multi.hit","probe.features","probe.features.epic"))
+if(getRversion() >= "3.1.0") utils::globalVariables(c("sampleNames<-","EPIC.manifest.hg19","EPIC.manifest.pop.hg19","hm450.manifest.hg19","hm450.manifest.pop.hg19","multi.hit","probe.features","probe.features.epic"))
 
 
 champ.filter <- function(beta=myImport$beta,
@@ -249,42 +249,42 @@ champ.filter <- function(beta=myImport$beta,
             if(is.null(population))
             {
                 message("    Using general 450K SNP list for filtering.")
-                data(hm450.manifest.hg38)
-                maskname <- rownames(hm450.manifest.hg38)[which(hm450.manifest.hg38$MASK.general==TRUE)]
+                data(hm450.manifest.hg19)
+                maskname <- rownames(hm450.manifest.hg19)[which(hm450.manifest.hg19$MASK_general==TRUE)]
             }else if(!population %in% c("AFR","EAS","EUR","SAS","AMR","GWD","YRI","TSI",
                                         "IBS","CHS","PUR","JPT","GIH","CHB","STU","ITU",
                                         "LWK","KHV","FIN","ESN","CEU","PJL","ACB","CLM",
                                         "CDX","GBR","BEB","PEL","MSL","MXL","ASW"))
             {
                 message("    Seems your population name is wrong. Using general 450K SNP list for filtering.")
-                data(hm450.manifest.hg38)
-                maskname <- rownames(hm450.manifest.hg38)[which(hm450.manifest.hg38$MASK.general==TRUE)]
+                data(hm450.manifest.hg19)
+                maskname <- rownames(hm450.manifest.hg19)[which(hm450.manifest.hg19$MASK_general==TRUE)]
             }else
             {
                 message("    Using ",population," specific 450K SNP list for filtering.")
-                data(hm450.manifest.pop.hg38)
-                maskname <- rownames(hm450.manifest.pop.hg38)[which(hm450.manifest.pop.hg38[,paste("MASK.general",population,sep=".")]==TRUE)]
+                data(hm450.manifest.pop.hg19)
+                maskname <- rownames(hm450.manifest.pop.hg19)[which(hm450.manifest.pop.hg19[,paste("MASK_general_",population,sep="")]==TRUE)]
             }
         }else
         {
             if(is.null(population))
             {
                 message("    Using general EPIC SNP list for filtering.")
-                data(EPIC.manifest.hg38)
-                maskname <- rownames(EPIC.manifest.hg38)[which(EPIC.manifest.hg38$MASK.general==TRUE)]
+                data(EPIC.manifest.hg19)
+                maskname <- rownames(EPIC.manifest.hg19)[which(EPIC.manifest.hg19$MASK_general==TRUE)]
             }else if(!population %in% c("AFR","EAS","EUR","SAS","AMR","GWD","YRI","TSI",
                                         "IBS","CHS","PUR","JPT","GIH","CHB","STU","ITU",
                                         "LWK","KHV","FIN","ESN","CEU","PJL","ACB","CLM",
                                         "CDX","GBR","BEB","PEL","MSL","MXL","ASW"))
             {
                 message("    Seems your population name is wrong. Using general EPIC SNP list for filtering.")
-                data(EPIC.manifest.hg38)
-                maskname <- rownames(EPIC.manifest.hg38)[which(EPIC.manifest.hg38$MASK.general==TRUE)]
+                data(EPIC.manifest.hg19)
+                maskname <- rownames(EPIC.manifest.hg19)[which(EPIC.manifest.hg19$MASK_general==TRUE)]
             }else
             {
                 message("    Using ",population," specific EPIC SNP list for filtering.")
-                data(EPIC.manifest.pop.hg38)
-                maskname <- rownames(EPIC.manifest.pop.hg38)[which(EPIC.manifest.pop.hg38[,paste("MASK.general",population,sep=".")]==TRUE)]
+                data(EPIC.manifest.pop.hg19)
+                maskname <- rownames(EPIC.manifest.pop.hg19)[which(EPIC.manifest.pop.hg19[,paste("MASK_general_",population,sep="")]==TRUE)]
             }
         }
         RemainProbe <- !rownames(Objects[[1]]) %in% maskname
