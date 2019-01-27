@@ -284,7 +284,7 @@ champ.filter <- function(beta=myImport$beta,
             {
                 message("    Using ",population," specific EPIC SNP list for filtering.")
                 data(EPIC.manifest.pop.hg19)
-                maskname <- rownames(EPIC.manifest.pop.hg19)[which(EPIC.manifest.pop.hg19[,paste("MASK.general",population,sep=".")]==TRUE)]
+                maskname <- rownames(EPIC.manifest.pop.hg19)[which(EPIC.manifest.pop.hg19[,paste("MASK_general_",population,sep="")]==TRUE)]
             }
         }
         RemainProbe <- !rownames(Objects[[1]]) %in% maskname
