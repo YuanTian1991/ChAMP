@@ -18,7 +18,7 @@ Depends: R (>= 3.3), minfi, ChAMPdata (>= 2.6.0), FEM (>= 3.1),DMRcate,
         Illumina450ProbeVariants.db,IlluminaHumanMethylationEPICmanifest
 Imports:
         prettydoc,Hmisc,globaltest,sva,illuminaio,rmarkdown,IlluminaHumanMethylation450kmanifest,IlluminaHumanMethylationEPICanno.ilm10b2.hg19,
-        limma,RPMM, DNAcopy, preprocessCore,impute, marray, wateRmelon,svdvis,
+        limma,RPMM, DNAcopy, preprocessCore,impute, marray, wateRmelon,
         plyr,goseq,missMethyl,kpmt,
         GenomicRanges,qvalue,isva,doParallel,bumphunter,quadprog,shiny,shinythemes,plotly
         (>= 4.5.6),RColorBrewer,dendextend, matrixStats,combinat
