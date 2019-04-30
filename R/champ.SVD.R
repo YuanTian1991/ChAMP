@@ -6,6 +6,7 @@ champ.SVD <- function(beta=myNorm,
                       RGEffect=FALSE,
                       PDFplot=TRUE,
                       Rplot=TRUE,
+		      Splot=T,
                       resultsDir="./CHAMP_SVDimages/")
 {
     message("[===========================]")
@@ -141,6 +142,17 @@ champ.SVD <- function(beta=myNorm,
         suppressWarnings(axis(2,at=1:ncol(svdPV.m),labels=colnames(svdPV.m),las=2));
         legend(x=-(topPCA/2.5),y=3,legend=c(expression("p < 1x"~10^{-10}),expression("p < 1x"~10^{-5}),"p < 0.01", "p < 0.05", "p > 0.05"), fill=c("darkred","red","orange","pink","white"),par('usr')[2], par('usr')[4], xpd=NA);    
     }
+      #Screeplot start
+	splot <- function(x=svd.o,y=rmt.o)  
+	{
+    	scp <- list(u=x$u[1:nrow(x$u),1:y$dim],v=x$v[1:y$dim,1:y$dim],d=x$d[1:y$dim])
+    	return(invisible(capture.output(svdvis::svd.scree(scp))))
+  	}
+if(Splot)
+  {
+    splot()
+  }
+  #Screeplot end
     if(PDFplot)
     {
         pdf(paste(resultsDir,"SVDsummary.pdf",sep=""),width=8,height=8);
@@ -148,7 +160,8 @@ champ.SVD <- function(beta=myNorm,
         image(x=1:nrow(svdPV.m), y=1:ncol(svdPV.m), z=log10(svdPV.m), col=myPalette, breaks=breaks.v, xlab="", ylab="", axes=FALSE, main= "Singular Value Decomposition Analysis (SVD)");
         axis(1,at=1:nrow(svdPV.m),labels=paste("PC-",1:nrow(svdPV.m),sep=""),las=2);
         suppressWarnings(axis(2,at=1:ncol(svdPV.m),labels=colnames(svdPV.m),las=2));
-        legend(x=-(topPCA/2.5),y=3,legend=c(expression("p < 1x"~10^{-10}),expression("p < 1x"~10^{-5}),"p < 0.01", "p < 0.05", "p > 0.05"), fill=c("darkred","red","orange","pink","white"),par('usr')[2], par('usr')[4], xpd=NA,);    
+        legend(x=-(topPCA/2.5),y=3,legend=c(expression("p < 1x"~10^{-10}),expression("p < 1x"~10^{-5}),"p < 0.01", "p < 0.05", "p > 0.05"), fill=c("darkred","red","orange","pink","white"),par('usr')[2], par('usr')[4], xpd=NA,);
+	    splot()
         dev.off();
     }
 
