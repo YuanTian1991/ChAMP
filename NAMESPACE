@@ -53,6 +53,7 @@ importFrom("grDevices", "colorRampPalette")
 importFrom("stats", "aggregate", "as.dendrogram", "as.formula","bartlett.test",
            "cmdscale", "fisher.test", "fitted","loess", "order.dendrogram", "t.test")
 
+importFrom("svdvis","svd.scree")
 
 export(
 	champ.process, 
