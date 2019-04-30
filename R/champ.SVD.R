@@ -161,7 +161,7 @@ champ.SVD <- function(beta=myNorm,
   pve = svd.obj$d^2/sum(svd.obj$d^2) * 100
   pve = data.frame(names=names(svd.obj$d), pve)
   pve$names = factor(pve$names, levels=unique(names(svd.obj$d)))
-  g = ggplot(pve, aes(names, pve)) + geom_point() + theme_bw()
+  g = ggplot2::ggplot(pve, aes(names, pve)) + geom_point() + theme_bw()
   gout = g + ylim(0,NA) +
     labs(title=maintitle, axis.title.x=axis.title.x, axis.title.y=axis.title.y)
 
