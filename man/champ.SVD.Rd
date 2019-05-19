@@ -17,6 +17,7 @@ Singular Value Decomposition analysis for batch effects prediciton in HumanMethy
               RGEffect=FALSE,
               PDFplot=TRUE,
               Rplot=TRUE,
+	      Splot=T,
               resultsDir="./CHAMP_SVDimages/")
 }
 
@@ -27,6 +28,7 @@ Singular Value Decomposition analysis for batch effects prediciton in HumanMethy
 	\item{RGEffect}{If Green and Red color control probes would be calculated. (default = FALSE)}
     \item{PDFplot}{If PDFplot would be generated and save in resultsDir. (default = TRUE)}
     \item{Rplot}{If Rplot would be generated and save in resultsDir. Note if you are doing analysis on a server remotely, please make sure the server could connect your local graph applications. (For example X11 for linux.) (default = TRUE)}
+    \item{Rplot}{If Splot is true, generates Scree plot (elbow plot). If PDFPlot is also true, would be generated and save in resultsDir. (default = TRUE)}
     \item{resultsDir}{The directory where PDF files would be saved. (default = "./CHAMP_SVDimages/")}
 }
 

@@ -34,6 +34,7 @@ import(missMethyl)
 import(Hmisc)
 import(globaltest)
 import(kpmt,"kpmt")
+import(ggplot2)
 
 importFrom("utils", "read.csv")
 importFrom(RPMM, blc)
@@ -52,7 +53,6 @@ importFrom("utils", "capture.output", "data", "head", "read.delim",
 importFrom("grDevices", "colorRampPalette")
 importFrom("stats", "aggregate", "as.dendrogram", "as.formula","bartlett.test",
            "cmdscale", "fisher.test", "fitted","loess", "order.dendrogram", "t.test")
-
 
 export(
 	champ.process, 
