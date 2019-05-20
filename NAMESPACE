@@ -35,6 +35,7 @@ import(Hmisc)
 import(globaltest)
 import(kpmt,"kpmt")
 import(ggplot2)
+import(qqman)
 
 importFrom("utils", "read.csv")
 importFrom(RPMM, blc)
