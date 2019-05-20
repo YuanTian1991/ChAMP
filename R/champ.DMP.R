@@ -207,7 +207,7 @@ champ.DMP <- function(beta = myNorm,
     plot$CHR <- as.integer(as.character(factor(plot$CHR)))
     plot$SNP <- as.character(plot$SNP)
     plot$MAPINFO <- as.numeric(plot$MAPINFO)
-    plot <- plot[order(mhplot$CHR,mhplot$MAPINFO),]
+    plot <- plot[order(plot$CHR,plot$MAPINFO),]
 
     ##Count probes on CHR
     ch <- data.frame(table(plot$CHR))
