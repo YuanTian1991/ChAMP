@@ -5,12 +5,28 @@ champ.DMP <- function(beta = myNorm,
                       compare.group = NULL,
                       adjPVal = 0.05,
                       adjust.method = "BH",
-                      arraytype = "450K")
+                      arraytype = "450K",
+                      ###The following options are parsed down to qqman package for Manhattan and Q-Q plots
+                      resultsDir = "./CHAMP_DMPimages/")
+                      man.plot = T,
+                      probes = c(),
+                      chr = c(),
+                      dotsize = 1,
+                      sug.line = F,
+                      gen.line = T,
+                      gen.alpha = 0.05,
+                      q.plot = T)
 {
     message("[===========================]")
     message("[<<<<< ChAMP.DMP START >>>>>]")
     message("-----------------------------")
-
+    ### Prepare Checking ###
+    if (!file.exists(resultsDir)) dir.create(resultsDir)
+    message("champ.DMP Results will be saved in ",resultsDir)
+  
+    if(chr=="") chr=F
+    if(probes=="") probes=F
+  
     CalculateDMP <- function(beta,pheno,tmp_compare,adjPVal=adjPVal,adjust.method=adjust.method)
     {
         message("  -----------------------------")
@@ -144,7 +160,15 @@ champ.DMP <- function(beta = myNorm,
         }
     }
     message("\n[ Section 3:  Match Annotation Done ]\n")
-
+    
+    if(Mplot==T | Qplot==T) {
+    message("\n[ Section 4:  Plotting Start ]\n")
+    
+    message(" Getting p-values for all probes.")
+    plotDMP <- suppressMessage(CalculateDMP(beta,pheno,tmp_compare,adjPVal=1,adjust.method=adjust.method))
+      
+    message("\n[ Section 4:  Plotting Done ]\n")
+    }
     message("[<<<<<< ChAMP.DMP END >>>>>>]")
     message("[===========================]")
     message("[You may want to process DMP.GUI() or champ.GSEA() next.]\n")
