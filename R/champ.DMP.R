@@ -20,13 +20,7 @@ champ.DMP <- function(beta = myNorm,
     message("[===========================]")
     message("[<<<<< ChAMP.DMP START >>>>>]")
     message("-----------------------------")
-    ### Prepare Checking ###
-    if (!file.exists(resultsDir)) dir.create(resultsDir)
-    message("champ.DMP Results will be saved in ",resultsDir)
-  
-    if(chr=="") chr=F
-    if(probes=="") probes=F
-  
+
     CalculateDMP <- function(beta,pheno,tmp_compare,adjPVal=adjPVal,adjust.method=adjust.method)
     {
         message("  -----------------------------")
@@ -163,9 +157,93 @@ champ.DMP <- function(beta = myNorm,
     
     if(Mplot==T | Qplot==T) {
     message("\n[ Section 4:  Plotting Start ]\n")
-    
+      
+    if (!file.exists(resultsDir)) dir.create(resultsDir)
+    message(" champ.DMP plots will be saved in ",resultsDir)
+  
     message(" Getting p-values for all probes.")
-    plotDMP <- suppressMessage(CalculateDMP(beta,pheno,tmp_compare,adjPVal=1,adjust.method=adjust.method))
+    plotDMP <- suppressMessage(CalculateDMP(beta=beta,pheno=pheno,tmp_compare=compare.group,adjPVal=1,adjust.method=adjust.method))
+    if(arraytype == "EPIC") data(probe.features.epic) else data(probe.features)
+
+    for(i in names(plotDMP))
+    {
+        com.idx <- intersect(rownames(plotDMP[[i]]),rownames(probe.features))
+        if(!is.null(Compare))
+        {
+            avg <-  cbind(rowMeans(beta[com.idx,which(pheno==Compare[[i]][1])]),rowMeans(beta[com.idx,which(pheno==Compare[[i]][2])]))
+            avg <- cbind(avg,avg[,2]-avg[,1])
+            colnames(avg) <- c(paste(Compare[[i]],"AVG",sep="_"),"deltaBeta")
+            plotDMP[[i]] <- data.frame(plotDMP[[i]][com.idx,],avg,probe.features[com.idx,])
+        } else {
+            plotDMP[[i]] <- data.frame(plotDMP[[i]][com.idx,],probe.features[com.idx,])
+        }
+    }
+    DMP <- plotDMP[[1]]
+    message(" Proceeding with ", dim(DMP)[1]," probes")
+    
+    if(probes=="") probes=F  
+    if(chr==F | chr=="") chr = 1:22
+    
+    ##Transfer necessary data, set coloumn names
+    plot <- data.frame(rownames(DMP),(DMP["CHR"]),"",DMP["P.Value"],(DMP["MAPINFO"]))
+    colnames(plot) <- c("SNP","CHR","BP","P","MAPINFO")
+
+    if(man.plot) {
+
+    ##Check if probes exist in data
+    if(probes==F){
+      message("No probes will be highlighted")
+        } else if(probes!=F & isTRUE(probes %in% plot$SNP[plot$CHR %in% chr]==T)) {
+      message("Probe list OK, highlighting ",length(probes)," probe(s)")
+          } else {
+      errP <- matrix(setdiff(probes,plot$SNP[plot$CHR %in% chr]))
+      colnames(errP) <- c("")
+      message("The following probe(s) for highlighting were not in the selected data:")
+      print(errP[,1])
+      stop("Please check for spelling errors, or if probes are on the selected chromosome(s)")
+      }
+
+    ##Prepare data
+    plot$CHR <- as.integer(as.character(factor(plot$CHR)))
+    plot$SNP <- as.character(plot$SNP)
+    plot$MAPINFO <- as.numeric(plot$MAPINFO)
+    plot <- plot[order(mhplot$CHR,mhplot$MAPINFO),]
+
+    ##Count probes on CHR
+    ch <- data.frame(table(plot$CHR))
+
+    ##Number probes
+    BP = c()
+    for(i in 1:22){BP <- c(BP,1:ch[i,2])}
+    plot$BP <- BP
+
+    ##Make plot
+    message(" Drawing Manhattan plot")
+    if(gen.line) {
+    gen.line <- alpha/dim(DMP)[1]
+    message(" Genome-wide line drawn at p=",formatC(gen.line,format="e", digits=2))
+    }
+      
+    if(sug.line!=F)  message(" Suggestive line drawn at p=",formatC(sug.line,format="e", digits=2))
+      
+    if(chr==1:22){
+    tiff((paste(resultsDir,"Manhattan.tiff",sep=""), width=1024, height=425)
+    suppressWarnings(qqman::manhattan(plot, main="Manhattan plot", cex=dotsize, suggestiveline=-log10(sug.line), genomewideline=-log10(gen.line), highlight=probes))
+    dev.off()
+    } else {
+    tiff((paste(resultsDir,"Manhattan.tiff",sep=""), width=1024, height=425)
+    suppressWarnings(qqman::manhattan(subset(plot, CHR==chr), main="Manhattan plot", cex=dotsize, suggestiveline=-log10(sug.line), genomewideline=-log10(gen.line), highlight=probes))
+    dev.off()
+    }
+    }
+
+    if(q.plot) {
+    #Q-Q plot
+    message(" Drawing Q-Q plot")
+    tiff((paste(resultsDir,"QQplot.tiff",sep=""), width=512, height=512)
+    qqman::qq(plot$P, main="Q-Q Plot of EWAS p-values")
+    dev.off()
+    }
       
     message("\n[ Section 4:  Plotting Done ]\n")
     }
