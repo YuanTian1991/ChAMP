@@ -227,11 +227,11 @@ champ.DMP <- function(beta = myNorm,
     if(sug.line!=F)  message(" Suggestive line drawn at p=",formatC(sug.line,format="e", digits=2))
       
     if(chr==1:22){
-    tiff((paste(resultsDir,"Manhattan.tiff",sep=""), width=1024, height=425)
+    tiff(paste(resultsDir,"Manhattan.tiff",sep=""), width=1024, height=425)
     suppressWarnings(qqman::manhattan(plot, main="Manhattan plot", cex=dotsize, suggestiveline=-log10(sug.line), genomewideline=-log10(gen.line), highlight=probes))
     dev.off()
     } else {
-    tiff((paste(resultsDir,"Manhattan.tiff",sep=""), width=1024, height=425)
+    tiff(paste(resultsDir,"Manhattan.tiff",sep=""), width=1024, height=425)
     suppressWarnings(qqman::manhattan(subset(plot, CHR==chr), main="Manhattan plot", cex=dotsize, suggestiveline=-log10(sug.line), genomewideline=-log10(gen.line), highlight=probes))
     dev.off()
     }
@@ -240,7 +240,7 @@ champ.DMP <- function(beta = myNorm,
     if(q.plot) {
     #Q-Q plot
     message(" Drawing Q-Q plot")
-    tiff((paste(resultsDir,"QQplot.tiff",sep=""), width=512, height=512)
+    tiff(paste(resultsDir,"QQplot.tiff",sep=""), width=512, height=512)
     qqman::qq(plot$P, main="Q-Q Plot of EWAS p-values")
     dev.off()
     }
