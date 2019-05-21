@@ -190,15 +190,15 @@ champ.DMP <- function(beta = myNorm,
 
     ##Check if probes exist in data
     if(probes==F){
-      message("No probes will be highlighted")
+      message(" No probes will be highlighted")
         } else if(probes!=F & isTRUE(probes %in% plot$SNP[plot$CHR %in% chr]==T)) {
-      message("Probe list OK, highlighting ",length(probes)," probe(s)")
+      message(" Probe list OK, highlighting ",length(probes)," probe(s)")
           } else {
       errP <- matrix(setdiff(probes,plot$SNP[plot$CHR %in% chr]))
       colnames(errP) <- c("")
-      message("The following probe(s) for highlighting were not in the selected data:")
+      message(" The following probe(s) for highlighting were not in the selected data:")
       print(errP[,1])
-      stop("Please check for spelling errors, or if probes are on the selected chromosome(s)")
+      stop(" Please check for spelling errors, or if probes are on the selected chromosome(s)")
       }
 
     ##Prepare data
@@ -225,14 +225,17 @@ champ.DMP <- function(beta = myNorm,
     if(sug.line!=F)  message(" Suggestive line drawn at p=",formatC(sug.line,format="e", digits=2))
       
     if(is.numeric(gen.line) && is.numeric(sug.line)) {
+    l <- min(c(plot$P,gen.line,sug.line))/10
     tiff(paste(resultsDir,"Manhattan.tiff",sep=""), width=1024, height=425)
-    suppressWarnings(qqman::manhattan(subset(plot, CHR %in% chr), main="Manhattan plot", cex=dotsize, suggestiveline=-log10(sug.line), genomewideline=-log10(gen.line), highlight=probes))
+    suppressWarnings(qqman::manhattan(subset(plot, CHR %in% chr), main="Manhattan plot", cex=dotsize, suggestiveline=-log10(sug.line), genomewideline=-log10(gen.line), highlight=probes, ylim=c(0,l)))
     dev.off()
     } else if(is.numeric(gen.line) && !is.numeric(sug.line)) {
+    l <- min(c(plot$P,gen.line))/10
     tiff(paste(resultsDir,"Manhattan.tiff",sep=""), width=1024, height=425)
     suppressWarnings(qqman::manhattan(subset(plot, CHR %in% chr), main="Manhattan plot", cex=dotsize, suggestiveline=F, genomewideline=-log10(gen.line), highlight=probes))
     dev.off()
     } else if(!is.numeric(gen.line) && is.numeric(sug.line)) {
+    l <- min(c(plot$P,sug.line))/10
     tiff(paste(resultsDir,"Manhattan.tiff",sep=""), width=1024, height=425)
     suppressWarnings(qqman::manhattan(subset(plot, CHR %in% chr), main="Manhattan plot", cex=dotsize, suggestiveline=-log10(sug.line), genomewideline=F, highlight=probes))
     dev.off()
