@@ -212,25 +212,33 @@ champ.DMP <- function(beta = myNorm,
 
     ##Number probes
     BP = c()
-    for(i in 1:22){BP <- c(BP,1:ch[i,2])}
+    for(i in unique(ch[,1])){BP <- c(BP,1:ch[i,2])}
     plot$BP <- BP
 
     ##Make plot
     message(" Drawing Manhattan plot")
     if(gen.line) {
-    gen.line <- alpha/dim(DMP)[1]
+    gen.line <- gen.alpha/dim(plot)[1]
     message(" Genome-wide line drawn at p=",formatC(gen.line,format="e", digits=2))
     }
       
     if(sug.line!=F)  message(" Suggestive line drawn at p=",formatC(sug.line,format="e", digits=2))
       
-    if(chr==1:22){
+    if(is.numeric(gen.line) && is.numeric(sug.line)) {
     tiff(paste(resultsDir,"Manhattan.tiff",sep=""), width=1024, height=425)
-    suppressWarnings(qqman::manhattan(plot, main="Manhattan plot", cex=dotsize, suggestiveline=-log10(sug.line), genomewideline=-log10(gen.line), highlight=probes))
+    suppressWarnings(qqman::manhattan(subset(plot, CHR %in% chr), main="Manhattan plot", cex=dotsize, suggestiveline=-log10(sug.line), genomewideline=-log10(gen.line), highlight=probes))
+    dev.off()
+    } else if(is.numeric(gen.line) && !is.numeric(sug.line)) {
+    tiff(paste(resultsDir,"Manhattan.tiff",sep=""), width=1024, height=425)
+    suppressWarnings(qqman::manhattan(subset(plot, CHR %in% chr), main="Manhattan plot", cex=dotsize, suggestiveline=F, genomewideline=-log10(gen.line), highlight=probes))
+    dev.off()
+    } else if(!is.numeric(gen.line) && is.numeric(sug.line)) {
+    tiff(paste(resultsDir,"Manhattan.tiff",sep=""), width=1024, height=425)
+    suppressWarnings(qqman::manhattan(subset(plot, CHR %in% chr), main="Manhattan plot", cex=dotsize, suggestiveline=-log10(sug.line), genomewideline=F, highlight=probes))
     dev.off()
     } else {
     tiff(paste(resultsDir,"Manhattan.tiff",sep=""), width=1024, height=425)
-    suppressWarnings(qqman::manhattan(subset(plot, CHR==chr), main="Manhattan plot", cex=dotsize, suggestiveline=-log10(sug.line), genomewideline=-log10(gen.line), highlight=probes))
+    suppressWarnings(qqman::manhattan(subset(plot, CHR %in% chr), main="Manhattan plot", cex=dotsize, suggestiveline=F, genomewideline=F, highlight=probes))
     dev.off()
     }
     }
