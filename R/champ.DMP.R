@@ -7,7 +7,7 @@ champ.DMP <- function(beta = myNorm,
                       adjust.method = "BH",
                       arraytype = "450K",
                       ###The following options are parsed down to qqman package for Manhattan and Q-Q plots
-                      resultsDir = "./CHAMP_DMPimages/")
+                      resultsDir = "./CHAMP_DMPimages/"),
                       man.plot = T,
                       probes = c(),
                       chr = c(),
