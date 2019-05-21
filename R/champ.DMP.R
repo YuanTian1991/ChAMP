@@ -37,7 +37,7 @@ champ.DMP <- function(beta = myNorm,
                  warning=function(w) 
                 {stop("limma failed, No sample variance.\n")})
         DMP <- topTable(fit3,coef=1,number=nrow(tmpbeta),adjust.method=adjust.method,p.value=adjPVal)
-        message("  You have found ",sum(DMP$adj.P.Val <= adjPVal), " significant MVPs with a ",adjust.method," adjusted P-value below ", adjPVal,".")
+        message("  You have found ",sum(DMP$adj.P.Val <= adjPVal), " significant DMPs with a ",adjust.method," adjusted P-value below ", adjPVal,".")
         message("  Calculate DMP for ",tmp_compare[1]," and ",tmp_compare[2]," done.")
         return(DMP)
     }
@@ -122,6 +122,10 @@ champ.DMP <- function(beta = myNorm,
         fit2 <- eBayes(fit1)
         DMP <- topTable(fit2,coef=2,number=nrow(beta),adjust.method=adjust.method,p.value=adjPVal)
         message("  You have found ",sum(DMP$adj.P.Val <= adjPVal), " significant DMPs with a ",adjust.method," adjusted P-value below ", adjPVal,".")
+      if(man.plot | q.plot) {  
+      DMPs[["plotDMP"]] <- suppressMessages(topTable(fit2,coef=2,number=nrow(beta),adjust.method=adjust.method,p.value=1))
+        message("  P-values for ",dim(DMPs[["plotDMP"]])[1]," probes have been calculated for plotting.")
+        }
         if(sum(DMP$adj.P.Val <= adjPVal)!=0)
             DMPs[["NumericVariable"]] <- DMP
     } else {
@@ -131,6 +135,10 @@ champ.DMP <- function(beta = myNorm,
             DMP <- CalculateDMP(beta,pheno,Compare[[i]],adjPVal,adjust.method)
             if(sum(DMP$adj.P.Val <= adjPVal)!=0)
                 DMPs[[i]] <- DMP
+        }
+      if(man.plot | q.plot) {  
+      DMPs[["plotDMP"]] <- CalculateDMP(beta,pheno,Compare[[1]],1,adjust.method)
+        message("  P-values for ",dim(DMPs[["plotDMP"]])[1]," probes have been calculated for plotting for comparison between the first comparison pair, ",Compare[[1]][1]," and ",Compare[[1]][2],".")
         }
     }
     message("\n[ Section 2:  Find Numeric Vector Related CpGs Done ]\n")
@@ -160,31 +168,12 @@ champ.DMP <- function(beta = myNorm,
       
     if (!file.exists(resultsDir)) dir.create(resultsDir)
     message(" champ.DMP plots will be saved in ",resultsDir)
-  
-    message(" Getting p-values for all probes.")
-    plotDMP <- suppressMessages(CalculateDMP(beta=beta,pheno=pheno,tmp_compare=compare.group,adjPVal=1,adjust.method=adjust.method))
-    if(arraytype == "EPIC") data(probe.features.epic) else data(probe.features)
-
-    for(i in names(plotDMP))
-    {
-        com.idx <- intersect(rownames(plotDMP[[i]]),rownames(probe.features))
-        if(!is.null(Compare))
-        {
-            avg <-  cbind(rowMeans(beta[com.idx,which(pheno==Compare[[i]][1])]),rowMeans(beta[com.idx,which(pheno==Compare[[i]][2])]))
-            avg <- cbind(avg,avg[,2]-avg[,1])
-            colnames(avg) <- c(paste(Compare[[i]],"AVG",sep="_"),"deltaBeta")
-            plotDMP[[i]] <- data.frame(plotDMP[[i]][com.idx,],avg,probe.features[com.idx,])
-        } else {
-            plotDMP[[i]] <- data.frame(plotDMP[[i]][com.idx,],probe.features[com.idx,])
-        }
-    }
-    DMP <- plotDMP[[1]]
-    message(" Proceeding with ", dim(DMP)[1]," probes")
-    
+   
     if(probes=="") probes=F  
     if(chr==F | chr=="") chr = 1:22
     
     ##Transfer necessary data, set coloumn names
+    DMP <- DMPs[["plotDMP"]]
     plot <- data.frame(rownames(DMP),(DMP["CHR"]),"",DMP["P.Value"],(DMP["MAPINFO"]))
     colnames(plot) <- c("SNP","CHR","BP","P","MAPINFO")
 
