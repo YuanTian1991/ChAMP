@@ -116,6 +116,7 @@ champ.DMP <- function(beta = myNorm,
     DMPs <- list()
     if(is.null(Compare)){
         message("\n[ Section 2:  Find Numeric Covariates Linear Regression CpGs Start ]\n")
+      if(man.plot | q.plot) message("  P-values for all probes will be calculated for plotting.")
         df <- data.frame(pheno=pheno)
         model.matrix <- model.matrix(~ pheno, data=df)
         fit1 <- lmFit(beta,model.matrix)
@@ -124,12 +125,12 @@ champ.DMP <- function(beta = myNorm,
         message("  You have found ",sum(DMP$adj.P.Val <= adjPVal), " significant DMPs with a ",adjust.method," adjusted P-value below ", adjPVal,".")
       if(man.plot | q.plot) {  
       DMPs[["plotDMP"]] <- suppressMessages(topTable(fit2,coef=2,number=nrow(beta),adjust.method=adjust.method,p.value=1))
-        message("  P-values for ",dim(DMPs[["plotDMP"]])[1]," probes have been calculated for plotting.")
         }
         if(sum(DMP$adj.P.Val <= adjPVal)!=0)
             DMPs[["NumericVariable"]] <- DMP
     } else {
         message("\n[ Section 2:  Find Differential Methylated CpGs Start ]\n")
+      if(man.plot | q.plot) message("  P-values for all probes will be calculated for plotting, but only for first comparison pair, ",Compare[[1]][1]," and ",Compare[[1]][2],".")
         for(i in names(Compare))
         {
             DMP <- CalculateDMP(beta,pheno,Compare[[i]],adjPVal,adjust.method)
@@ -137,8 +138,7 @@ champ.DMP <- function(beta = myNorm,
                 DMPs[[i]] <- DMP
         }
       if(man.plot | q.plot) {  
-      DMPs[["plotDMP"]] <- CalculateDMP(beta,pheno,Compare[[1]],1,adjust.method)
-        message("  P-values for ",dim(DMPs[["plotDMP"]])[1]," probes have been calculated for plotting for comparison between the first comparison pair, ",Compare[[1]][1]," and ",Compare[[1]][2],".")
+      DMPs[["plotDMP"]] <- suppressMessages(CalculateDMP(beta,pheno,Compare[[1]],1,adjust.method))
         }
     }
     message("\n[ Section 2:  Find Numeric Vector Related CpGs Done ]\n")
@@ -147,7 +147,7 @@ champ.DMP <- function(beta = myNorm,
 
     message("\n[ Section 3:  Match Annotation Start ]\n")
     if(arraytype == "EPIC") data(probe.features.epic) else data(probe.features)
-
+    if(man.plot | q.plot) Compare[["plotDMP"]] <- Compare[[1]]
     for(i in names(DMPs))
     {
         com.idx <- intersect(rownames(DMPs[[i]]),rownames(probe.features))
