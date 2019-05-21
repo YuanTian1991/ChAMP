@@ -121,7 +121,7 @@ champ.DMP <- function(beta = myNorm,
         fit1 <- lmFit(beta,model.matrix)
         fit2 <- eBayes(fit1)
         DMP <- topTable(fit2,coef=2,number=nrow(beta),adjust.method=adjust.method,p.value=adjPVal)
-        message("  You have found ",sum(DMP$adj.P.Val <= adjPVal), " significant MVPs with a ",adjust.method," adjusted P-value below ", adjPVal,".")
+        message("  You have found ",sum(DMP$adj.P.Val <= adjPVal), " significant DMPs with a ",adjust.method," adjusted P-value below ", adjPVal,".")
         if(sum(DMP$adj.P.Val <= adjPVal)!=0)
             DMPs[["NumericVariable"]] <- DMP
     } else {
@@ -162,7 +162,7 @@ champ.DMP <- function(beta = myNorm,
     message(" champ.DMP plots will be saved in ",resultsDir)
   
     message(" Getting p-values for all probes.")
-    plotDMP <- suppressMessage(CalculateDMP(beta=beta,pheno=pheno,tmp_compare=compare.group,adjPVal=1,adjust.method=adjust.method))
+    plotDMP <- suppressMessages(CalculateDMP(beta=beta,pheno=pheno,tmp_compare=compare.group,adjPVal=1,adjust.method=adjust.method))
     if(arraytype == "EPIC") data(probe.features.epic) else data(probe.features)
 
     for(i in names(plotDMP))
