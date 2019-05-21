@@ -16,8 +16,8 @@ This function would use limma package to calculate differential methylation prob
               arraytype = "450K",
 	      resultsDir = "./CHAMP_DMPimages/")
               man.plot = T,
-              probes = c(),
-              chr = c(),
+              probes = F,
+              chr = F,
               dotsize = 1,
               sug.line = F,
               gen.line = T,
@@ -34,8 +34,8 @@ This function would use limma package to calculate differential methylation prob
     \item{arraytype}{Choose microarray type is 450K or EPIC. (default = "450K")}
 	\item{resultsDir}{Choose where plots are saved (default = "./CHAMP_DMPimages/")}
 	\item{man.plot}{Should Manhattan plot be produced (default = TRUE)}
-	\item{probes}{For Manhattan plot, choose probes to highlight, e.g., c("cg26090107", "cg05970496") (default = empty)}
-	\item{chr}{For Manhattan plot, choose chromosomes to plot. Input must be numerical, e.g., c(1,4,6) (default = all chromosomes)}
+	\item{probes}{For Manhattan plot, choose probes to highlight, e.g., c("cg26090107", "cg05970496") (default = FALSE (none))}
+	\item{chr}{For Manhattan plot, choose chromosomes to plot. Input must be numerical, e.g., c(1,4,6) (default = FALSE (all))}
 	\item{dotsize}{For Manhattan plot, choose dotsize (between 0 and 1) (default = 1)}
 	\item{sug.line}{For Manhattan plot, print a suggestive threshold line. Input must be a numerical, e.g., 6e-08, or FALSE (default = FALSE)}
 	\item{gen.line}{For Manhattan plot, print a genome-wide threshold line (default = TRUE)}
