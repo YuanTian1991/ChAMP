@@ -232,12 +232,12 @@ champ.DMP <- function(beta = myNorm,
     } else if(is.numeric(gen.line) && !is.numeric(sug.line)) {
     l <- abs(log10(min(c(plot$P,gen.line))))+1
     tiff(paste(resultsDir,"Manhattan.tiff",sep=""), width=1024, height=425)
-    suppressWarnings(qqman::manhattan(subset(plot, CHR %in% chr), main="Manhattan plot", cex=dotsize, suggestiveline=F, genomewideline=-log10(gen.line), highlight=probes))
+    suppressWarnings(qqman::manhattan(subset(plot, CHR %in% chr), main="Manhattan plot", cex=dotsize, suggestiveline=F, genomewideline=-log10(gen.line), highlight=probes, ylim=c(0,l)))
     dev.off()
     } else if(!is.numeric(gen.line) && is.numeric(sug.line)) {
     l <- abs(log10(min(c(plot$P,sug.line))))+1
     tiff(paste(resultsDir,"Manhattan.tiff",sep=""), width=1024, height=425)
-    suppressWarnings(qqman::manhattan(subset(plot, CHR %in% chr), main="Manhattan plot", cex=dotsize, suggestiveline=-log10(sug.line), genomewideline=F, highlight=probes))
+    suppressWarnings(qqman::manhattan(subset(plot, CHR %in% chr), main="Manhattan plot", cex=dotsize, suggestiveline=-log10(sug.line), genomewideline=F, highlight=probes, ylim=c(0,l)))
     dev.off()
     } else {
     tiff(paste(resultsDir,"Manhattan.tiff",sep=""), width=1024, height=425)
