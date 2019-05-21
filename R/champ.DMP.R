@@ -155,7 +155,7 @@ champ.DMP <- function(beta = myNorm,
     }
     message("\n[ Section 3:  Match Annotation Done ]\n")
     
-    if(Mplot==T | Qplot==T) {
+    if(man.plot==T | q.plot==T) {
     message("\n[ Section 4:  Plotting Start ]\n")
       
     if (!file.exists(resultsDir)) dir.create(resultsDir)
