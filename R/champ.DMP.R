@@ -225,17 +225,17 @@ champ.DMP <- function(beta = myNorm,
     if(sug.line!=F)  message(" Suggestive line drawn at p=",formatC(sug.line,format="e", digits=2))
       
     if(is.numeric(gen.line) && is.numeric(sug.line)) {
-    l <- min(c(plot$P,gen.line,sug.line))/10
+    l <- abs(log10(min(c(plot$P,gen.line,sug.line))))+1
     tiff(paste(resultsDir,"Manhattan.tiff",sep=""), width=1024, height=425)
     suppressWarnings(qqman::manhattan(subset(plot, CHR %in% chr), main="Manhattan plot", cex=dotsize, suggestiveline=-log10(sug.line), genomewideline=-log10(gen.line), highlight=probes, ylim=c(0,l)))
     dev.off()
     } else if(is.numeric(gen.line) && !is.numeric(sug.line)) {
-    l <- min(c(plot$P,gen.line))/10
+    l <- abs(log10(min(c(plot$P,gen.line))))+1
     tiff(paste(resultsDir,"Manhattan.tiff",sep=""), width=1024, height=425)
     suppressWarnings(qqman::manhattan(subset(plot, CHR %in% chr), main="Manhattan plot", cex=dotsize, suggestiveline=F, genomewideline=-log10(gen.line), highlight=probes))
     dev.off()
     } else if(!is.numeric(gen.line) && is.numeric(sug.line)) {
-    l <- min(c(plot$P,sug.line))/10
+    l <- abs(log10(min(c(plot$P,sug.line))))+1
     tiff(paste(resultsDir,"Manhattan.tiff",sep=""), width=1024, height=425)
     suppressWarnings(qqman::manhattan(subset(plot, CHR %in% chr), main="Manhattan plot", cex=dotsize, suggestiveline=-log10(sug.line), genomewideline=F, highlight=probes))
     dev.off()
