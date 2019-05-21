@@ -35,8 +35,7 @@ import(globaltest)
 import(kpmt,"kpmt")
 import(ggplot2)
 import(qqman)
-
-importFrom(FEM, DoIntEpi450k, GenStatM, DoEpiMod, FemModShow)
+import(FEM)
 
 importFrom("utils", "read.csv")
 importFrom(RPMM, blc)
