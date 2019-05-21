@@ -9,8 +9,8 @@ champ.DMP <- function(beta = myNorm,
                       ###The following options are parsed down to qqman package for Manhattan and Q-Q plots
                       resultsDir = "./CHAMP_DMPimages/",
                       man.plot = T,
-                      probes = c(),
-                      chr = c(),
+                      probes = F,
+                      chr = F,
                       dotsize = 1,
                       sug.line = F,
                       gen.line = T,
@@ -169,8 +169,17 @@ champ.DMP <- function(beta = myNorm,
     if (!file.exists(resultsDir)) dir.create(resultsDir)
     message(" champ.DMP plots will be saved in ",resultsDir)
    
-    if(probes=="") probes=F  
-    if(chr==F | chr=="") chr = 1:22
+    if(probes!=F & !is.character(probes)){
+      message(" 'probes' argument must be FALSE or a character string. Setting to FALSE.")
+      probes = F
+      }
+    
+      if(chr!=F & !is.numeric(chr)) {
+      message(" 'chr' argument must be FALSE or a numeric string. Setting to FALSE.")
+      chr = F
+      }
+    
+      if(chr==F) chr = as.numeric(levels(DMPs[["plotDMP"]][,"CHR"])[levels(DMPs[["plotDMP"]][,"CHR"]) %in% unique(DMPs[["plotDMP"]][,"CHR"])])
     
     ##Transfer necessary data, set coloumn names
     DMP <- DMPs[["plotDMP"]]
