@@ -2,6 +2,12 @@
 \title{ChAMP News}
 \encoding{UTF-8}
 
+\section{Version 2.15.1}{
+  \itemize{
+    \item Added scree plot into champ.SVD() function.
+  }
+}
+
 \section{Version 2.13.2}{
   \itemize{
     \item Changed ebayesGSEA function with a new name as ebGSEA, and added KPMT function in it.

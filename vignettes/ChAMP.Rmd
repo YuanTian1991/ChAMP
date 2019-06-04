@@ -18,6 +18,8 @@ vignette: >
 
 # New Updates
 
+> **Thanks to [rasmus.rydbirk@regionh.dk](https://github.com/rrydbirk), we have updated champ.SVD() function, added one scree plot for user to check significance of deconvoluted components.**
+
 > **[ChAMP paper](https://academic.oup.com/bioinformatics/article/doi/10.1093/bioinformatics/btx513/4082274/ChAMP-Updated-Methylation-Analysis-Pipeline-for) has been published on Bioconductor! As author of ChAMP, we really appriciate all your help and suggestions, in the future, I will continually make this package better and better.**
 
 > **If you have any bugs to report, or any suggestions for ChAMP, please email champ450k@gmail.com or tianyuan1991hit@gmail.com. **
@@ -334,6 +336,8 @@ Note that, for different type of covariates (categorical and numeric), champ.SVD
 
 While champ.SVD() is running, all detected covariates will be printed on the screen, so that the user may check if the covariates you want to analyse are correct. The result is a heatmap (saved as SVDsummary.pdf) of the top  principal components correlated to the covariates information provided. In champ.SVD() we used Random Matrix Theory from isva package to detect numbers of latent variables. If our method detected more than 20 components, we would select only top 20. In the heatmap, the darker colours represent a more significant p-value, indicating a stronger correlation of the SVD component with a factor of interest. If the SVD analysis shows that technical factors account for a substantial fraction of variation, then it will be necessary to implement other normalization methods (e.g ComBat) that may help remove this technical variation. ComBat is included in the ChAMP pipeline to remove variation related to the beadchip, position and/or plate, but it may be used to remove other batch effects revealed in the SVD analysis.
 
+> Note: For latest version ChAMP, we added one scree plot in champ.SVD(), to help user to check variance captured by each components. Then they can do batch effect on correponding batch effect. For example, if after deconvolution, first 2 components captured more than 80% of variance, you don't need to care batch effect existing in latter components, just focus on significant correlations in first two components.
+
 You may use the following code to generate the SVD plot:
 
 ```{r eval=FALSE}
@@ -342,6 +346,9 @@ champ.SVD(beta=myNorm,pd=myLoad$pd)
 
 ```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
 knitr::include_graphics("Figure/Demo450KSVD.png")
+```
+```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
+knitr::include_graphics("Figure/Demo450KSVD2.jpg")
 ```
 
 
