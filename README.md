@@ -12,3 +12,5 @@ Install Code:
 git clone https://github.com/YuanTian1991/ChAMP.git
 R CMD INSTALL ChAMP
 ```
+
+Current latest version: `2.15.1`
