@@ -1,7 +1,5 @@
 # ChAMP Package for DNA methylation analysis
 
----
-
 ChAMP package is designed for conduct DNA methylation array analysis, providing service from data loading, to final gene set enrichment analysis .e.g.
 
 More information could be find in [Bioconductor page](https://bioconductor.org/packages/release/bioc/html/ChAMP.html). Also we provided a more detailed guide in the [HTML vignette](https://bioconductor.org/packages/release/bioc/vignettes/ChAMP/inst/doc/ChAMP.html).
