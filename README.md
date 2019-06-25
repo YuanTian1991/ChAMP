@@ -1,4 +1,6 @@
-#ChAMP Package for DNA methylation analysis
+# ChAMP Package for DNA methylation analysis
+
+---
 
 ChAMP package is designed for conduct DNA methylation array analysis, providing service from data loading, to final gene set enrichment analysis .e.g.
 
