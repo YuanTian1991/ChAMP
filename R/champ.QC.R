@@ -66,9 +66,9 @@ champ.QC <- function(beta = myLoad$beta,
         dend <- as.dendrogram(hc)
         MyColor <- rainbow(length(table(pheno)))
         names(MyColor) <- names(table(pheno))
-        labels_colors(dend) <- MyColor[pheno[order.dendrogram(dend)]]
+        labels_colors(dend) <- MyColor[as.character(pheno[order.dendrogram(dend)])]
         dend <- dend %>% set("labels_cex",0.8)
-        dend <- dend %>% set("leaves_pch", 19) %>% set("leaves_cex",0.6) %>% set("leaves_col",MyColor[pheno[order.dendrogram(dend)]])
+        dend <- dend %>% set("leaves_pch", 19) %>% set("leaves_cex",0.6) %>% set("leaves_col",MyColor[as.character(pheno[order.dendrogram(dend)])])
 
         if(Rplot)
         {
