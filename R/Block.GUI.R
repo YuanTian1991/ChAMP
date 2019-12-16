@@ -137,11 +137,11 @@ Block.GUI <- function(Block=myBlock,
                              tabsetPanel(
                                  tabPanel("Blocktable",
                                           align = "left",
-                                          div(dataTableOutput("blocktable"), style = "font-size:75%")
+                                          div(DT::dataTableOutput("blocktable"), style = "font-size:75%")
                                          ),
                                  tabPanel("CpGtable",
                                           align = "left",
-                                          div(dataTableOutput("cpgtable"), style = "font-size:75%")
+                                          div(DT::dataTableOutput("cpgtable"), style = "font-size:75%")
                                          ),
                                  tabPanel("Blockplot",
                                           align = "center",
@@ -151,7 +151,7 @@ Block.GUI <- function(Block=myBlock,
                                                    br(),
                                                    column(width = 12,
                                                           align = "left",
-                                                          div(dataTableOutput("clustertable"), style = "font-size:75%")
+                                                          div(DT::dataTableOutput("clustertable"), style = "font-size:75%")
                                                          ),#column
                                                    column(width = 12,
                                                           align = "center",
@@ -229,18 +229,18 @@ Block.GUI <- function(Block=myBlock,
                              mycpgtable=mycpgtable)
                     })
 
-        output$blocktable <- renderDataTable({
+        output$blocktable <- DT::renderDataTable({
                                             datatable <- Cutoff_repalce()$myblock
                                             datatable <- data.frame(ID=rownames(datatable),datatable)
                                         },options = list(pageLength=20))
-        output$cpgtable <- renderDataTable({
+        output$cpgtable <- DT::renderDataTable({
                                             datatable <- Cutoff_repalce()$mycpgtable
                                             datatable <- data.frame(ID=rownames(datatable),datatable)
                                         },options = list(pageLength=20))
         output$blockplot <- renderPlotly({
                                             innerblockplot(Block_repalce()$G,Block_repalce()$cpgidf,Block_repalce()$block.idx)
                                         })
-        output$clustertable <- renderDataTable({
+        output$clustertable <- DT::renderDataTable({
                                             datatable <- Block_repalce()$clustersinblock
                                             datatable <- data.frame(ID=rownames(datatable),datatable)
                                         },options = list(pageLength=8))

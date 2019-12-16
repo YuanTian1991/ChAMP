@@ -247,7 +247,7 @@ DMP.GUI <- function(DMP=myDMP[[1]],
                              tabsetPanel(
                                  tabPanel("DMPtable",
                                           align = "left",
-                                          div(dataTableOutput("table"), style = "font-size:75%")
+                                          div(DT::dataTableOutput("table"), style = "font-size:75%")
                                          ),
                                  tabPanel("Heatmap",
                                           align = "center",
@@ -373,7 +373,7 @@ DMP.GUI <- function(DMP=myDMP[[1]],
                                        myallgeneselect=myallgeneselect)
                     })
 
-        output$table <- renderDataTable({
+        output$table <- DT::renderDataTable({
                                          if(class(pheno)=="numeric") {
                                             datatable <- Cutoff_repalce()$mydmp[,c("CHR","MAPINFO","gene","feature","cgi",names(DMP)[1:6])]
                                          } else {
