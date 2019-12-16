@@ -233,11 +233,11 @@ DMR.GUI <- function(DMR=myDMR,
                              tabsetPanel(
                                  tabPanel("DMRtable",
                                           align = "left",
-                                          div(dataTableOutput("table"), style = "font-size:75%")
+                                          div(DT::dataTableOutput("table"), style = "font-size:75%")
                                          ),
                                  tabPanel("CpGtable",
                                           align = "left",
-                                          div(dataTableOutput("cpgtable"), style = "font-size:75%")
+                                          div(DT::dataTableOutput("cpgtable"), style = "font-size:75%")
                                          ),
                                  tabPanel("DMRPlot",
                                           align = "center",
@@ -246,7 +246,7 @@ DMR.GUI <- function(DMR=myDMR,
                                                    br(),
                                                    column(width = 12,
                                                           align = "left",
-                                                          div(dataTableOutput("probetable"), style = "font-size:75%")
+                                                          div(DT::dataTableOutput("probetable"), style = "font-size:75%")
                                                          ),#column
                                                    column(width = 12,
                                                           align = "center",
@@ -313,15 +313,15 @@ DMR.GUI <- function(DMR=myDMR,
                              mydata=mydata)
                     })
 
-        output$probetable <- renderDataTable({
+        output$probetable <- DT::renderDataTable({
                                             datatable <- DMR_repalce()$mydmrselect
                                             datatable <- data.frame(ID=rownames(datatable),datatable)
                                         },options = list(pageLength=8))
-        output$table <- renderDataTable({
+        output$table <- DT::renderDataTable({
                                             datatable <- Cutoff_repalce()$mydmr
                                             datatable <- data.frame(ID=rownames(datatable),datatable)
                                         },options = list(pageLength=20))
-        output$cpgtable <- renderDataTable({
+        output$cpgtable <- DT::renderDataTable({
                                             datatable <- Cutoff_repalce()$mygeneselect
                                             datatable <- data.frame(ID=rownames(datatable),datatable)
                                            },options = list(pageLength=20))

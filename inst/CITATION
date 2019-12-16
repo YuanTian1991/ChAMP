@@ -4,11 +4,11 @@ c(bibentry(bibtype = "Article",
            author = c(
            person("Yuan", "Tian"),
            person(c("Tiffany", "J."), "Morris"),
-           person(c("Amy", "P"), "Webster"),
+           person(c("Amy", "P."), "Webster"),
            person("Zhen", "Yang"),
-           person("Stephan", "Beck")
+           person("Stephan", "Beck"),
            person("Feber", "Andrew"),
-           person(c("Andrew", "E."), "Teschendorff"),
+           person(c("Andrew", "E."), "Teschendorff")
            ),
            year = 2017,
            journal = "Bioinformatics",
