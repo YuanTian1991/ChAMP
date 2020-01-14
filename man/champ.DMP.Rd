@@ -13,7 +13,16 @@ This function would use limma package to calculate differential methylation prob
               compare.group = NULL,
               adjPVal = 0.05,
               adjust.method = "BH",
-              arraytype = "450K")
+              arraytype = "450K",
+	      resultsDir = "./CHAMP_DMPimages/")
+              man.plot = T,
+              probes = F,
+              chr = F,
+              dotsize = 1,
+              sug.line = F,
+              gen.line = T,
+              gen.alpha = 0.05,
+              q.plot = T))
 }
 
 \arguments{
@@ -23,9 +32,18 @@ This function would use limma package to calculate differential methylation prob
   	\item{adjPVal}{The minimum threshold of significance for probes to be considered an DMP. (default = 0.05)}
 	\item{adjust.method}{The p-value adjustment method to be used for the limma analyis, (default= BH (Benjamini-Hochberg))}
     \item{arraytype}{Choose microarray type is 450K or EPIC. (default = "450K")}
+	\item{resultsDir}{Choose where plots are saved (default = "./CHAMP_DMPimages/")}
+	\item{man.plot}{Should Manhattan plot be produced (default = TRUE)}
+	\item{probes}{For Manhattan plot, choose probes to highlight, e.g., c("cg26090107", "cg05970496") (default = FALSE (none))}
+	\item{chr}{For Manhattan plot, choose chromosomes to plot. Input must be numerical, e.g., c(1,4,6) (default = FALSE (all))}
+	\item{dotsize}{For Manhattan plot, choose dotsize (between 0 and 1) (default = 1)}
+	\item{sug.line}{For Manhattan plot, print a suggestive threshold line. Input must be a numerical, e.g., 6e-08, or FALSE (default = FALSE)}
+	\item{gen.line}{For Manhattan plot, print a genome-wide threshold line (default = TRUE)}
+	\item{gen.alpha}{For Manhattan plot, choose genome-wide significance level (default = 0.05)}
+	\item{q.plot}{Should Q-Q plot be produced (default = TRUE)}
 }
 \value{
-\item{DMP}{A list DMP results. Each element in the list is a data frame of all probes with an adjusted p-value for significance of differential methylation containing columns for logFC, AveExpr, t, P.Value, adj.P.Val, B, C_AVG, T_AVG, deltaBeta, CHR, MAPINFO, Strand, Type, gene, feature, cgi, feat.cgi, UCSC_CpG_Islands_Name, DHS, Enhancer, Phantom, Probe_SNPs, Probe_SNPs_10. These values are directly calculated from limma package, user may read limma manual for more information. deltaBeta is the same as logFC, we kept it here cause maybe old users would stil using it. XXX_AVG is mean value of XXX pheno type in your pheno parameter. Note for numeric variables, the returned result will be named as "NumericVariable", it contains most features as output for categorical covariates except for XXX_AVG and deltaBeta}
+\item{DMP}{A list DMP results. Each element in the list is a data frame of all probes with an adjusted p-value for significance of differential methylation containing columns for logFC, AveExpr, t, P.Value, adj.P.Val, B, C_AVG, T_AVG, deltaBeta, CHR, MAPINFO, Strand, Type, gene, feature, cgi, feat.cgi, UCSC_CpG_Islands_Name, DHS, Enhancer, Phantom, Probe_SNPs, Probe_SNPs_10. These values are directly calculated from limma package, user may read limma manual for more information. deltaBeta is the same as logFC, we kept it here cause maybe old users would stil using it. XXX_AVG is mean value of XXX pheno type in your pheno parameter. Note for numeric variables, the returned result will be named as "NumericVariable", it contains most features as output for categorical covariates except for XXX_AVG and deltaBeta. Furthermore, function produces Manhattan plot as known from GWAS studies, and Q-Q plot to check for inflated p-values.}
 }
 
 \examples{
