@@ -202,4 +202,5 @@ champ.SVD <- function(beta=myNorm,
     message("[<<<<<< ChAMP.SVD END >>>>>>]")
     message("[===========================]")
     message("[If the batch effect is not significant, you may want to process champ.DMP() or champ.DMR() or champ.BlockFinder() next, otherwise, you may want to run champ.runCombat() to eliminat batch effect, then rerun champ.SVD() to check corrected result.]\n")
+    return(svdPV.m)
 }

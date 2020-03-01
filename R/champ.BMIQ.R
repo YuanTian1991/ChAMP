@@ -67,6 +67,7 @@ w0.m[which(beta1.v > th1.v[2]),3] <- 1;
 
 ### fit type1
 print("Fitting EM beta mixture to type1 probes");
+set.seed(1234567)
 rand.idx <- sample(1:length(beta1.v),nfit,replace=FALSE)
 em1.o <- blc(matrix(beta1.v[rand.idx],ncol=1),w=w0.m[rand.idx,],maxiter=niter,tol=tol);
 subsetclass1.v <- apply(em1.o$w,1,which.max);
@@ -119,6 +120,7 @@ w0.m[intersect(which(beta2.v > th2.v[1]),which(beta2.v <= th2.v[2])),2] <- 1;
 w0.m[which(beta2.v > th2.v[2]),3] <- 1;
 
 print("Fitting EM beta mixture to type2 probes");
+set.seed(1234567)
 rand.idx <- sample(1:length(beta2.v),nfit,replace=FALSE)
 em2.o <- blc(matrix(beta2.v[rand.idx],ncol=1),w=w0.m[rand.idx,],maxiter=niter,tol=tol);
 print("Done");
