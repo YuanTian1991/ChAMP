@@ -32,6 +32,7 @@ champ.runCombat <- function(beta=myNorm,
 
     PhenoTypes.lv_tmp <- as.data.frame(pd[,valid.idx])
     colnames(PhenoTypes.lv_tmp) <- colnames(pd)[valid.idx]
+    PhenoTypes.lv_tmp <- apply(PhenoTypes.lv_tmp,2,function(x) as.character(x))
     PhenoTypes.lv <- as.data.frame(apply(PhenoTypes.lv_tmp,2,function(x) if(class(x)!="numeric") as.factor(as.numeric(as.factor(x)))))
     if(!is.null(rownames(pd))) rownames(PhenoTypes.lv) <- rownames(pd)
 
