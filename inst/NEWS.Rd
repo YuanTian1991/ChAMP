@@ -2,6 +2,12 @@
 \title{ChAMP News}
 \encoding{UTF-8}
 
+\section{Version 2.17.3}{
+  \itemize{
+    \item Fixed bug in runCombat, as some factors are numeric format.
+  }
+}
+
 \section{Version 2.15.1}{
   \itemize{
     \item Added scree plot into champ.SVD() function.
