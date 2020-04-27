@@ -62,7 +62,7 @@ champ.SVD <- function(beta=myNorm,
     drawheatmap <- function(svdPV.m)
     {
         myPalette <- c("darkred","red","orange","pink","white");
-        breaks.v <- c(-200,-10,-5,-2,log10(0.05),0);
+        breaks.v <- c(-10000,-10,-5,-2,log10(0.05),0);
         image(x=1:nrow(svdPV.m), y=1:ncol(svdPV.m), z=log10(svdPV.m), col=myPalette, breaks=breaks.v, xlab="", ylab="", axes=FALSE, main= "Singular Value Decomposition Analysis (SVD)");
         axis(1,at=1:nrow(svdPV.m),labels=paste("PC-",1:nrow(svdPV.m),sep=""),las=2);
         suppressWarnings(axis(2,at=1:ncol(svdPV.m),labels=colnames(svdPV.m),las=2));
