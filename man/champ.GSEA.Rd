@@ -17,7 +17,8 @@
                method="fisher",
                arraytype="450K",
                Rplot=TRUE,
-               adjPval=0.05)
+               adjPval=0.05,
+               cores=1)
 }
 
 \arguments{
@@ -31,6 +32,7 @@
     \item{arraytype}{Which kind of array your data set is? (default = "450K")}
     \item{Rplot}{If gometh method was chosen, should Probability Weight plot will be plotted. More information please check gometh package. (default = TRUE)}
     \item{adjPval}{Adjusted p value cutoff for all calculated GSEA result. (default = 0.05)}
+    \item{cores}{Number of parallel threads/cores used in ebayes method. (default = 1)}
 }
 \value{
     For fisher Method:
@@ -51,6 +53,13 @@
     \item{ontology over_represented_adjPvalue}{The ajusted over representing p value with "BH" method. User may used this one to select qualitied Pathways.}
 
     For ebayes method:
+
+    There are three list:
+      GSEA contains all pathway's GSEA result in one list, and only significant pathways GSEA in another.
+      EnrichedGene: contains enriched genes in each pathways.
+      gtResult: global test result for each gene.
+
+    Below are columns for list GSEA.
     \item{nREP}{Number of genes enriched in this pathway.}
     \item{AUC}{Area under curve from wilcox test.}
     \item{P(WT)}{P value detected for each pathway from Wilcox Test.}

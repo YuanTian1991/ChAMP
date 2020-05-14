@@ -1,6 +1,6 @@
 if(getRversion() >= "3.1.0") utils::globalVariables("PathwayList")
 
-champ.ebGSEA <- function(beta=myNorm, pheno=myLoad$pd$Sample_Group, minN=5, adjPval=0.05, arraytype="450K")
+champ.ebGSEA <- function(beta=myNorm, pheno=myLoad$pd$Sample_Group, minN=5, adjPval=0.05, arraytype="450K", cores=1)
 {
     #library(Hmisc);
     #library(globaltest);
@@ -8,8 +8,8 @@ champ.ebGSEA <- function(beta=myNorm, pheno=myLoad$pd$Sample_Group, minN=5, adjP
 
     mapEIDtoCpG <- function(beta,arraytype) {
         if(arraytype=="EPIC"){
-            message("  Extracting annotation from IlluminaHumanMethylationEPICilm10b2.hg19.")
-            RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylationEPIC",annotation = "ilm10b2.hg19"))
+            message("  Extracting annotation from IlluminaHumanMethylationEPICilm10b4.hg19.")
+            RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylationEPIC",annotation = "ilm10b4.hg19"))
         }else{
             message("  Extracting annotation from IlluminaHumanMethylation450kilmn12.hg19.")
             RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylation450k",annotation = "ilmn12.hg19"))
@@ -100,7 +100,25 @@ champ.ebGSEA <- function(beta=myNorm, pheno=myLoad$pd$Sample_Group, minN=5, adjP
     data(PathwayList)
 
     message("  Doing Wilcox Test and Known Population Median Test, it could be slow here.")
-    gseaWT.m <- do.call(rbind,lapply(PathwayList,function(x) gseaWTfn(termEID.v=x, rankEID.v=rownames(sresGT.m),minN=minN)))
+
+    if(cores > 1)
+    {
+        if(cores > detectCores()) cores <- detectCores()
+        message(cores," cores will be used to do parallel GSEA computing.")
+         cl <- makeCluster(cores)
+        registerDoParallel(cl)
+        gseaWT.m <- foreach(x = 1:length(PathwayList), .combine = rbind, .export=c("gseaWTfn", "PathwayList", "sresGT.m", "minN")) %dopar% {
+            gseaWTfn(termEID.v= PathwayList[[x]] , rankEID.v=rownames(sresGT.m),minN=minN)
+        }
+        stopCluster(cl)
+    } else
+    {
+        gseaWT.m <- do.call(rbind,lapply(PathwayList,function(x) gseaWTfn(termEID.v=x, rankEID.v=rownames(sresGT.m),minN=minN)))
+    }
+
+
+    commonEID <- lapply(PathwayList, function(x) intersect(x, rownames(sresGT.m)))
+
     colnames(gseaWT.m) <- c("nREP","AUC","P","P(KPMT)")
     rownames(gseaWT.m) <- names(PathwayList);
 
@@ -132,5 +150,5 @@ champ.ebGSEA <- function(beta=myNorm, pheno=myLoad$pd$Sample_Group, minN=5, adjP
 
     message("\n[ Section 3:  GSEA on Pathway Done ]\n")
 
-    return(topGSEAwt.lm)
+    return(list(GSEA=topGSEAwt.lm, EnrichGene=commonEID, gtResult=sresGT.m))
 } 

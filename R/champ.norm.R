@@ -41,8 +41,10 @@ champ.norm <- function(beta=myLoad$beta,
         {
             if(cores > detectCores()) cores <- detectCores()
             message(cores," cores will be used to do parallel BMIQ computing.")
-            registerDoParallel(makeCluster(cores))
+            cl <- makeCluster(cores)
+            registerDoParallel(cl)
             beta.p <- foreach(x = 1:ncol(beta),.combine = cbind,.export=c("champ.BMIQ","blc")) %dopar% champ.BMIQ(beta[,x],design.v,sampleID=colnames(beta)[x],plots=plotBMIQ)$nbeta
+            stopCluster(cl)
         }else
         {
             beta.p <- sapply(1:ncol(beta),function(x) champ.BMIQ(beta[,x],design.v,sampleID=colnames(beta)[x],plots=plotBMIQ)$nbeta)
@@ -62,7 +64,7 @@ champ.norm <- function(beta=myLoad$beta,
 	}else if(method=="FunctionalNormalization")
     {
         if(is.null(rgSet)) stop("rgSet not found, it is required for FunctionalNormalization")
-        if(arraytype=="EPIC") rgSet@annotation[2] <- "ilm10b3.hg19"
+        if(arraytype=="EPIC") rgSet@annotation[2] <- "ilm10b4.hg19"
         beta.p <- getBeta(preprocessFunnorm(rgSet))[rownames(beta),]
     }else
     {
