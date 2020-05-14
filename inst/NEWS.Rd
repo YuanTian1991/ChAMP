@@ -2,6 +2,12 @@
 \title{ChAMP News}
 \encoding{UTF-8}
 
+\section{Version 2.18.2}{
+  \itemize{
+    \item Added parallel running for ebGSEA function. And allow it to return enriched gene list.
+  }
+}
+
 \section{Version 2.17.3}{
   \itemize{
     \item Fixed bug in runCombat, as some factors are numeric format.

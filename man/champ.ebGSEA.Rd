@@ -8,7 +8,7 @@
 }
 
 \usage{
-champ.ebGSEA(beta=myNorm, pheno=myLoad$pd$Sample_Group, minN=5, adjPval=0.05, arraytype="450K")
+champ.ebGSEA(beta=myNorm, pheno=myLoad$pd$Sample_Group, minN=5, adjPval=0.05, arraytype="450K", cores=1)
 }
 
 \arguments{
@@ -17,8 +17,16 @@ champ.ebGSEA(beta=myNorm, pheno=myLoad$pd$Sample_Group, minN=5, adjPval=0.05, ar
     \item{minN}{Minium number of common genes threshold in one geneset and candidate gene list, if less than this value, the p value of this geneset would be set 1. (default = 5)}
     \item{adjPval}{Adjusted p value cutoff for all calculated GSEA result. (default = 0.05)}
     \item{arraytype}{Which kind of array your data set is? (default = "450K")}
+    \item{cores}{Number of parallel threads/cores used to accelarate. (default = 1)}
 }
 \value{
+
+    There are three list:
+      GSEA contains all pathway's GSEA result in one list, and only significant pathways GSEA in another. 
+      EnrichedGene: contains enriched genes in each pathways.
+      gtResult: global test result for each gene.
+
+    Below are columns for list GSEA:
     \item{nREP}{Number of genes enriched in this pathway.}
     \item{AUC}{Area under curve from wilcox test.}
     \item{P(WT)}{P value detected for each pathway from Wilcox Test.}

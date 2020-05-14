@@ -9,7 +9,8 @@ champ.GSEA <- function(beta=myNorm,
                        method="fisher",
                        arraytype="450K",
                        Rplot=TRUE,
-                       adjPval=0.05)
+                       adjPval=0.05,
+                       cores=1)
 {
     message("[===========================]")
     message("[<<<< ChAMP.GSEA START >>>>>]")
@@ -36,7 +37,7 @@ champ.GSEA <- function(beta=myNorm,
     {
         data(PathwayList)
         if(arraytype=="EPIC"){
-            RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylationEPIC",annotation = "ilm10b2.hg19"))
+            RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylationEPIC",annotation = "ilm10b4.hg19"))
         }else{
             RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylation450k",annotation = "ilmn12.hg19"))
         }
@@ -171,7 +172,7 @@ champ.GSEA <- function(beta=myNorm,
     } else if(method=="gometh")
     {
         if(arraytype=="EPIC"){
-            RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylationEPIC",annotation = "ilm10b2.hg19"))
+            RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylationEPIC",annotation = "ilm10b4.hg19"))
         }else{
             RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylation450k",annotation = "ilmn12.hg19"))
         }
@@ -219,7 +220,7 @@ champ.GSEA <- function(beta=myNorm,
             if(length(table(pheno) == 2)) message("  pheno parameter is category variable, logistic method would be ued when calculating ebayes GSEA.")
             else stop("If your pheno parameter is category variable, only two phenotypes are allowed, say Cancer vs Normal, please modify your data set.")
         }
-        listsummary.lm <- champ.ebGSEA(beta=beta,pheno=pheno,adjPval=adjPval,minN=5,arraytype=arraytype)
+        listsummary.lm <- champ.ebGSEA(beta=beta,pheno=pheno,adjPval=adjPval,minN=5,arraytype=arraytype, cores=cores)
     } else {
         stop(" You must assign method parameter as fisher, gometh or ebayes.")
     }
