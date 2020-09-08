@@ -23,7 +23,6 @@ import(DMRcate)
 import(dendextend)
 import(sva)
 import(IlluminaHumanMethylationEPICmanifest)
-import(FEM)
 import(impute)
 import(goseq)
 import(combinat)
@@ -69,7 +68,6 @@ export(
 	champ.Block, 
 	champ.GSEA, 
     champ.ebGSEA,
-	champ.EpiMod,
     champ.CNA,
     champ.refbase,
     DMP.GUI,

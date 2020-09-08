@@ -67,6 +67,9 @@ champ.refbase <- function(beta=myNorm,
     lm.o <- lm(t(beta) ~ cellFrac[,-1*which.min(colMeans(cellFrac))])
     tmp.m <- t(lm.o$res)+rowMeans(beta);
 
+    tmp.m[tmp.m <= 0] <- min(tmp.m[which(tmp.m > 0)])
+    tmp.m[tmp.m >= 1] <- max(tmp.m[which(tmp.m < 1)])
+
     message("All cell proportion influence except the one with least cell proportion get corrected.\n")
 
     message("[<<<< ChAMP.REFBASE END >>>>]")

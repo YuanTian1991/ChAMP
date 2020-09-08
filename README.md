@@ -13,4 +13,4 @@ git clone https://github.com/YuanTian1991/ChAMP.git
 R CMD INSTALL ChAMP
 ```
 
-Current latest version: `2.17.3`
+Current latest version: `2.19.3`
