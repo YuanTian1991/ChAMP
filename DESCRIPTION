@@ -2,7 +2,7 @@ Package: ChAMP
 Type: Package
 Title: Chip Analysis Methylation Pipeline for Illumina
         HumanMethylation450 and EPIC
-Version: 2.19.3
+Version: 2.19.4
 Date: 2020-5-14
 Description: The package includes quality control metrics, a selection of normalization methods and novel methods to identify differentially methylated regions and to highlight copy number alterations.
 Authors@R: c(person("Tian","Yuan", role = c("cre", "aut"),
@@ -14,7 +14,7 @@ Authors@R: c(person("Tian","Yuan", role = c("cre", "aut"),
 	     person("Ankur", "Chakravarthy", role = "ctb"))
 License: GPL-3
 VignetteBuilder: knitr
-Depends: R (>= 3.3), minfi, ChAMPdata (>= 2.6.0), FEM (>= 3.1),DMRcate,
+Depends: R (>= 3.3), minfi, ChAMPdata (>= 2.6.0),DMRcate,
         Illumina450ProbeVariants.db,IlluminaHumanMethylationEPICmanifest, DT
 Imports:
         prettydoc,Hmisc,globaltest,sva,illuminaio,rmarkdown,IlluminaHumanMethylation450kmanifest,IlluminaHumanMethylationEPICanno.ilm10b4.hg19,

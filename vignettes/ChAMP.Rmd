@@ -16,13 +16,9 @@ vignette: >
   %\VignetteIndexEntry{ChAMP: The Chip Analysis Methylation Pipeline}
 ---
 
-# New Updates
-
-> **Thanks to [rasmus.rydbirk@regionh.dk](https://github.com/rrydbirk), we have updated champ.SVD() function, added one scree plot for user to check significance of deconvoluted components.**
-
 > **[ChAMP paper](https://academic.oup.com/bioinformatics/article/doi/10.1093/bioinformatics/btx513/4082274/ChAMP-Updated-Methylation-Analysis-Pipeline-for) has been published on Bioconductor! As author of ChAMP, we really appriciate all your help and suggestions, in the future, I will continually make this package better and better.**
 
-> **If you have any bugs to report, or any suggestions for ChAMP, please email champ450k@gmail.com or tianyuan1991hit@gmail.com. **
+> **If you have any bugs to report, or any suggestions for ChAMP, please email champ450k@gmail.com. **
 
 # Introduction
 
@@ -94,7 +90,7 @@ knitr::include_graphics("Figure/ChAMP_Pipeline.png")
 ChAMP Pipeline Figure above outlines the steps in the ChAMP pipeline. Each step can be run individually as a separate function. This allows integration between ChAMP's result and other analysis pipelines. In above pipeline plot, all functions of ChAMP are included, which are categorized using three colors:
 
 * **Blue** functions represent functions for Methylation Data Preparation, like Loading, Normalization, Quality Control checks etc.
-* **Red** functions represent functions for generating analysis results, like Differentially Methylated Positions (DMPs), Differentially Methylated Regions (DMRs), Differentially methylated Blocks, EpiMod (a method for detecting differentially methylated gene modules derived from FEM package), Pathway Enrichment Results etc.
+* **Red** functions represent functions for generating analysis results, like Differentially Methylated Positions (DMPs), Differentially Methylated Regions (DMRs), Differentially methylated Blocks, EpiMod (a method for detecting differentially methylated gene modules derived from FEM package, currently unavailable), Pathway Enrichment Results etc.
 * **Yellow** functions represent GUI interface for dataset and analysis results.
 
 Solid gray line in above plot represent stream of pipeline, while dash gray line represent functions may not necessarily be used, which depends on your data and projects.
@@ -130,7 +126,6 @@ DMR.GUI()
 myBlock <- champ.Block()
 Block.GUI()
 myGSEA <- champ.GSEA()
-myEpiMod <- champ.EpiMod()
 myCNA <- champ.CNA()
 
 # If DataSet is Blood samples, run champ.refbase() here.
@@ -168,7 +163,6 @@ DMR.GUI(arraytype="EPIC")
 myBlock <- champ.Block(arraytype="EPIC")
 Block.GUI(arraytype="EPIC") # For this simulation data, not Differential Methylation Block is detected.
 myGSEA <- champ.GSEA(arraytype="EPIC")
-myEpiMod <- champ.EpiMod(arraytype="EPIC")
 
 # champ.CNA(arraytype="EPIC")
 # champ.CNA() function call for intensity data, which is not included in our Simulation data.
@@ -611,25 +605,6 @@ myebayGSEA <- champ.ebGSEA(beta=myNorm,pheno=myLoad$pd$Sample_Group,arraytype="4
 This is a promising GSEA method, without bias from number of CpGs enriched in genes, or significant level of CpGs.
 
 
-## Differential Methylated Interaction Hotspots
-
-Another function included in ChAMP is champ.EpiMod(). This function uses [FEM](https://www.bioconductor.org/packages/devel/bioc/html/FEM.html)  package to infer differentially methylated gene modules within a user-specific functional gene-network. This network could be e.g. a protein-protein interaction network. Thus, the champ.EpiMod() function can be viewed as a functional supervised algorithm, which uses a network of relations between genes (usually a PPI network), to identify subnetworks where a significant number of genes are associated with a phenotype of interest (POI). The EpiMod algorithm can be run in two different modes: at the probe level, in which case the most differentially methylated probe is assigned to each gene, or at the gene-level in which case a DNAm value is assigned to each gene using an optimized procedure described in detail in Jiao Y, Widschwendter M, Teschendorff AE Bioinformatics 2014. Originally, the FEM package was developed to infer differentially methylated gene modules which are also deregulated at the gene expression level, however here we only provide the EpiMod version, which only infers differentially methylated modules. More advanced user may refer to FEM package for more information.
-
-
-User may use following code to do champ.EpiMod()
-
-```{r eval=FALSE}
-myEpiMod <- champ.EpiMod(beta=myNorm,pheno=myLoad$pd$Sample_Group)
-```
-
-The all significant modules would be returned. And PDF version plots would returned in resultsDir in function parameter. Like below:
-
-```{r, out.width = 800, fig.retina = NULL,echo=FALSE}
-knitr::include_graphics("Figure/EpiMod.jpg")
-```
-
-Above we demonstrated four modules detect by champ.EpiMod() based on our small 450K test data. But in practice, each modules would be saved in to a pdf file individually in resultsDir directory.
-
 ## Copy Number Variation
 
 For Copy Number Variation analysis, we provide champ.CNA() to achieve this work. This function uses the HumanMethylation450 or HumanMethylationEPIC data to identify copy number alterations [@Feber14]. The function utilises the intensity values for each probe to count copy number and determine if copy number alterations are present. Copy number is determined using the CopyNumber package.
@@ -750,10 +725,6 @@ For GSEA method, if you used 'gometh' method, please cite below paper:
 > Young MD, Wakefield MJ, Smyth GK and Oshlack A (2010). "Gene ontology analysis for RNA-seq: accounting for selection bias." Genome Biology, 11, pp. R14.
 
 > Phipson, B, Maksimovic, J, Oshlack, A (2016). missMethyl: an R package for analyzing data from Illumina's HumanMethylation450 platform. Bioinformatics, 32, 2:286-8.
-
-If you used the [FEM](http://bioconductor.org/packages/release/bioc/html/FEM.html) package to find Differential Methylated Modules in gene networks, please cite:
-
-> Jiao Y, Widschwendter M, Teschendorff AE. A systems-level integrative framework for genome-wide dna methylation and gene expression data identifies differential gene expression modules under epigenetic control. Bioinformatics. 2014;30(16):2360-2366.
 
 The CNA detection function was provided by Andy Feber of UCL, you may citate related paper below:
 
