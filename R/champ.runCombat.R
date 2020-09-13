@@ -91,7 +91,7 @@ champ.runCombat <- function(beta=myNorm,
     }
     message("<< Rank Check Complete, you data is good to proceed. >> ^_^")
  	
-    if(min(beta)<=0)
+    if(min(beta)<=0 & logitTrans == TRUE)
     {
         message("Zeros in your dataset have been replaced with smallest positive value.")
         beta[beta<=0] <- min(beta[beta > 0])
