@@ -25,10 +25,8 @@ champ.runCombat <- function(beta=myNorm,
 
     if(is.null(variablename) | !variablename %in% colnames(pd)) stop("variablename parameter MUST contains variable in pd file.")
 
-    valid.idx <- which(!colnames(pd) == variablename &
-                       apply(pd,2,function(x) length(unique(x)))!=1 &
-                       apply(pd,2,function(x) all(table(x)>=2)))
-    if(length(valid.idx)==0) stop("There is no valid factor can be corrected. Factor can be corrected must contian at least two phenotypes, each of them must contain at least two samples. Also batch factors can be variable factor. Please check if your covariates fulfill these requirement.")
+    valid.idx <- which(!colnames(pd) == variablename & apply(pd,2,function(x) length(unique(x)))!=1)
+    if(length(valid.idx)==0) stop("There is no valid factor can be corrected. Factor can be corrected must contian at least two phenotypes. Also batch factors can be variable factor. Please check if your covariates fulfill these requirement.")
 
     PhenoTypes.lv_tmp <- as.data.frame(pd[,valid.idx])
     colnames(PhenoTypes.lv_tmp) <- colnames(pd)[valid.idx]
@@ -39,7 +37,7 @@ champ.runCombat <- function(beta=myNorm,
     if(ncol(PhenoTypes.lv)>=1)
     {
         message("<< Following Factors in your pd(sample_sheet.csv) could be applied to Combat: >>")
-        sapply(colnames(PhenoTypes.lv_tmp),function(x) message("<",x,">(",class(PhenoTypes.lv[[x]]),"):",paste(unique(PhenoTypes.lv_tmp[,x]),collapse=", ")))
+        sapply(colnames(PhenoTypes.lv_tmp),function(x) message("<",x,">(",class(PhenoTypes.lv[[x]]),")"))
         message("[champ.runCombat have automatically select ALL factors contain at least two different values from your pd(sample_sheet.csv).]")
     }else
     {
