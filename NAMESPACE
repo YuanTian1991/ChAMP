@@ -36,7 +36,7 @@ import(kpmt,"kpmt")
 import(ggplot2)
 
 importFrom("utils", "read.csv")
-importFrom(RPMM, blc)
+importFrom(RPMM, "blc")
 
 importFrom("grDevices", "dev.off", "jpeg", "pdf", "rainbow")
 importFrom("graphics", "axis", "legend", "mtext", "par", "plot",
