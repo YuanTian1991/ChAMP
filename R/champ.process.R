@@ -158,7 +158,7 @@ champ.process <- function(runload=TRUE,
         {
             save(myNorm,file=paste(resultsDir,"/myNorm.rda",sep=""))
             message("champ.norm()'s result \"myNorm\" has been saved in ",resultsDir," as \"myNorm.rda.\"")
-            if(normalizationmethod=="BMIQ" & PDFplot==TRUE)
+            if(normalizationmethod=="BMIQ" && PDFplot==TRUE)
                 message("Plots of champ.norm() has been saved in ",paste(resultsDir,"/CHAMP_Normalization/",sep=""))
         }
         gc()
@@ -266,7 +266,7 @@ champ.process <- function(runload=TRUE,
         {
             save(myDMR,file=paste(resultsDir,"/myDMR.rda",sep=""))
             message("champ.DMR()'s result \"myDMR\" has been saved in ",resultsDir," as \"myDMR.rda.\"")
-            if(DMRmethod=="ProbeLasso" & PDFplot==TRUE)
+            if(DMRmethod=="ProbeLasso" && PDFplot==TRUE)
                 message("Plots of champ.DMR() have been saved in ",paste(resultsDir,"/CHAMP_ProbeLasso/",sep=""))
         }
         gc()

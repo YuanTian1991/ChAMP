@@ -126,7 +126,7 @@ champ.load <- function(directory = getwd(),
         message("\nThere are ",sum(is.na(tmp))," NA remain in filtered Data Set. Impute can be done for remain NAs, but not suitable for small number samples. For small Data Set (like only 20 samples), we suggest you set parameter ProbeCutoff as 0 in champ.load() here, which would remove all NA involved probe no matter how many samples of those probes are NA.\n")
     }
 
-    if(autoimpute & sum(is.na(tmp)) > 0){
+    if(autoimpute && sum(is.na(tmp)) > 0){
         message("Impute will be conducted here for remain ",sum(is.na(tmp)),"  NAs. Note that if you don't do this, NA values would be kept in your data set. You may use champ.impute() function to do more complex imputation as well.")
         # Open a file to send messages to save lot's of information from impute.knn
         message("\nImpute function is working now, it may need couple minutes...")

@@ -40,7 +40,7 @@ champ.DMP <- function(beta = myNorm,
 
     message("--------------------------------")
 
-    if(is.null(pheno) | length(unique(pheno))<=1)
+    if(is.null(pheno) || length(unique(pheno))<=1)
     {
         stop("pheno parameter is invalid. Please check the input, pheno MUST contain at least two phenotypes.")
     }else
