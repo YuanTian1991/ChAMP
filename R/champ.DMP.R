@@ -135,7 +135,8 @@ champ.DMP <- function(beta = myNorm,
         com.idx <- intersect(rownames(DMPs[[i]]),rownames(probe.features))
         if(!is.null(Compare))
         {
-            avg <-  cbind(rowMeans(beta[com.idx,which(pheno==Compare[[i]][1])]),rowMeans(beta[com.idx,which(pheno==Compare[[i]][2])]))
+            avg <- cbind(rowMeans(beta[com.idx, pheno==Compare[[i]][1], drop=FALSE]),
+                         rowMeans(beta[com.idx, pheno==Compare[[i]][2], drop=FALSE]))
             avg <- cbind(avg,avg[,2]-avg[,1])
             colnames(avg) <- c(paste(Compare[[i]],"AVG",sep="_"),"deltaBeta")
             DMPs[[i]] <- data.frame(DMPs[[i]][com.idx,],avg,probe.features[com.idx,])
