@@ -95,7 +95,16 @@ champ.import <- function(directory = getwd(),
      message("\n\n[ Section 3: Use Annotation Start ]")
 
      message("\n  Reading ", arraytype, " Annotation >>")
-     if(arraytype == "EPIC") data(AnnoEPIC) else data(Anno450K)
+     # if(arraytype == "EPIC") data(AnnoEPIC) else data(Anno450K)
+     if(arraytype=="EPIC") {
+         data(AnnoEPIC)
+     } else if (arraytype == "450K") {
+         data(Anno450K)
+     } else if (arraytype == "Mouse") {
+         data(AnnoMouse)
+     } else {
+         stop("ArrayType parameter is wrong, it must be 450K, EPIC or Mouse.")
+    }
 
      message("\n  Fetching NEGATIVE ControlProbe.")
      control_probe <- rownames(Anno$ControlProbe)[which(Anno$ControlProbe[,1]=="NEGATIVE")]

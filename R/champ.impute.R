@@ -27,7 +27,7 @@ champ.impute <- function(beta=myLoad$beta,
 
         beta <- tmp_beta[rowValid,]
         if(!is.null(pd)) pd <- pd[colValid,]
-        data.m <- impute.knn(beta)$data
+        data.m <- impute.knn(beta, k=k)$data
         message("(3): The rest NA are imputed by KNN method which parameter k as ",k,".")
     }else if(method=="Delete")
     {

@@ -265,7 +265,7 @@ champ.filter <- function(beta=myImport$beta,
                 data(hm450.manifest.pop.hg19)
                 maskname <- rownames(hm450.manifest.pop.hg19)[which(hm450.manifest.pop.hg19[,paste("MASK_general_",population,sep="")]==TRUE)]
             }
-        }else
+        }else if(arraytype == "EPIC")
         {
             if(is.null(population))
             {
@@ -286,9 +286,13 @@ champ.filter <- function(beta=myImport$beta,
                 data(EPIC.manifest.pop.hg19)
                 maskname <- rownames(EPIC.manifest.pop.hg19)[which(EPIC.manifest.pop.hg19[,paste("MASK_general_",population,sep="")]==TRUE)]
             }
+        } else if(arraytype == 'Mouse') {
+            message("SNP filtering does not fit Mouse data yet.")
+            maskname <- c()
         }
+
         RemainProbe <- !rownames(Objects[[1]]) %in% maskname
-        message("    Filtering probes with SNPs as identified in Zhou's Nucleic Acids Research Paper 2016.")
+        message("    Filtering probes with SNPs.")
         message("    Removing ", sum(RemainProbe == FALSE) ," probes from the analysis.")
         Objects <- lapply(Objects,function(x) x[RemainProbe,])
         Accessory <- lapply(Accessory,function(x) x[RemainProbe,])
@@ -311,7 +315,16 @@ champ.filter <- function(beta=myImport$beta,
     if(FilterOption$filterXY == TRUE)
     {
         message("\n  Filtering XY Start")
-        if(arraytype=="EPIC") data(probe.features.epic) else data(probe.features)
+        #if(arraytype=="EPIC") data(probe.features.epic) else data(probe.features)
+        if(arraytype=="EPIC") {
+            data(probe.features.epic)
+        } else if (arraytype == "450K") {
+            data(probe.features)
+        } else if (arraytype == "Mouse") {
+            data(probe.features.mouse)
+        } else {
+            stop("ArrayType parameter is wrong, it must be 450K, EPIC or Mouse.")
+        }
         RemainProbe <- rownames(Objects[[1]]) %in% (rownames(probe.features)[!probe.features$CHR %in% c("X","Y")])
         message("    Filtering probes located on X,Y chromosome, removing ", sum(RemainProbe == FALSE) ," probes from the analysis.")
         Objects <- lapply(Objects,function(x) x[RemainProbe,])

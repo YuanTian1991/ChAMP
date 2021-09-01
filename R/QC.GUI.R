@@ -55,7 +55,15 @@ QC.GUI <- function(beta=myLoad$beta,
     }
     innertypePlot <- function(beta,arraytype)
     {
-       if(arraytype=="EPIC") data(probe.features.epic) else data(probe.features)
+       if(arraytype=="EPIC") {
+           data(probe.features.epic) 
+       }else if (arraytype == "450K") {
+           data(probe.features)
+       } else if (arraytype == "Mouse") {
+           data(probe.features.mouse)
+       } else {
+           stop("arraytype parameter must be EPIC, 450K or Mouse.")
+       }
        d1 <- density(beta[which(probe.features[rownames(beta),"Type"]=="I"),])
        d2 <- density(beta[which(probe.features[rownames(beta),"Type"]=="II"),])
        twolines <- data.frame(d1x = d1$x, d1y = d1$y, d2x = d2$x, d2y = d2$y)

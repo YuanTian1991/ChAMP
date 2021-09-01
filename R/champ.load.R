@@ -184,7 +184,7 @@ champ.load <- function(directory = getwd(),
                 data(hm450.manifest.pop.hg19)
                 maskname <- rownames(hm450.manifest.pop.hg19)[which(hm450.manifest.pop.hg19[,paste("MASK_general_",population,sep="")]==TRUE)]
             }
-        }else
+        }else if(arraytype == "EPIC")
         {
             if(is.null(population))
             {
@@ -205,6 +205,8 @@ champ.load <- function(directory = getwd(),
                 data(EPIC.manifest.pop.hg19)
                 maskname <- rownames(EPIC.manifest.pop.hg19)[which(EPIC.manifest.pop.hg19[,paste("MASK_general_",population,sep="")]==TRUE)]
             }
+        } else if(arraytype == "Mouse") {
+            message("Sorry, currently SNP filtering does not support mouse.")
         }
         mset.f2=mset[!featureNames(mset) %in% maskname,]
         tmp <- tmp[!rownames(tmp) %in% maskname,]
@@ -225,7 +227,16 @@ champ.load <- function(directory = getwd(),
 
     if(filterXY)
 	{
-        if(arraytype=="EPIC") data(probe.features.epic) else data(probe.features)
+        if(arraytype=="EPIC") { 
+            data(probe.features.epic) 
+        } else if (arraytype == "450K") {
+            data(probe.features)
+        } else if (arraytype == "Mouse") {
+            data(probe.features.mouse)
+        } else {
+            stop("ArrayType parameter is wrong, it must be 450K, EPIC or Mouse.")
+        }
+
 		autosomes=probe.features[!probe.features$CHR %in% c("X","Y"), ]
         mset.f2=mset[featureNames(mset) %in% row.names(autosomes),]
         tmp <- tmp[rownames(tmp) %in% row.names(autosomes),]

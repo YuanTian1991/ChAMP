@@ -128,7 +128,16 @@ champ.DMP <- function(beta = myNorm,
     if(length(DMPs)==0) stop("ChAMP.DMP Have not detected even one significant CpGs. You may try other threshold.")
 
     message("\n[ Section 3:  Match Annotation Start ]\n")
-    if(arraytype == "EPIC") data(probe.features.epic) else data(probe.features)
+    #if(arraytype == "EPIC") data(probe.features.epic) else data(probe.features)
+           if(arraytype=="EPIC") {
+           data(probe.features.epic)
+       }else if (arraytype == "450K") {
+           data(probe.features)
+       } else if (arraytype == "Mouse") {
+           data(probe.features.mouse)
+       } else {
+           stop("arraytype parameter must be EPIC, 450K or Mouse.")
+       }
 
     for(i in names(DMPs))
     {
