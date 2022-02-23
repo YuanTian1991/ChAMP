@@ -170,12 +170,15 @@ champ.SVD <- function(beta=myNorm,
     svdPV.m <- matrix(nrow=topPCA,ncol=ncol(PhenoTypes.lv));
     colnames(svdPV.m) <- colnames(PhenoTypes.lv);
 
-	for(c in 1:topPCA)
-        for(f in 1:ncol(PhenoTypes.lv))
-            if(class(PhenoTypes.lv[,f])!="numeric")
+	for(c in 1:topPCA){
+        for(f in 1:ncol(PhenoTypes.lv)) {
+            if(class(PhenoTypes.lv[,f])!="numeric") {
                 svdPV.m[c,f] <- kruskal.test(svd.o$v[,c] ~ as.factor(PhenoTypes.lv[[f]]))$p.value
-            else
+            } else {
                 svdPV.m[c,f] <- summary(lm(svd.o$v[,c] ~ PhenoTypes.lv[[f]]))$coeff[2,4];
+            }
+        }
+    }
 
     message("<< Calculate SVD matrix successfully. >>")
 
@@ -184,7 +187,7 @@ champ.SVD <- function(beta=myNorm,
     if(Rplot)
     {
         par(mar=c(5,15,2,1));
-        splot(svd.o,rmt.o)
+        # splot(svd.o,rmt.o)
         drawheatmap(svdPV.m)
     }
 	       
@@ -193,7 +196,7 @@ champ.SVD <- function(beta=myNorm,
     {
         pdf(paste(resultsDir,"SVDsummary.pdf",sep=""),width=8,height=8);
         drawheatmap(svdPV.m)
-        splot(svd.o,rmt.o)
+        # splot(svd.o,rmt.o)
         dev.off();
     }
 

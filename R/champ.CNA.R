@@ -19,7 +19,13 @@ champ.CNA <- function(intensity=myLoad$intensity,
     if (!file.exists(resultsDir)) dir.create(resultsDir)
     message("champ.CNA Results will be saved in ",resultsDir," .\n")
 
-    if(arraytype=="EPIC") data(probe.features.epic) else data(probe.features)
+    if(arraytype=="EPIC") {
+        data(probe.features.epic)
+    } else if (arraytype == "450K") {
+        data(probe.features)
+    } else {
+        data(probe.features.mouse)
+    }
 
     message("ChaMP.CNA does not provide batch Correct on intensity data now, but you can use champ.runCombat to correct slides batch yourself.")
 	
@@ -33,6 +39,7 @@ champ.CNA <- function(intensity=myLoad$intensity,
         }
         if(controlGroup == "champCtls")
         {
+            if(arraytype == "Mouse") stop("Mouse methylation array can't use human blood control.")
             message("<< Combining champ bloodCtl dataset into your intensity dataset as control >>")
             data(champBloodCtls)
             ctlIntensity=bloodCtl$intensity

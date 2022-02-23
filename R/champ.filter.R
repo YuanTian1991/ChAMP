@@ -287,8 +287,8 @@ champ.filter <- function(beta=myImport$beta,
                 maskname <- rownames(EPIC.manifest.pop.hg19)[which(EPIC.manifest.pop.hg19[,paste("MASK_general_",population,sep="")]==TRUE)]
             }
         } else if(arraytype == 'Mouse') {
-            message("SNP filtering does not fit Mouse data yet.")
-            maskname <- c()
+            data(Mouse.manifest.mm10)
+            maskname <- rownames(Mouse.manifest)[which(Mouse.manifest$MASK_general==TRUE)]
         }
 
         RemainProbe <- !rownames(Objects[[1]]) %in% maskname
