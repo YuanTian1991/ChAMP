@@ -32,7 +32,7 @@ champ.CNA <- function(intensity=myLoad$intensity,
 	if(control)
 	{
         message("<< Create Control Data >>")
-        if(controlGroup != "champCtls" & !(controlGroup %in% pheno))
+        if(controlGroup != "champCtls" && !(controlGroup %in% pheno))
         {
         	message("You have chosen ", controlGroup, " as the reference and this does not exist in your sample sheet (column Sample_Group). The analysis will run with ChAMP blood controls.")
         	controlGroup="champCtls"

@@ -20,10 +20,10 @@ champ.runCombat <- function(beta=myNorm,
 
 	################ Customise Phenotype Data ########################
 
-    if(is.null(pd) | class(pd)=="list") stop("pd parameter in Data Frame or Matrix is necessary And must contain at least tow factors. If your pd is a list, please change its Format.")
+    if(is.null(pd) || class(pd)=="list") stop("pd parameter in Data Frame or Matrix is necessary And must contain at least tow factors. If your pd is a list, please change its Format.")
     if(class(pd)=="matrix") pd <- as.data.frame(pd)
 
-    if(is.null(variablename) | !variablename %in% colnames(pd)) stop("variablename parameter MUST contains variable in pd file.")
+    if(is.null(variablename) || !variablename %in% colnames(pd)) stop("variablename parameter MUST contains variable in pd file.")
 
     valid.idx <- which(!colnames(pd) == variablename & apply(pd,2,function(x) length(unique(x)))!=1)
     if(length(valid.idx)==0) stop("There is no valid factor can be corrected. Factor can be corrected must contian at least two phenotypes. Also batch factors can be variable factor. Please check if your covariates fulfill these requirement.")
@@ -59,7 +59,7 @@ champ.runCombat <- function(beta=myNorm,
         stop(setdiff(batchname,colnames(PhenoTypes.lv))," factors is not valid to run Combat, please recheck your dataset.")
     }
 
-    if(min(beta)<=0 & logitTrans == TRUE)
+    if(min(beta)<=0 && logitTrans == TRUE)
     {
         message("Zeros in your dataset have been replaced with smallest positive value.")
         beta[beta<=0] <- min(beta[beta > 0])

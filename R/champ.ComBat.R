@@ -76,7 +76,7 @@ champ.ComBat <- function (dat, batch, mod, numCovs = NULL, par.prior = TRUE, pri
     mod = as.matrix(mod[, !check])
     colnames(mod)[ncol(mod)] = "Batch"
     
-    if(sum(check) > 0 & !is.null(numCovs))
+    if(sum(check) > 0 && !is.null(numCovs))
     	numCovs = numCovs - 1
     design <- design.mat(mod, numCov = numCovs)
     batches <- list.batch(mod)
@@ -137,7 +137,7 @@ champ.ComBat <- function (dat, batch, mod, numCovs = NULL, par.prior = TRUE, pri
     t2 <- apply(gamma.hat, 1, var)
     a.prior <- apply(delta.hat, 1, aprior)
     b.prior <- apply(delta.hat, 1, bprior)
-    if (prior.plots & par.prior) {
+    if (prior.plots && par.prior) {
         par(mfrow = c(2, 2))
         tmp <- density(gamma.hat[1, ])
         plot(tmp, type = "l", main = "Density Plot")

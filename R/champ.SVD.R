@@ -78,7 +78,7 @@ champ.SVD <- function(beta=myNorm,
     # Function to draw screeplot. Contributed by Rasmus.
 	svd.scree <- function(svd.obj, maintitle="Scree Plot", axis.title.x="Component Index (Singular Vectors)", axis.title.y="Percent Variance Explained") 
     {
-        if(is.list(svd.obj) & all(names(svd.obj) %in% c("u","d","v"))) {
+        if(is.list(svd.obj) && all(names(svd.obj) %in% c("u","d","v"))) {
             print("Your input data is treated as a SVD output, with u, d, v corresponding to left singular vector, singular values, and right singular vectors, respectively.")
         } else {
             print("Your input data is treated as a vector of singular values. For example, it should be svd.obj$d from a SVD output.")
@@ -121,7 +121,7 @@ champ.SVD <- function(beta=myNorm,
 
 	################ Customise Phenotype Data ########################
 
-    if(is.null(pd) | class(pd)=="list") stop("pd parameter in Data Frame or Matrix is necessary And must contain at least tow factors. If your pd is a list, please change its Format.")
+    if(is.null(pd) || class(pd)=="list") stop("pd parameter in Data Frame or Matrix is necessary And must contain at least tow factors. If your pd is a list, please change its Format.")
     if(class(pd)=="matrix") pd <- as.data.frame(pd)
 
     PhenoTypes.lv_tmp <- pd[,!colnames(pd) %in% c("Sample_Name","Project","filenames","Basename") & apply(pd,2,function(x) length(unique(x)))!=1]
@@ -147,8 +147,8 @@ champ.SVD <- function(beta=myNorm,
     }
     
     #### PhenoTypes.lv prepare ready.
-    if(RGEffect==TRUE & is.null(rgSet)) message("If you want to check Effect of Control Probes, you MUST provide rgSet parameter. Now champ.SVD can only analysis factors in pd.")
-	if(!is.null(rgSet) & RGEffect)
+    if(RGEffect==TRUE && is.null(rgSet)) message("If you want to check Effect of Control Probes, you MUST provide rgSet parameter. Now champ.SVD can only analysis factors in pd.")
+	if(!is.null(rgSet) && RGEffect)
 	{
         if(rgSet@annotation[1]=="IlluminaHumanMethylation450k") data(ControlProbes450K) else data(ControlProbesEPIC)
         dataC2.m <- as.data.frame(log2(apply(ControlProbes,1,function(x) if(x[3]=="Grn") getGreen(rgSet)[x[2],] else getRed(rgSet)[x[2],])))

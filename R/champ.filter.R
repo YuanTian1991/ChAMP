@@ -81,7 +81,7 @@ champ.filter <- function(beta=myImport$beta,
     {
         message("\n  Parameter filterDetP is TRUE, checking if detP in accord with Data Matrix...")
         if(!is.null(Accessory$detP)) {
-            if(identical(rownames(Accessory$detP),rownames(Objects[[1]])) & identical(colnames(Accessory$detP),colnames(Objects[[1]])))
+            if(identical(rownames(Accessory$detP),rownames(Objects[[1]])) && identical(colnames(Accessory$detP),colnames(Objects[[1]])))
             {
                 message("    detP check success.")
             }
@@ -103,7 +103,7 @@ champ.filter <- function(beta=myImport$beta,
     {
         message("\n  Parameter filterBeads is TRUE, checking if beadcount in accord with Data Matrix...")
         if(!is.null(Accessory$beadcount)) {
-            if(identical(rownames(Accessory$beadcount),rownames(Objects[[1]])) & identical(colnames(Accessory$beadcount),colnames(Objects[[1]])))
+            if(identical(rownames(Accessory$beadcount),rownames(Objects[[1]])) && identical(colnames(Accessory$beadcount),colnames(Objects[[1]])))
             {
                 message("    beadcount check success.")
             }
@@ -123,8 +123,8 @@ champ.filter <- function(beta=myImport$beta,
     if(FilterOption$autoimpute == TRUE)
     {
         message("\n  parameter autoimpute is TRUE. Checking if the conditions are fulfilled...")
-        if("beta" %in% names(Objects) | "M" %in% names(Objects)){
-            if(ProbeCutoff > 0 & !is.null(detP)) {
+        if("beta" %in% names(Objects) || "M" %in% names(Objects)){
+            if(ProbeCutoff > 0 && !is.null(detP)) {
                 message("    autoimpute check success.")
             } else {
                 message("    !!! ProbeCutoff is 0, which means you have no needs to do imputation. autoimpute has been reset FALSE.")
@@ -343,7 +343,7 @@ champ.filter <- function(beta=myImport$beta,
         Objects <- append(Objects,list(pd=pd))
     }
 
-    if(fixOutlier & "beta" %in% names(Objects))
+    if(fixOutlier && "beta" %in% names(Objects))
     {
         message("\n  Fixing Outliers Start")
         message("    Replacing all value smaller/equal to 0 with smallest positive value.")
