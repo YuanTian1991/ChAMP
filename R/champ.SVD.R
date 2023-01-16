@@ -108,7 +108,7 @@ champ.SVD <- function(beta=myNorm,
 
     if(length(which(is.na(beta)))>0) message(length(which(is.na(beta)))," NA are detected in your beta Data Set, which may cause fail or uncorrect of SVD analysis. You may want to impute NA with champ.impute() function first.")
 
-    if(class(beta) == 'data.frame')
+    if(inherits(beta, 'data.frame'))
     {
         message("Your beta parameter is data.frame format. ChAMP is now changing it to matrix.")
         beta <- as.matrix(beta)
