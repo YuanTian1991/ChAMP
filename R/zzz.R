@@ -9,13 +9,8 @@
       \\___|_||_/_/ \\_\\_|  |_|_|  
       ------------------------------
 "
-<<<<<<< Updated upstream
-    mes2 <- "    If you have any question or suggestion about ChAMP, please email to champ450k@gmail.com.\n    Thank you for citating ChAMP:\n\n    Yuan Tian, Tiffany J Morris, Amy P Webster, Zhen Yang, Stephan Beck, Andrew Feber, Andrew E Teschendorff; ChAMP: updated methylation analysis pipeline for Illumina BeadChips, Bioinformatics, btx513, https://doi.org/10.1093/bioinformatics/btx513\n     --------------------------\n"
-    packageStartupMessage(">> Package version 2.23.1 loaded <<\n",mes,mes2)
-=======
     mes2 <- "    If you have any question or suggestion about ChAMP, please email to champ450k@gmail.com.\n    Thank you for citating ChAMP:\n\n    Yuan Tian, Tiffany J Morris, Amy P Webster, Zhen Yang, Stephan Beck, Andrew Feber, Andrew E Teschendorff; ChAMP: updated methylation analysis pipeline for Illumina BeadChips, Bioinformatics, btx513, https://doi.org/10.1093/bioinformatics/btx513"
     mes3 <- "    REQUIRE ChAMPdata >= 2.23.1"
-    packageStartupMessage(">> Package version 2.22.1 loaded <<\n", mes , mes2, mes3)
->>>>>>> Stashed changes
+    packageStartupMessage(">> Package version 2.29.1 loaded <<\n", mes , mes2, mes3)
 }
 

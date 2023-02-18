@@ -1,10 +1,9 @@
-<<<<<<< Updated upstream
 Package: ChAMP
 Type: Package
 Title: Chip Analysis Methylation Pipeline for Illumina
         HumanMethylation450 and EPIC
-Version: 2.29.0
-Date: 2020-11-2
+Version: 2.29.1
+Date: 2020-02-18
 Description: The package includes quality control metrics, a selection of normalization methods and novel methods to identify differentially methylated regions and to highlight copy number alterations.
 Authors@R: c(person("Tian","Yuan", role = c("cre", "aut"),
                     email = "champ450k@gmail.com"),
@@ -36,42 +35,4 @@ Maintainer: Yuan Tian  <champ450k@gmail.com>
 NeedsCompilation: no
 LazyData: true
 Packaged: 2018-03-22 04:29:01 UTC; tiany
-=======
-Package: ChAMP
-Type: Package
-Title: Chip Analysis Methylation Pipeline for Illumina
-        HumanMethylation450 and EPIC
-Version: 2.22.1
-Date: 2023-02-18
-Description: The package includes quality control metrics, a selection of normalization methods and novel methods to identify differentially methylated regions and to highlight copy number alterations.
-Authors@R: c(person("Tian","Yuan", role = c("cre", "aut"),
-                    email = "champ450k@gmail.com"),
-		person("Tiffany","Morris",role = "ctb"),
-             person("Lee", "Stirling", role = "ctb"),
-             person("Andrew", "Feber", role = "ctb"),
-	     person("Andrew", "Teschendorff", role = "ctb"),
-	     person("Ankur", "Chakravarthy", role = "ctb"))
-License: GPL-3
-VignetteBuilder: knitr
-Depends: R (>= 3.3), minfi, ChAMPdata (>= 2.6.0),DMRcate,
-        Illumina450ProbeVariants.db,IlluminaHumanMethylationEPICmanifest, DT, RPMM
-Imports:
-        prettydoc,Hmisc,globaltest,sva,illuminaio,rmarkdown,IlluminaHumanMethylation450kmanifest,IlluminaHumanMethylationEPICanno.ilm10b4.hg19,
-        limma, DNAcopy, preprocessCore,impute, marray, wateRmelon,
-        plyr,goseq,missMethyl,kpmt,ggplot2,
-        GenomicRanges,qvalue,isva,doParallel,bumphunter,quadprog,shiny,shinythemes,plotly
-        (>= 4.5.6),RColorBrewer,dendextend, matrixStats,combinat
-biocViews: Microarray, MethylationArray, Normalization, TwoChannel,
-        CopyNumber, DNAMethylation
-Suggests: knitr,rmarkdown
-Author: Yuan Tian [cre,aut],
-  Tiffany Morris [ctb],
-  Lee Stirling [ctb],
-  Andrew Feber [ctb],
-  Andrew Teschendorff [ctb],
-  Ankur Chakravarthy [ctb]
-Maintainer: Yuan Tian  <champ450k@gmail.com>
-NeedsCompilation: no
-LazyData: true
-Packaged: 2018-03-22 04:29:01 UTC; tiany
->>>>>>> Stashed changes
+

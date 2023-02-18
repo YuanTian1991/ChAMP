@@ -242,61 +242,8 @@ champ.filter <- function(beta=myImport$beta,
     if(FilterOption$filterSNPs== TRUE)
     {
         message("\n  Filtering SNPs Start")
-<<<<<<< Updated upstream
-        
-        
-        if(arraytype=="450K")
-        {
-            if(is.null(population))
-            {
-                message("    Using general 450K SNP list for filtering.")
-                data(hm450.manifest.hg19)
-                maskname <- rownames(hm450.manifest.hg19)[which(hm450.manifest.hg19$MASK_general==TRUE)]
-            }else if(!population %in% c("AFR","EAS","EUR","SAS","AMR","GWD","YRI","TSI",
-                                        "IBS","CHS","PUR","JPT","GIH","CHB","STU","ITU",
-                                        "LWK","KHV","FIN","ESN","CEU","PJL","ACB","CLM",
-                                        "CDX","GBR","BEB","PEL","MSL","MXL","ASW"))
-            {
-                message("    Seems your population name is wrong. Using general 450K SNP list for filtering.")
-                data(hm450.manifest.hg19)
-                maskname <- rownames(hm450.manifest.hg19)[which(hm450.manifest.hg19$MASK_general==TRUE)]
-            }else
-            {
-                message("    Using ",population," specific 450K SNP list for filtering.")
-                data(hm450.manifest.pop.hg19)
-                maskname <- rownames(hm450.manifest.pop.hg19)[which(hm450.manifest.pop.hg19[,paste("MASK_general_",population,sep="")]==TRUE)]
-            }
-        }else if(arraytype == "EPIC")
-        {
-            if(is.null(population))
-            {
-                message("    Using general EPIC SNP list for filtering.")
-                data(EPIC.manifest.hg19)
-                maskname <- rownames(EPIC.manifest.hg19)[which(EPIC.manifest.hg19$MASK_general==TRUE)]
-            }else if(!population %in% c("AFR","EAS","EUR","SAS","AMR","GWD","YRI","TSI",
-                                        "IBS","CHS","PUR","JPT","GIH","CHB","STU","ITU",
-                                        "LWK","KHV","FIN","ESN","CEU","PJL","ACB","CLM",
-                                        "CDX","GBR","BEB","PEL","MSL","MXL","ASW"))
-            {
-                message("    Seems your population name is wrong. Using general EPIC SNP list for filtering.")
-                data(EPIC.manifest.hg19)
-                maskname <- rownames(EPIC.manifest.hg19)[which(EPIC.manifest.hg19$MASK_general==TRUE)]
-            }else
-            {
-                message("    Using ",population," specific EPIC SNP list for filtering.")
-                data(EPIC.manifest.pop.hg19)
-                maskname <- rownames(EPIC.manifest.pop.hg19)[which(EPIC.manifest.pop.hg19[,paste("MASK_general_",population,sep="")]==TRUE)]
-            }
-        } else if(arraytype == 'Mouse') {
-            data(Mouse.manifest.mm10)
-            maskname <- rownames(Mouse.manifest)[which(Mouse.manifest$MASK_general==TRUE)]
-        }
-
-        RemainProbe <- !rownames(Objects[[1]]) %in% maskname
-        message("    Filtering probes with SNPs.")
-=======
       if(arraytype %in% c("EPIC", "EPICv2")) {
-        message("\n    !!! Important, since version 2.23.1, ChAMP set default `EPIC` arraytype as EPIC version 2. ",
+        message("\n    !!! Important, since version 2.29.1, ChAMP set default `EPIC` arraytype as EPIC version 2. ",
                 "\n        You can set 'EPIC' or 'EPICv2' to use version 2 EPIC annotation",
                 "\n        If you want to use the old version (v1), please specify arraytype parameter as `EPICv1`. ",
                 "\n        For 450K array, still use `450K`\n")
@@ -319,7 +266,6 @@ champ.filter <- function(beta=myImport$beta,
       }
       
         RemainProbe <- !rownames(Objects[[1]]) %in% maskname
->>>>>>> Stashed changes
         message("    Removing ", sum(RemainProbe == FALSE) ," probes from the analysis.")
         Objects <- lapply(Objects,function(x) x[RemainProbe,])
         Accessory <- lapply(Accessory,function(x) x[RemainProbe,])
@@ -342,18 +288,6 @@ champ.filter <- function(beta=myImport$beta,
     if(FilterOption$filterXY == TRUE)
     {
         message("\n  Filtering XY Start")
-<<<<<<< Updated upstream
-        #if(arraytype=="EPIC") data(probe.features.epic) else data(probe.features)
-        if(arraytype=="EPIC") {
-            data(probe.features.epic)
-        } else if (arraytype == "450K") {
-            data(probe.features)
-        } else if (arraytype == "Mouse") {
-            data(probe.features.mouse)
-        } else {
-            stop("ArrayType parameter is wrong, it must be 450K, EPIC or Mouse.")
-        }
-=======
       if(arraytype %in% c("EPIC", "EPICv2")) {
         data("probe.features.epicv2")
       } else if(arraytype == "EPICv1") {
@@ -361,8 +295,6 @@ champ.filter <- function(beta=myImport$beta,
       } else { 
         data("probe.features")
       }
-      
->>>>>>> Stashed changes
         RemainProbe <- rownames(Objects[[1]]) %in% (rownames(probe.features)[!probe.features$CHR %in% c("X","Y")])
         message("    Filtering probes located on X,Y chromosome, removing ", sum(RemainProbe == FALSE) ," probes from the analysis.")
         Objects <- lapply(Objects,function(x) x[RemainProbe,])
