@@ -43,6 +43,7 @@ champ.import <- function(directory = getwd(),
      if("Sentrix_ID" %in% colnames(pd))
      {
          colnames(pd)[which(colnames(pd)=="Sentrix_ID")] <- "Slide"
+         pd$Slide <- as.character(pd$Slide)
          message("  Replace Sentrix_ID into Slide")
      } else 
      {
@@ -95,6 +96,7 @@ champ.import <- function(directory = getwd(),
      message("\n\n[ Section 3: Use Annotation Start ]")
 
      message("\n  Reading ", arraytype, " Annotation >>")
+<<<<<<< Updated upstream
      # if(arraytype == "EPIC") data(AnnoEPIC) else data(Anno450K)
      if(arraytype=="EPIC") {
          data(AnnoEPIC)
@@ -105,6 +107,19 @@ champ.import <- function(directory = getwd(),
      } else {
          stop("ArrayType parameter is wrong, it must be 450K, EPIC or Mouse.")
     }
+=======
+     if(arraytype %in% c("EPIC", "EPICv2")) {
+       message("    !!! Important, since version 2.23.1, ChAMP set default `EPIC` arraytype as EPIC version 2. ",
+               "\n        You can set 'EPIC' or 'EPICv2' to use version 2 EPIC annotation",
+               "\n        If you want to use the old version (v1), please specify arraytype parameter as `EPICv1`. ",
+               "\n        For 450K array, still use `450K`")
+       data("AnnoEPICv2")
+     } else if(arraytype == "EPICv1") {
+       data("AnnoEPICv1")
+     } else { 
+        data(Anno450K)
+     }
+>>>>>>> Stashed changes
 
      message("\n  Fetching NEGATIVE ControlProbe.")
      control_probe <- rownames(Anno$ControlProbe)[which(Anno$ControlProbe[,1]=="NEGATIVE")]
@@ -184,5 +199,6 @@ champ.import <- function(directory = getwd(),
      message("\n[<<<<< ChAMP.IMPORT END >>>>>>]")
      message("[===========================]")
      message("[You may want to process champ.filter() next.]\n")
+     
      return(list("beta"=BetaValue,"M"=MValue,"pd"=pd,"intensity"=intensity,"detP"=detP,"beadcount"=Ubead,"Meth"=M,"UnMeth"=U))
 }

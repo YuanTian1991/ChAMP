@@ -202,18 +202,18 @@ champ.filter <- function(beta=myImport$beta,
            zz <- file("ImputeMessage.Rout", open="wt")
            sink(zz)
            sink(zz, type="message")
-
+           
            if("beta" %in% names(Objects))
            {
                message("    Doing imputation on beta matrix.")
                Objects$beta[Accessory$detP > detPcut] <- NA
-               Objects$beta <- impute.knn(Objects$beta,k=5)$data
+               Objects$beta <- suppressMessages(impute.knn(Objects$beta, k=5)$data)
            }
            if("M" %in% names(Objects))
            {
                message("    Doing imputation on M matrix.")
                Objects$M[Accessory$detP > detPcut] <- NA
-               Objects$M <- impute.knn(Objects$M,k=5)$data
+               Objects$M <- suppressMessages(impute.knn(Objects$M,k=5)$data)
            }
            sink(type="message")
            sink()
@@ -242,6 +242,7 @@ champ.filter <- function(beta=myImport$beta,
     if(FilterOption$filterSNPs== TRUE)
     {
         message("\n  Filtering SNPs Start")
+<<<<<<< Updated upstream
         
         
         if(arraytype=="450K")
@@ -293,6 +294,32 @@ champ.filter <- function(beta=myImport$beta,
 
         RemainProbe <- !rownames(Objects[[1]]) %in% maskname
         message("    Filtering probes with SNPs.")
+=======
+      if(arraytype %in% c("EPIC", "EPICv2")) {
+        message("\n    !!! Important, since version 2.23.1, ChAMP set default `EPIC` arraytype as EPIC version 2. ",
+                "\n        You can set 'EPIC' or 'EPICv2' to use version 2 EPIC annotation",
+                "\n        If you want to use the old version (v1), please specify arraytype parameter as `EPICv1`. ",
+                "\n        For 450K array, still use `450K`\n")
+        data("EPICv2_Mask")
+      } else if(arraytype == "EPICv1") {
+        data("EPICv1_Mask")
+      } else { 
+        data("Hm450K_Mask")
+      }
+      
+      if(is.null(population)) {
+        message("    Using general mask options")
+        maskname <- rownames(Mask)[Mask$MASK_general]
+      } else if (paste0("MASK_general_", population) %in% colnames(Mask)) {
+        message("    Using ", population, " specific SNP option.")
+        maskname <- rownames(Mask)[Mask[, paste0("MASK_general_", population)]]
+      } else {
+        message("    Seems the population does not exist in this array annotation, using general options.")
+        maskname <- rownames(Mask)[Mask$MASK_general]
+      }
+      
+        RemainProbe <- !rownames(Objects[[1]]) %in% maskname
+>>>>>>> Stashed changes
         message("    Removing ", sum(RemainProbe == FALSE) ," probes from the analysis.")
         Objects <- lapply(Objects,function(x) x[RemainProbe,])
         Accessory <- lapply(Accessory,function(x) x[RemainProbe,])
@@ -315,6 +342,7 @@ champ.filter <- function(beta=myImport$beta,
     if(FilterOption$filterXY == TRUE)
     {
         message("\n  Filtering XY Start")
+<<<<<<< Updated upstream
         #if(arraytype=="EPIC") data(probe.features.epic) else data(probe.features)
         if(arraytype=="EPIC") {
             data(probe.features.epic)
@@ -325,6 +353,16 @@ champ.filter <- function(beta=myImport$beta,
         } else {
             stop("ArrayType parameter is wrong, it must be 450K, EPIC or Mouse.")
         }
+=======
+      if(arraytype %in% c("EPIC", "EPICv2")) {
+        data("probe.features.epicv2")
+      } else if(arraytype == "EPICv1") {
+        data("probe.features.epicv1")
+      } else { 
+        data("probe.features")
+      }
+      
+>>>>>>> Stashed changes
         RemainProbe <- rownames(Objects[[1]]) %in% (rownames(probe.features)[!probe.features$CHR %in% c("X","Y")])
         message("    Filtering probes located on X,Y chromosome, removing ", sum(RemainProbe == FALSE) ," probes from the analysis.")
         Objects <- lapply(Objects,function(x) x[RemainProbe,])
