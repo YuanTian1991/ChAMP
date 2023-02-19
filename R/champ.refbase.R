@@ -49,16 +49,35 @@ champ.refbase <- function(beta=myNorm,
   }
   message("<< Load projectWBC function success. >>")
   
+  if(arraytype %in% c("EPIC", "EPICv2")) {
+    data("probe.features.epicv2")
+  } else if(arraytype == "EPICv1") {
+    data("probe.features.epicv1")
+  } else if(arraytype == "450K") { 
+    data("probe.features")
+  } else (
+    stop("arraytype must be `EPICv2`, `EPICv1`, `450K`")
+  )
+  probe.features <- probe.features[rownames(beta),]
+  dedup <- !duplicated(probe.features$Name)
+  
+  beta_dedup <- beta[dedup, ]
+  rownames(beta_dedup) <- probe.features[dedup, "Name"]
+  
   if(arraytype == "27K")
   {
     data(CellTypeMeans27K)     # From Accomando et al. (27K)
-    DMRs27K <- intersect(rownames(CellTypeMeans27K), rownames(beta))
-    cellFrac <- projectWBC(beta[DMRs27K,], CellTypeMeans27K[DMRs27K,], lessThanOne=TRUE)
+    DMRs27K <- intersect(rownames(CellTypeMeans27K), rownames(beta_dedup))
+    cellFrac <- projectWBC(beta_dedup[DMRs27K,], 
+                           CellTypeMeans27K[DMRs27K,], 
+                           lessThanOne=TRUE)
   }else
   {
     data(CellTypeMeans450K)    # From Reinius et al. (450K)
-    DMRs450K <- intersect(rownames(CellTypeMeans450K), rownames(beta))
-    cellFrac <- projectWBC(beta[DMRs450K,],CellTypeMeans450K[DMRs450K,],lessThanOne=TRUE)
+    DMRs450K <- intersect(rownames(CellTypeMeans450K), rownames(beta_dedup))
+    cellFrac <- projectWBC(beta_dedup[DMRs450K,],
+                           CellTypeMeans450K[DMRs450K,],
+                           lessThanOne=TRUE)
   }
   message("Mean value for each estimated Cell Proportion:")
   print(colMeans(cellFrac))
