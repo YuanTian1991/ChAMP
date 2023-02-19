@@ -1,8 +1,8 @@
 if(getRversion() >= "3.1.0") utils::globalVariables(c("myLoad","probeInfoALL.lv","%dopar%","makeCluster","foreach"))
 
 champ.norm <- function(beta=myLoad$beta,
-                       rgSet=myLoad$rgSet,
-                       mset=myLoad$mset,
+                       rgSet=NULL,
+                       mset=NULL,
                        resultsDir="./CHAMP_Normalization/",
                        method="BMIQ",
                        plotBMIQ=FALSE,
@@ -26,17 +26,17 @@ champ.norm <- function(beta=myLoad$beta,
   {
     message("<< Normalizing data with BMIQ Method >>")
     message("Note that,BMIQ function may fail for bad quality samples (Samples did not even show beta distribution).")
-    # if(arraytype=="EPIC") data(probeInfoALL.epic.lv) else data(probeInfoALL.lv)
-    # design.v <- as.numeric(lapply(probeInfoALL.lv,function(x) x)$Design[match(rownames(beta),probeInfoALL.lv$probeID)])
-    if(arraytype=="EPIC") {
-      data(probe.features.epic)
-    } else if (arraytype == "450K") {
-      data(probe.features)
-    } else if (arraytype == "Mouse") {
-      data(probe.features.mouse)
-    } else {
-      stop("ArrayType parameter is wrong, it must be 450K, EPIC or Mouse.")
-    }
+    
+    if(arraytype %in% c("EPIC", "EPICv2")) {
+      data("probe.features.epicv2")
+    } else if(arraytype == "EPICv1") {
+      data("probe.features.epicv1")
+    } else if(arraytype == "450K") { 
+      data("probe.features")
+    } else (
+      stop("arraytype must be `EPICv2`, `EPICv1`, `450K`")
+    )
+    
     design.v <- as.numeric(as.factor(probe.features[rownames(beta), "Type"]))
     
     if(min(beta,na.rm=TRUE)==0)
@@ -66,15 +66,16 @@ champ.norm <- function(beta=myLoad$beta,
     message("<< Normalizing data with PBC Method >>")
     #if(arraytype=="EPIC") data(probeInfoALL.epic.lv) else data(probeInfoALL.lv)
     #design.v <- as.numeric(lapply(probeInfoALL.lv,function(x) x)$Design[match(rownames(beta),probeInfoALL.lv$probeID)])
-    if(arraytype=="EPIC") {
-      data(probe.features.epic)
-    } else if (arraytype == "450K") {
-      data(probe.features)
-    } else if (arraytype == "Mouse") {
-      data(probe.features.mouse)
-    } else {
-      stop("ArrayType parameter is wrong, it must be 450K, EPIC or Mouse.")
-    }
+    if(arraytype %in% c("EPIC", "EPICv2")) {
+      data("probe.features.epicv2")
+    } else if(arraytype == "EPICv1") {
+      data("probe.features.epicv1")
+    } else if(arraytype == "450K") { 
+      data("probe.features")
+    } else (
+      stop("arraytype must be `EPICv2`, `EPICv1`, `450K`")
+    )
+    
     design.v <- as.numeric(as.factor(probe.features[rownames(beta), "Type"]))
     
     if(min(beta,na.rm=TRUE)==0)
