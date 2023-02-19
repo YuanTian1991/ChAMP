@@ -19,13 +19,20 @@ champ.CNA <- function(intensity=myLoad$intensity,
   if (!file.exists(resultsDir)) dir.create(resultsDir)
   message("champ.CNA Results will be saved in ",resultsDir," .\n")
   
-  if(arraytype=="EPIC") {
-    data(probe.features.epic)
-  } else if (arraytype == "450K") {
-    data(probe.features)
-  } else {
-    data(probe.features.mouse)
-  }
+  if(arraytype %in% c("EPIC", "EPICv2")) {
+    data("probe.features.epicv2")
+  } else if(arraytype == "EPICv1") {
+    data("probe.features.epicv1")
+  } else if(arraytype == "450K") { 
+    data("probe.features")
+  } else (
+    stop("arraytype must be `EPICv2`, `EPICv1`, `450K`")
+  )
+  probe.features <- probe.features[rownames(intensity),]
+  dedup <- !duplicated(probe.features$Name)
+  
+  intensity <- intensity[dedup, ]
+  rownames(intensity) <- probe.features[dedup, "Name"]
   
   message("ChaMP.CNA does not provide batch Correct on intensity data now, but you can use champ.runCombat to correct slides batch yourself.")
   
@@ -43,7 +50,10 @@ champ.CNA <- function(intensity=myLoad$intensity,
       message("<< Combining champ bloodCtl dataset into your intensity dataset as control >>")
       data(champBloodCtls)
       ctlIntensity=bloodCtl$intensity
-      intensity <- cbind(intensity,ctlIntensity[rownames(intensity),])
+      
+      common_cpg <- intersect(rownames(intensity), rownames(ctlIntensity))
+      
+      intensity <- cbind(intensity[common_cpg, ], ctlIntensity[common_cpg,])
       pheno <- c(pheno,bloodCtl$pd$Sample_Group)
       message("champ bloodCtl dataset contains only two samples, they will be used as control groups.")
     }
