@@ -55,15 +55,16 @@ QC.GUI <- function(beta=myLoad$beta,
     }
     innertypePlot <- function(beta,arraytype)
     {
-       if(arraytype=="EPIC") {
-           data(probe.features.epic) 
-       }else if (arraytype == "450K") {
-           data(probe.features)
-       } else if (arraytype == "Mouse") {
-           data(probe.features.mouse)
-       } else {
-           stop("arraytype parameter must be EPIC, 450K or Mouse.")
-       }
+      if(arraytype %in% c("EPIC", "EPICv2")) {
+        data("probe.features.epicv2")
+      } else if(arraytype == "EPICv1") {
+        data("probe.features.epicv1")
+      } else if(arraytype == "450K") { 
+        data("probe.features")
+      } else (
+        stop("arraytype must be `EPICv2`, `EPICv1`, `450K`")
+      )
+      
        d1 <- density(beta[which(probe.features[rownames(beta),"Type"]=="I"),])
        d2 <- density(beta[which(probe.features[rownames(beta),"Type"]=="II"),])
        twolines <- data.frame(d1x = d1$x, d1y = d1$y, d2x = d2$x, d2y = d2$y)
@@ -83,7 +84,7 @@ QC.GUI <- function(beta=myLoad$beta,
         }else
         {
             SVD <- svd(beta)
-            rmt.o <- EstDimRMT(beta - rowMeans(beta))
+            rmt.o <- EstDimRMTv2(beta - rowMeans(beta))
             k <- rmt.o$dim
             if(k < 2) k <- 2
             M <- SVD$v[,1:k]

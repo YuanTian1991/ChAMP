@@ -292,9 +292,12 @@ champ.filter <- function(beta=myImport$beta,
         data("probe.features.epicv2")
       } else if(arraytype == "EPICv1") {
         data("probe.features.epicv1")
-      } else { 
+      } else if(arraytype == "450K") { 
         data("probe.features")
-      }
+      } else (
+        stop("arraytype must be `EPICv2`, `EPICv1`, `450K`")
+      )
+      
         RemainProbe <- rownames(Objects[[1]]) %in% (rownames(probe.features)[!probe.features$CHR %in% c("X","Y")])
         message("    Filtering probes located on X,Y chromosome, removing ", sum(RemainProbe == FALSE) ," probes from the analysis.")
         Objects <- lapply(Objects,function(x) x[RemainProbe,])

@@ -3,16 +3,15 @@ if(getRversion() >= "3.1.0") utils::globalVariables(c("myLoad","probe. features.
 CpG.GUI <- function(CpG=rownames(myLoad$beta),
                     arraytype="450K")
 {
-    #if(arraytype=="EPIC") data(probe.features.epic) else data(probe.features)
-           if(arraytype=="EPIC") {
-           data(probe.features.epic)
-       }else if (arraytype == "450K") {
-           data(probe.features)
-       } else if (arraytype == "Mouse") {
-           data(probe.features.mouse)
-       } else {
-           stop("arraytype parameter must be EPIC, 450K or Mouse.")
-       }
+  if(arraytype %in% c("EPIC", "EPICv2")) {
+    data("probe.features.epicv2")
+  } else if(arraytype == "EPICv1") {
+    data("probe.features.epicv1")
+  } else if(arraytype == "450K") { 
+    data("probe.features")
+  } else (
+    stop("arraytype must be `EPICv2`, `EPICv1`, `450K`")
+  )
 
     cgi.info <- table(probe.features[CpG,"cgi"])
     chromsome.info <- table(probe.features[CpG,"CHR"])
