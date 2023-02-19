@@ -54,7 +54,7 @@ When you are installing ChAMP, you may encounter some errors saying that some pa
 
 After installation, you should be able to load the ChAMP package in your R session:
 
-```{r eval=TRUE,message=FALSE, warning=FALSE}
+```{r eval=FALSE, message=FALSE, warning=FALSE}
 library("ChAMP")
 ```
 
@@ -202,20 +202,20 @@ Currently the default method for loading is "ChAMP". You may set "method" in cha
 User may invoke following code to load data set:
 
 
-```{r eval=TRUE}
+```{r eval=FALSE}
 myLoad <- champ.load(testDir)
 ```
 
 Alternatively, the user can load the data from the dataset object testDataSet in ChAMPdata package, using:
 
 
-```{r eval=TRUE}
+```{r eval=FALSE}
 data(testDataSet)
 ```
 
 It is important to check the pd file (Sample_Sheet.csv). Most pd files are similar in format, but their most valuable information are not always stored in same column, for example, for most pd files, Sample_Group means groups of phenotype wants to be researched, but in some pd files, similar information may be stored in columns named as "Diagnose" or "CancerType", so the user **MUST** understand their pd file well to achieve a successful analysis.
 
-```{r eval=TRUE}
+```{r eval=FALSE}
 myLoad$pd
 ```
 
@@ -276,7 +276,7 @@ This is a useful function to demonstrate the distribution of your CpG list. If y
 
 Quality Control is an important process to make sure dataset is suitable for downstream analysis. champ.QC() function and QC.GUI() function would draw some plots for user to easily check their data's quality. Usually, there are three plots that would be generated:
 
-```{r eval=TRUE,dpi=100,fig.width=7,fig.height=4,message=FALSE}
+```{r eval=FALSE, dpi=100, fig.width=7, fig.height=4, message=FALSE}
 champ.QC()
 ```
 
@@ -385,7 +385,7 @@ The output of champ.DMP() includes **some data frames** of P-value, t-statistic 
 > In our latest version champ.DMP(), numeric variables are fully support not, if you have covariate like ages or time series data. However, more advanced users can run limma with other settings and use the output (including all probes and their p-values) for the DMR hunter.
 
 Users may use following code to get DMPs (still we are using Demo 450K test data here):
-```{r eval=TRUE,warning=FALSE,message=FALSE}
+```{r eval=FALSE, warning=FALSE, message=FALSE}
 myDMP <- champ.DMP(beta = myNorm,pheno=myLoad$pd$Sample_Group)
 ```
 
@@ -485,7 +485,7 @@ myDMR <- champ.DMR(beta=myNorm,pheno=myLoad$pd$Sample_Group,method="Bumphunter")
 
 The output of Bumphunter, DMRcate and ProbeLasso functions are all dataframe, but may contain different columns. Here we can have a check on DMRcate result.
 
-```{r eval=TRUE}
+```{r eval=FALSE}
 head(myDMR$DMRcateDMR)
 ```
 
@@ -535,7 +535,7 @@ myBlock <- champ.Block(beta=myNorm,pheno=myLoad$pd$Sample_Group,arraytype="450K"
 
 champ.Block() function returns numerous objects, but the most important one is the first list: Block. You may check it like below:
 
-```{r eval=TRUE}
+```{r eval=FALSE}
 head(myBlock$Block)
 ```
 And we provide a GUI function for users to check the result of myBlock above.
@@ -587,7 +587,7 @@ myGSEA <- champ.GSEA(beta=myNorm,DMP=myDMP[[1]], DMR=myDMR, arraytype="450K",adj
 
 In above code, we also used the demo 450K array incorporated in our package to demonstrate the effect of champ.GSEA(). After the calculation, for each list (DMP,DMR or other list), one GSEA result would be returned. User may check the result like below:
 
-```{r eval=TRUE}
+```{r eval=FALSE}
 head(myGSEA$DMP)
 # Above is the GSEA result for differential methylation probes.
 head(myGSEA$DMR)
