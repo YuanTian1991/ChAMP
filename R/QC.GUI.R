@@ -84,7 +84,7 @@ QC.GUI <- function(beta=myLoad$beta,
         }else
         {
             SVD <- svd(beta)
-            rmt.o <- EstDimRMTv2(beta - rowMeans(beta))
+            rmt.o <- EstDimRMT(beta - rowMeans(beta))
             k <- rmt.o$dim
             if(k < 2) k <- 2
             M <- SVD$v[,1:k]
@@ -124,65 +124,65 @@ QC.GUI <- function(beta=myLoad$beta,
     }
 
     app <- shinyApp(
-        ui = fluidPage(
-                tags$head(tags$style("#mdsPlot{height:80vh !important;}")),
-                tags$head(tags$style("#densityPlot{height:80vh !important;}")),
-                tags$head(tags$style("#dendrograme{height:80vh !important;}")),
-                tags$head(tags$style("#typedensityPlot{height:80vh !important;}")),
-                tags$head(tags$style("#heatmap{height:80vh !important;}")),
-
-                theme = shinytheme("readable"),
-                titlePanel("QC Overview"),
-                tabsetPanel(
-                            tabPanel("mdsPlot",
-                                     align = "center",
-                                     plotlyOutput("mdsPlot")
-                                     ),
-                            tabPanel("TypeDensity",
-                                     align = "center",
-                                     plotlyOutput("typedensityPlot")
-                                     ),
-                            tabPanel("QCPlot",
-                                     align = "center",
-                                     plotlyOutput("densityPlot")
-                                     ),
-                            tabPanel("Dendrogram",
-                                     align = "center",
-                                     plotOutput("dendrograme")
-                                     ),
-                            tabPanel("Heatmap",
-                                     align = "center",
-                                     plotlyOutput("heatmap")
-                                     )
-                            )#tabsetPanel
-                    ),#ui
-    server = function(input, output){
+      ui = fluidPage(
+        tags$head(tags$style("#mdsPlot{height:80vh !important;}")),
+        tags$head(tags$style("#densityPlot{height:80vh !important;}")),
+        tags$head(tags$style("#dendrograme{height:80vh !important;}")),
+        tags$head(tags$style("#typedensityPlot{height:80vh !important;}")),
+        tags$head(tags$style("#heatmap{height:80vh !important;}")),
+        
+        theme = shinytheme("readable"),
+        titlePanel("QC Overview"),
+        tabsetPanel(
+          tabPanel("mdsPlot",
+                   align = "center",
+                   plotlyOutput("mdsPlot")
+          ),
+          tabPanel("TypeDensity",
+                   align = "center",
+                   plotlyOutput("typedensityPlot")
+          ),
+          tabPanel("QCPlot",
+                   align = "center",
+                   plotlyOutput("densityPlot")
+          ),
+          tabPanel("Dendrogram",
+                   align = "center",
+                   plotOutput("dendrograme")
+          ),
+          tabPanel("Heatmap",
+                   align = "center",
+                   plotlyOutput("heatmap")
+          )
+        )#tabsetPanel
+      ),#ui
+      server = function(input, output){
         output$mdsPlot <- renderPlotly(
-                                   {
-                                       innermdsplot(beta,pheno)
-                                   }
-                                  )
+          {
+            innermdsplot(beta,pheno)
+          }
+        )
         output$typedensityPlot <- renderPlotly(
-                                   {
-                                       innertypePlot(beta,arraytype)
-                                   }
-                                  )
+          {
+            innertypePlot(beta,arraytype)
+          }
+        )
         output$densityPlot <- renderPlotly(
-                                   {
-                                       innerdensityPlot(beta,pheno)
-                                   }
-                                  )
+          {
+            innerdensityPlot(beta,pheno)
+          }
+        )
         output$dendrograme <- renderPlot(
-                                   {
-                                       innerdendrogram(beta,pheno) 
-                                   }
-                                  )
+          {
+            innerdendrogram(beta,pheno) 
+          }
+        )
         output$heatmap <- renderPlotly(
-                                   {
-                                       innerheatmap(beta)
-                                   }
-                                  )
-        }
+          {
+            innerheatmap(beta)
+          }
+        )
+      }
     )
     runApp(app)
 }
