@@ -10,7 +10,17 @@ Block.GUI <- function(Block=myBlock,
   message("!!! important !!! Since we just upgrated champ.DMP() function, which is now can support multiple phenotypes. Here in Block.GUI() function, if you want to use \"runDMP\" parameter, and your pheno contains more than two groups of phenotypes, you MUST specify compare.group parameter as compare.group=c(\"A\",\"B\") to get DMP value between group A and group B.")
   
   
-  if(arraytype == "EPIC") data(probe.features.epic) else data(probe.features)
+  # if(arraytype == "EPIC") data(probe.features.epic) else data(probe.features)
+  if(arraytype %in% c("EPIC", "EPICv2")) {
+    data("probe.features.epicv2")
+  } else if(arraytype == "EPICv1") {
+    data("probe.features.epicv1")
+  } else if(arraytype == "450K") { 
+    data("probe.features")
+  } else (
+    stop("arraytype must be `EPICv2`, `EPICv1`, `450K`")
+  )
+  
   probe.features <- probe.features[names(Block$allCLID.v),]
   
   design <- model.matrix( ~ 0 + pheno)

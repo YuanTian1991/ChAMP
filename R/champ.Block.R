@@ -15,17 +15,35 @@ champ.Block <- function(beta=myNorm,
   
   
   #############  ConstResgion.R  ################
-  if(arraytype=="EPIC"){
-    RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylationEPIC",annotation = "ilm10b4.hg19"))
-  }else{
-    RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylation450k",annotation = "ilmn12.hg19"))
-  }
+  # if(arraytype=="EPIC"){
+  #   RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylationEPIC",annotation = "ilm10b4.hg19"))
+  # }else{
+  #   RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylation450k",annotation = "ilmn12.hg19"))
+  # }
+  
+  if(arraytype %in% c("EPIC", "EPICv2")) {
+    data("probe.features.epicv2")
+  } else if(arraytype == "EPICv1") {
+    data("probe.features.epicv1")
+  } else if(arraytype == "450K") { 
+    data("probe.features")
+  } else (
+    stop("arraytype must be `EPICv2`, `EPICv1`, `450K`")
+  )
+  
+  
   if(cores > detectCores()) cores <- detectCores()
   registerDoParallel(cores = cores)
   
-  RSanno <- getAnnotation(RSobject)[,c("chr","pos","Relation_to_Island")]
-  RSanno <- RSanno[order(RSanno$chr,RSanno$pos),]
-  sbeta.m <- beta[rownames(RSanno),]
+  # RSanno <- getAnnotation(RSobject)[,c("chr","pos","Relation_to_Island")]
+  # RSanno <- RSanno[order(RSanno$chr,RSanno$pos),]
+  # sbeta.m <- beta[rownames(RSanno),]
+  # sregion.v <- RSanno$Relation_to_Island
+  
+  RSanno <- probe.features[rownames(beta), c("CHR", "MAPINFO", "cgi")]
+  RSanno <- RSanno[order(RSanno$CHR,RSanno$MAPINFO),]
+  colnames(RSanno) <- c("chr", "pos", "Relation_to_Island")
+  sbeta.m <- beta
   sregion.v <- RSanno$Relation_to_Island
   
   message("<< Load Annotation Successfully >>")
@@ -87,8 +105,8 @@ champ.Block <- function(beta=myNorm,
   blockID.v <- levels(as.factor(blocks));
   message("<< New Clusters are generated for blocks >>")
   
-  blockPROP.m <- data.frame(CHR=aggregate(posOS.m[,2],by=list(blocks),function(x) x[1])[,2],
-                            aggregate(posOS.m[,1],by=list(blocks),function(x) c(mean(x),min(x),max(x),max(x)-min(x),length(x)))[,2])
+  blockPROP.m <- data.frame(CHR=aggregate(posOS.m[selAUT.idx,2], by=list(blocks), function(x) x[1])[,2],
+                            aggregate(posOS.m[selAUT.idx,1],by=list(blocks),function(x) c(mean(x),min(x),max(x),max(x)-min(x),length(x)))[,2])
   colnames(blockPROP.m) <- c("CHR","AvPos","Start","End","Size","NumberOS");
   
   message("<< Generate information for New Clusters >>")

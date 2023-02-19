@@ -298,7 +298,7 @@ champ.filter <- function(beta=myImport$beta,
       stop("arraytype must be `EPICv2`, `EPICv1`, `450K`")
     )
     
-    RemainProbe <- rownames(Objects[[1]]) %in% (rownames(probe.features)[!probe.features$CHR %in% c("X","Y")])
+    RemainProbe <- rownames(Objects[[1]]) %in% (rownames(probe.features)[!probe.features$CHR %in% c("X","Y", "chrX", "chrY")])
     message("    Filtering probes located on X,Y chromosome, removing ", sum(RemainProbe == FALSE) ," probes from the analysis.")
     Objects <- lapply(Objects,function(x) x[RemainProbe,])
     Accessory <- lapply(Accessory,function(x) x[RemainProbe,])
