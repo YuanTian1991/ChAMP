@@ -13,4 +13,5 @@ git clone https://github.com/YuanTian1991/ChAMP.git
 R CMD INSTALL ChAMP
 ```
 
-Current latest version: `2.19.3`
+
+Current latest version: `2.29.1`, which support EPICv2, but it must be used along with [ChAMPdata >= 2.23.1](https://github.com/YuanTian1991/ChAMPdata)

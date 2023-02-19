@@ -202,7 +202,7 @@ Currently the default method for loading is "ChAMP". You may set "method" in cha
 User may invoke following code to load data set:
 
 
-```{r eval=FALSE}
+```{r eval=TRUE}
 myLoad <- champ.load(testDir)
 ```
 
