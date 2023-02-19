@@ -1,20 +1,38 @@
 if(getRversion() >= "3.1.0") utils::globalVariables("PathwayList")
 
-champ.ebGSEA <- function(beta=myNorm, pheno=myLoad$pd$Sample_Group, minN=5, adjPval=0.05, arraytype="450K", cores=1)
+champ.ebGSEA <- function(beta=myNorm, 
+                         pheno=myLoad$pd$Sample_Group, 
+                         minN=5, 
+                         adjPval=0.05, 
+                         arraytype="450K", 
+                         cores=1)
 {
   #library(Hmisc);
   #library(globaltest);
   message("ebGSEA function require no NA in beta and pheno parameter.")
   
   mapEIDtoCpG <- function(beta,arraytype) {
-    if(arraytype=="EPIC"){
-      message("  Extracting annotation from IlluminaHumanMethylationEPICilm10b4.hg19.")
-      RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylationEPIC",annotation = "ilm10b4.hg19"))
-    }else{
-      message("  Extracting annotation from IlluminaHumanMethylation450kilmn12.hg19.")
-      RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylation450k",annotation = "ilmn12.hg19"))
-    }
-    RSanno <- as.data.frame(getAnnotation(RSobject))
+    # if(arraytype=="EPIC"){
+    #   message("  Extracting annotation from IlluminaHumanMethylationEPICilm10b4.hg19.")
+    #   RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylationEPIC",annotation = "ilm10b4.hg19"))
+    # }else{
+    #   message("  Extracting annotation from IlluminaHumanMethylation450kilmn12.hg19.")
+    #   RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylation450k",annotation = "ilmn12.hg19"))
+    # }
+    # RSanno <- as.data.frame(getAnnotation(RSobject))
+    if(arraytype %in% c("EPIC", "EPICv2")) {
+      data("probe.features.epicv2")
+    } else if(arraytype == "EPICv1") {
+      data("probe.features.epicv1")
+    } else if(arraytype == "450K") { 
+      data("probe.features")
+    } else (
+      stop("arraytype must be `EPICv2`, `EPICv1`, `450K`")
+    )
+    RSanno <- probe.features[rownames(beta), c("CHR", "MAPINFO", "gene", "feature")]
+    colnames(RSanno) <- c("chr", "pos", "UCSC_RefGene_Name", "UCSC_RefGene_Group")
+    
+    
     message("  Removing Non-CG probes out of annotation.")
     ann.keep <- RSanno[substr(rownames(RSanno),1,2)=="cg" & RSanno$UCSC_RefGene_Name != "",]
     
@@ -83,12 +101,24 @@ champ.ebGSEA <- function(beta=myNorm, pheno=myLoad$pd$Sample_Group, minN=5, adjP
   if(class(pheno)=="numeric")
   {
     message("  Applying Linear Model on Global Test. It could be very slow...")
-    gt.o <- gt(response=pheno, alternative=t(beta),model="linear",directional = FALSE,
-               standardize = FALSE, permutations = 0, subsets=mapEID,trace=FALSE);
+    gt.o <- gt(response=pheno, 
+               alternative=t(beta),
+               model="linear",
+               directional = FALSE,
+               standardize = FALSE, 
+               permutations = 0, 
+               subsets=mapEID,
+               trace=FALSE);
   } else {
     message("  Applying Binary Model on Global Test. It could be very slow...")
-    gt.o <- gt(response=(as.numeric(as.factor(pheno))-1), alternative=t(beta),model="logistic",directional = FALSE,
-               standardize = FALSE, permutations = 0, subsets=mapEID,trace=FALSE);
+    gt.o <- gt(response=(as.numeric(as.factor(pheno))-1), 
+               alternative=t(beta),
+               model="logistic",
+               directional = FALSE,
+               standardize = FALSE, 
+               permutations = 0, 
+               subsets=mapEID,
+               trace=FALSE);
   }
   resGT.m <- result(gt.o);
   tmp.s <- sort(resGT.m[,1],index.return=TRUE);

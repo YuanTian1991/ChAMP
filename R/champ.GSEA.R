@@ -36,12 +36,26 @@ champ.GSEA <- function(beta=myNorm,
   if(method=="fisher")
   {
     data(PathwayList)
-    if(arraytype=="EPIC"){
-      RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylationEPIC",annotation = "ilm10b4.hg19"))
-    }else{
-      RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylation450k",annotation = "ilmn12.hg19"))
-    }
-    RSanno <- getAnnotation(RSobject)[,c("chr","pos","Name","UCSC_RefGene_Name")]
+    # if(arraytype=="EPIC"){
+    #   RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylationEPIC",annotation = "ilm10b4.hg19"))
+    # }else{
+    #   RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylation450k",annotation = "ilmn12.hg19"))
+    # }
+    # RSanno <- getAnnotation(RSobject)[,c("chr","pos","Name","UCSC_RefGene_Name")]
+    
+    if(arraytype %in% c("EPIC", "EPICv2")) {
+      data("probe.features.epicv2")
+    } else if(arraytype == "EPICv1") {
+      data("probe.features.epicv1")
+    } else if(arraytype == "450K") { 
+      data("probe.features")
+    } else (
+      stop("arraytype must be `EPICv2`, `EPICv1`, `450K`")
+    )
+    RSanno <- probe.features[rownames(beta), c("CHR", "MAPINFO", "gene")]
+    colnames(RSanno) <- c("chr", "pos", "UCSC_RefGene_Name")
+    
+
     ueid.v <- unique(unlist(sapply(RSanno$UCSC_RefGene_Name,function(x) strsplit(x,split=";")[[1]])))
     bias.Data <- table(unlist(sapply(RSanno$UCSC_RefGene_Name,function(x) unique(strsplit(x,split=";")[[1]]))))
     bias.Data <- as.numeric(bias.Data[ueid.v])
@@ -171,13 +185,26 @@ champ.GSEA <- function(beta=myNorm,
     names(listsummary.lm) <- names(selGEID.lv);
   } else if(method=="gometh")
   {
-    if(arraytype=="EPIC"){
-      RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylationEPIC",annotation = "ilm10b4.hg19"))
-    }else{
-      RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylation450k",annotation = "ilmn12.hg19"))
-    }
+    # if(arraytype=="EPIC"){
+    #   RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylationEPIC",annotation = "ilm10b4.hg19"))
+    # }else{
+    #   RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylation450k",annotation = "ilmn12.hg19"))
+    # }
+    # 
+    # RSanno <- getAnnotation(RSobject)[,c("chr","pos","Name","UCSC_RefGene_Name")]
     
-    RSanno <- getAnnotation(RSobject)[,c("chr","pos","Name","UCSC_RefGene_Name")]
+    if(arraytype %in% c("EPIC", "EPICv2")) {
+      data("probe.features.epicv2")
+    } else if(arraytype == "EPICv1") {
+      data("probe.features.epicv1")
+    } else if(arraytype == "450K") { 
+      data("probe.features")
+    } else (
+      stop("arraytype must be `EPICv2`, `EPICv1`, `450K`")
+    )
+    RSanno <- probe.features[rownames(beta), c("CHR", "MAPINFO", "gene")]
+    colnames(RSanno) <- c("chr", "pos", "UCSC_RefGene_Name")
+    
     ueid.v <- rownames(beta)
     loi.lv <- list()
     if(!is.null(DMP))
