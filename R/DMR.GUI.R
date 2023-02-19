@@ -47,15 +47,25 @@ DMR.GUI <- function(DMR=myDMR,
   }
   message("\n[ Section 1: Calculate DMP Done  ]\n")
   
-  if(arraytype == "EPIC") data(probe.features.epic) else data(probe.features)
+  if(arraytype %in% c("EPIC", "EPICv2")) {
+    data("probe.features.epicv2")
+  } else if(arraytype == "EPICv1") {
+    data("probe.features.epicv1")
+  } else if(arraytype == "450K") { 
+    data("probe.features")
+  } else (
+    stop("arraytype must be `EPICv2`, `EPICv1`, `450K`")
+  )
+  
   probe.features <- probe.features[rownames(beta),]
   
   message("\n[ Section 2: Mapping DMR to annotation Start  ]\n")
   
   message("  Generating Annotation File")
-  DMR[[1]]$seqnames <- as.factor(substr(DMR[[1]]$seqnames,4,100))
+  # DMR[[1]]$seqnames <- as.factor(substr(DMR[[1]]$seqnames,4,100))
   index <- apply(DMR[[1]],1,function(x) which(probe.features$CHR==x[1] & probe.features$MAPINFO >= as.numeric(x[2]) & probe.features$MAPINFO <= as.numeric(x[3])))
-  Anno <- data.frame(DMRindex=unname(unlist(sapply(names(index),function(x) rep(x,length(index[[x]]))))),probe.features[do.call(c,index),1:8])
+  Anno <- data.frame(DMRindex=unname(unlist(sapply(names(index),function(x) rep(x,length(index[[x]]))))), 
+                     probe.features[do.call(c,index),1:8])
   message("  Generating Annotation File Success")
   
   if(identical(names(DMR),"DMRcateDMR"))

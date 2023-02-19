@@ -79,12 +79,22 @@ champ.DMR <- function(beta=myNorm,
   
   message("\n[ Section 2:  Run DMR Algorithm Start ]\n")
   
-  if(arraytype=="EPIC"){
-    RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylationEPIC",annotation = "ilm10b4.hg19"))
-  }else{
-    RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylation450k",annotation = "ilmn12.hg19"))
-  }
-  probe.features <- getAnnotation(RSobject)
+  # if(arraytype=="EPIC"){
+  #   RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylationEPIC",annotation = "ilm10b4.hg19"))
+  # }else{
+  #   RSobject <- RatioSet(beta, annotation = c(array = "IlluminaHumanMethylation450k",annotation = "ilmn12.hg19"))
+  # }
+  # probe.features <- getAnnotation(RSobject)
+  
+  if(arraytype %in% c("EPIC", "EPICv2")) {
+    data("probe.features.epicv2")
+  } else if(arraytype == "EPICv1") {
+    data("probe.features.epicv1")
+  } else if(arraytype == "450K") { 
+    data("probe.features")
+  } else (
+    stop("arraytype must be `EPICv2`, `EPICv1`, `450K`")
+  )
   
   if(cores > detectCores()) cores <- detectCores()
   
@@ -99,14 +109,14 @@ champ.DMR <- function(beta=myNorm,
     
     cpg.idx <- intersect(rownames(beta),rownames(probe.features))
     Anno <- probe.features[cpg.idx,]
-    Anno <- Anno[order(Anno$chr,Anno$pos),]
+    Anno <- Anno[order(Anno$CHR, Anno$MAPINFO),]
     cpg.idx <- rownames(Anno)
     
-    cl <- clusterMaker(Anno$chr,Anno$pos,maxGap=maxGap)
+    cl <- clusterMaker(Anno$CHR, Anno$MAPINFO, maxGap=maxGap)
     names(cl) <- cpg.idx
     bumphunter.idx <- cpg.idx[which(cl %in% names(which(table(cl)>minProbes)))]
     
-    message("According to your data set, champ.DMR() detected ",sum(table(cl)>minProbes)," clusters contains MORE THAN ",minProbes," probes within",maxGap," maxGap. These clusters will be used to find DMR.\n")
+    message("According to your data set, champ.DMR() detected ",sum(table(cl)>minProbes)," clusters contains MORE THAN ",minProbes," probes within ",maxGap," maxGap. These clusters will be used to find DMR.\n")
     
     X <- cbind(1,(as.numeric(as.factor(pheno))-1))
     Beta <- beta[bumphunter.idx,]
@@ -116,8 +126,8 @@ champ.DMR <- function(beta=myNorm,
     
     Bumps <- bumphunter(Y,
                         design=X,
-                        chr=Anno[bumphunter.idx,]$chr,
-                        pos=Anno[bumphunter.idx,]$pos,
+                        chr=Anno[bumphunter.idx,]$CHR,
+                        pos=Anno[bumphunter.idx,]$MAPINFO,
                         cluster=cl[bumphunter.idx],
                         cutoff=cutoff,
                         pickCutoff=pickCutoff,
