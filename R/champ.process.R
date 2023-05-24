@@ -356,7 +356,7 @@ champ.process <- function(runload=TRUE,
     
     myCNA <- champ.CNA(intensity=myLoad$intensity,
                        pheno=myLoad$pd$Sample_Group,
-                       resultsDir="./CHAMP_CNA",
+                       resultsDir=paste(resultsDir,"/CHAMP_CNA/",sep=""),
                        control=TRUE,
                        controlGroup="champCtls",
                        sampleCNA=TRUE,
