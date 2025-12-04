@@ -5,23 +5,34 @@ champ.DMP <- function(beta = myNorm,
                       compare.group = NULL,
                       adjPVal = 0.05,
                       adjust.method = "BH",
-                      arraytype = "450K")
+                      arraytype = "450K",
+                      block = myLoad$pd$Blocking_Group)
 {
   message("[===========================]")
   message("[<<<<< ChAMP.DMP START >>>>>]")
   message("-----------------------------")
   
-  CalculateDMP <- function(beta,pheno,tmp_compare,adjPVal=adjPVal,adjust.method=adjust.method)
+  CalculateDMP <- function(beta,pheno,tmp_compare,adjPVal=adjPVal,adjust.method=adjust.method,block=block)
   {
     message("  -----------------------------")
     message("  Start to Compare : ",tmp_compare[1],", ",tmp_compare[2])
     p <- pheno[which(pheno %in% tmp_compare)]
     tmpbeta <- beta[,which(pheno %in% tmp_compare)]
+    
     design <- model.matrix( ~ 0 + p)
     contrast.matrix <- makeContrasts(contrasts=paste(colnames(design)[2:1],collapse="-"), levels=colnames(design))
     message("  Contrast Matrix")
     print(contrast.matrix)
-    fit <- lmFit(tmpbeta, design)
+    
+    if(!is.null(block)) 
+    {
+      tmpblock <- block[which(pheno %in% tmp_compare)]
+      dupcor <- duplicateCorrelation(tmpbeta,design, block=tmpblock)
+      fit <- lmFit(tmpbeta,design,block=tmpblock,correlation=dupcor$consensus)
+      }else
+    {
+      fit <- lmFit(tmpbeta, design)
+      }
     fit2 <- contrasts.fit(fit,contrast.matrix)
     tryCatch(fit3 <- eBayes(fit2),
              warning=function(w) 
@@ -118,7 +129,7 @@ champ.DMP <- function(beta = myNorm,
     message("\n[ Section 2:  Find Differential Methylated CpGs Start ]\n")
     for(i in names(Compare))
     {
-      DMP <- CalculateDMP(beta,pheno,Compare[[i]],adjPVal,adjust.method)
+      DMP <- CalculateDMP(beta,pheno,Compare[[i]],adjPVal,adjust.method,block)
       if(sum(DMP$adj.P.Val <= adjPVal)!=0)
         DMPs[[i]] <- DMP
     }
@@ -144,10 +155,15 @@ champ.DMP <- function(beta = myNorm,
     com.idx <- intersect(rownames(DMPs[[i]]),rownames(probe.features))
     if(!is.null(Compare))
     {
-      avg <-  cbind(rowMeans(beta[com.idx,which(pheno==Compare[[i]][1])]),rowMeans(beta[com.idx,which(pheno==Compare[[i]][2])]))
-      avg <- cbind(avg,avg[,2]-avg[,1])
-      colnames(avg) <- c(paste(Compare[[i]],"AVG",sep="_"),"deltaBeta")
-      DMPs[[i]] <- data.frame(DMPs[[i]][com.idx,],avg,probe.features[com.idx,])
+      if (!is.null(dim(beta[com.idx, which(pheno == Compare[[i]][1])]))){
+        
+        avg <-  cbind(rowMeans(beta[com.idx,which(pheno==Compare[[i]][1])]),rowMeans(beta[com.idx,which(pheno==Compare[[i]][2])]))
+        avg <- cbind(avg,avg[,2]-avg[,1])
+        colnames(avg) <- c(paste(Compare[[i]],"AVG",sep="_"),"deltaBeta")
+        DMPs[[i]] <- data.frame(DMPs[[i]][com.idx,],avg,probe.features[com.idx,])
+        }else
+        { print(paste0("Skipping comparison of ", Compare[[i]][1], " to ", Compare[[i]][2], " due to missing data"))
+        }
     } else {
       DMPs[[i]] <- data.frame(DMPs[[i]][com.idx,],probe.features[com.idx,])
     }
