@@ -122,7 +122,7 @@ champ.SVD <- function(beta=myNorm,
   ################ Customise Phenotype Data ########################
   
   if(is.null(pd) | class(pd)=="list") stop("pd parameter in Data Frame or Matrix is necessary And must contain at least tow factors. If your pd is a list, please change its Format.")
-  if(class(pd)=="matrix") pd <- as.data.frame(pd)
+  if(class(pd)[1]=="matrix" | class(pd)[2]=="matrix") pd <- as.data.frame(pd) # Current issue in mainline.
   
   PhenoTypes.lv_tmp <- pd[,!colnames(pd) %in% c("Sample_Name","Project","filenames","Basename") & apply(pd,2,function(x) length(unique(x)))!=1]
   PhenoTypes.lv <- PhenoTypes.lv_tmp
